@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('ez-theme');
+    if(!t){ t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EZ Market — كل ما تريد، في مكان واحد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A;
+    --ink-soft:#6B6B6B;
+    --surface:#FFFFFF;
+    --surface-alt:#FAF5F5;
+    --surface-raise:#FFFFFF;
+    --border:#F1D9DB;
+    --primary:#C8102E;
+    --primary-dark:#8E0B21;
+    --primary-tint:#FBE4E7;
+    --accent:#E63946;
+    --accent-tint:#FDEBEC;
+    --sale:#B3121F;
+    --sale-tint:#F8DEE0;
+    --star:#E63946;
+    --shadow-sm:0 4px 14px rgba(20,40,34,.06);
+    --shadow-md:0 14px 34px rgba(20,40,34,.10);
+    --radius-card:18px;
+    --radius-pill:999px;
+    --radius-sm:12px;
+    --font:'Cairo','Tahoma',system-ui,sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F5EBEC;
+      --ink-soft:#C9A8AC;
+      --surface:#1A0E10;
+      --surface-alt:#241316;
+      --surface-raise:#2A171A;
+      --border:#3D1F23;
+      --primary:#FF3B4E;
+      --primary-dark:#E01F35;
+      --primary-tint:#3D1418;
+      --accent:#FF6B76;
+      --accent-tint:#3A1519;
+      --sale:#FF5C6C;
+      --sale-tint:#3A1418;
+      --star:#FF6B76;
+      --shadow-sm:0 4px 14px rgba(0,0,0,.35);
+      --shadow-md:0 14px 34px rgba(0,0,0,.45);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F5EBEC;
+    --ink-soft:#C9A8AC;
+    --surface:#1A0E10;
+    --surface-alt:#241316;
+    --surface-raise:#2A171A;
+    --border:#3D1F23;
+    --primary:#FF3B4E;
+    --primary-dark:#E01F35;
+    --primary-tint:#3D1418;
+    --accent:#FF6B76;
+    --accent-tint:#3A1519;
+    --sale:#FF5C6C;
+    --sale-tint:#3A1418;
+    --star:#FF6B76;
+    --shadow-sm:0 4px 14px rgba(0,0,0,.35);
+    --shadow-md:0 14px 34px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--font);
+    background:var(--surface-alt);
+    color:var(--ink);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:64px;
+  }
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  button{font-family:var(--font); cursor:pointer;}
+  .wrap{max-width:1240px; margin:0 auto; padding:0 20px;}
+  .icon{width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; flex-shrink:0;}
+  .icon.filled{fill:currentColor; stroke:none;}
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:var(--surface); border-bottom:1px solid transparent;
+    transition:box-shadow .3s ease, border-color .3s ease;
+  }
+  header.scrolled{ box-shadow:var(--shadow-sm); border-color:var(--border); }
+  .header-top{ display:flex; align-items:center; gap:18px; padding:14px 20px; max-width:1240px; margin:0 auto; }
+  .logo{ display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.35rem; color:var(--primary); white-space:nowrap; }
+  .logo span.dot{ color:var(--accent); }
+  .search-bar{
+    flex:1; display:flex; align-items:center; gap:10px;
+    background:var(--surface-alt); border:1px solid var(--border);
+    border-radius:var(--radius-pill); padding:9px 16px; max-width:560px;
+  }
+  .search-bar input{ border:none; background:none; outline:none; width:100%; color:var(--ink); font-family:var(--font); font-size:.92rem; }
+  .search-bar .icon{ color:var(--ink-soft); }
+  .header-actions{ display:flex; align-items:center; gap:6px; margin-inline-start:auto; }
+
+  /* Nav drawer (hamburger menu) */
+  .nav-drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:190; opacity:0; pointer-events:none; transition:opacity .35s ease; }
+  .nav-drawer-overlay.open{ opacity:1; pointer-events:auto; }
+  .nav-drawer{ position:fixed; top:0; bottom:0; right:0; width:320px; max-width:86vw; background:var(--surface); z-index:200; transform:translateX(100%); transition:transform .45s cubic-bezier(.16,.84,.44,1); box-shadow:-10px 0 40px rgba(0,0,0,.18); overflow-y:auto; padding:18px 0 30px; }
+  .nav-drawer.open{ transform:translateX(0); }
+  .nav-drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:0 18px 16px; border-bottom:1px solid var(--border); margin-bottom:10px; }
+  .nav-drawer-head .logo{ font-size:1.2rem; }
+  .nav-drawer-close{ width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--surface-alt); display:flex; align-items:center; justify-content:center; color:var(--ink); transform:rotate(90deg); flex-shrink:0; }
+  .nav-quick{ display:grid; grid-template-columns:repeat(5,1fr); gap:4px; padding:4px 10px 14px; margin-bottom:6px; border-bottom:1px solid var(--border); }
+  .nav-quick-item{ display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; padding:6px 0; cursor:pointer; color:var(--ink); font-family:inherit; opacity:0; transform:translateX(24px); transition:opacity .4s ease, transform .4s ease; }
+  .nav-drawer.open .nav-quick-item{ opacity:1; transform:translateX(0); }
+  .nav-quick-item .icon-btn{ width:42px; height:42px; }
+  .nav-quick-item:hover .icon-btn{ background:var(--primary-tint); color:var(--primary); border-color:var(--primary); transform:translateY(-1px); }
+  .nav-quick-label{ font-size:.66rem; font-weight:700; color:var(--ink-soft); white-space:nowrap; }
+  .nav-drawer-links{ display:flex; flex-direction:column; padding:0 10px; }
+  .nav-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:12px; font-weight:700; font-size:.92rem; color:var(--ink); opacity:0; transform:translateX(24px); transition:opacity .4s ease, transform .4s ease, background .2s ease; }
+  .nav-link:hover{ background:var(--surface-alt); color:var(--primary); }
+  .nav-link .icon{ width:18px; height:18px; color:var(--primary); flex-shrink:0; }
+  .nav-link.sub{ font-weight:600; font-size:.85rem; color:var(--ink-soft); padding-inline-start:20px; }
+  .nav-drawer.open .nav-link{ opacity:1; transform:translateX(0); }
+  .nav-drawer-divider{ height:1px; background:var(--border); margin:12px 10px; }
+  .nav-drawer-label{ display:block; padding:6px 12px 2px; font-size:.72rem; font-weight:800; color:var(--ink-soft); letter-spacing:.02em; opacity:0; transform:translateX(24px); transition:opacity .4s ease, transform .4s ease; }
+  .nav-drawer.open .nav-drawer-label{ opacity:1; transform:translateX(0); }
+  @media (prefers-reduced-motion: reduce){ .nav-drawer, .nav-link, .nav-drawer-label, .nav-quick-item{ transition:none !important; } }
+  .icon-btn{
+    position:relative; display:flex; align-items:center; justify-content:center;
+    width:42px; height:42px; border-radius:50%; border:1px solid var(--border);
+    background:var(--surface); color:var(--ink); transition:background .2s, transform .2s;
+  }
+  .icon-btn:hover{ background:var(--surface-alt); transform:translateY(-1px); }
+  .icon-btn .badge{
+    position:absolute; top:-4px; left:-4px; background:var(--sale); color:#fff;
+    font-size:.65rem; font-weight:700; min-width:18px; height:18px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; padding:0 3px;
+  }
+  .cats-nav{ border-top:1px solid var(--border); }
+  .cats-nav ul{ display:flex; gap:26px; list-style:none; padding:11px 20px; max-width:1240px; margin:0 auto; overflow-x:auto; scrollbar-width:none; }
+  .cats-nav ul::-webkit-scrollbar{display:none;}
+  .cats-nav a{ font-size:.86rem; color:var(--ink-soft); white-space:nowrap; font-weight:600; transition:color .2s; }
+  .cats-nav a:hover{ color:var(--primary); }
+  .mobile-search{ display:none; }
+
+  @media (max-width: 860px){
+    .search-bar{ display:none; }
+    .mobile-search{ display:flex; padding:0 20px 12px; }
+    .mobile-search .search-bar{ display:flex; max-width:none; }
+    .cats-nav{ display:none; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative; overflow:hidden;
+    background-image:linear-gradient(160deg, rgba(20,4,7,.72) 0%, rgba(20,4,7,.55) 62%, rgba(20,4,7,.4) 100%), url('ez11.jpg');
+    background-size:cover; background-position:center; background-repeat:no-repeat;
+    color:#fff;
+  }
+  .hero-inner{
+    position:relative; z-index:1;
+    max-width:840px; margin:0 auto; padding:64px 20px 80px;
+    text-align:center;
+  }
+  .hero-badge{
+    display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.28); padding:6px 14px; border-radius:var(--radius-pill);
+    font-size:.8rem; font-weight:600; margin-bottom:22px;
+  }
+  .hero h1{ font-size:clamp(2.1rem, 4vw, 3.1rem); font-weight:800; line-height:1.25; margin-inline:auto; }
+  .hero-rotate{ min-height:2.6em; display:flex; align-items:center; justify-content:center; }
+  .hero-rotate .hrt-inner{ display:inline-block; transition:opacity .45s ease, transform .45s ease; }
+  .hero-rotate.hrt-switching .hrt-inner{ opacity:0; transform:translateY(14px); }
+  @media (prefers-reduced-motion: reduce){ .hero-rotate .hrt-inner{ transition:none; } }
+  .hero p{ margin:18px auto 0; font-size:1.05rem; color:rgba(255,255,255,.86); max-width:42ch; }
+  .hero-ctas{ display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; justify-content:center; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:13px 26px; border-radius:var(--radius-pill); font-weight:700; font-size:.94rem;
+    border:1px solid transparent; transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+  }
+  .btn-accent{ background:var(--accent); color:#FFFFFF; }
+  .btn-accent:hover{ transform:translateY(-2px); box-shadow:0 10px 22px rgba(240,162,2,.35); }
+  .btn-ghost-light{ background:rgba(255,255,255,.08); color:#fff; border-color:rgba(255,255,255,.4); }
+  .btn-ghost-light:hover{ background:rgba(255,255,255,.18); }
+  .btn-primary{ background:var(--primary); color:#fff; }
+  .btn-primary:hover{ background:var(--primary-dark); transform:translateY(-1px); }
+  .btn-outline{ background:transparent; border-color:var(--border); color:var(--ink); }
+  .btn-outline:hover{ border-color:var(--primary); color:var(--primary); }
+
+  @media (max-width: 900px){
+    .hero-inner{ padding:48px 20px 64px; }
+  }
+
+  /* ---------- Sections ---------- */
+  section{ padding:56px 0; }
+  .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:28px; gap:16px; }
+  .section-head h2{ font-size:1.5rem; font-weight:800; }
+  .section-head p{ color:var(--ink-soft); font-size:.9rem; margin-top:4px; }
+  .see-all{ font-weight:700; font-size:.88rem; color:var(--primary); display:flex; align-items:center; gap:4px; white-space:nowrap; }
+
+  /* Reveal */
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity .55s ease, transform .55s ease; }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+
+  /* ---------- Ads carousel ---------- */
+  .ads-carousel{
+    position:relative; overflow:hidden; border-radius:var(--radius-card);
+    box-shadow:var(--shadow-sm); border:1px solid var(--border); background:var(--surface-alt);
+  }
+  .ads-track{ display:flex; direction:ltr; will-change:transform; }
+  .ad-slide{ position:relative; flex:0 0 100%; aspect-ratio:3/1; background:var(--surface-alt); }
+  .ad-slide img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .ad-slide.ad-empty img{ display:none; }
+  .ad-slide.ad-empty{
+    display:flex; align-items:center; justify-content:center;
+    border:2px dashed var(--border); box-sizing:border-box;
+  }
+  .ad-slide.ad-empty::before{
+    content:"🖼️  " attr(data-file);
+    color:var(--ink-soft); font-weight:700; font-size:.95rem; letter-spacing:.02em;
+  }
+  @media (max-width:760px){ .ad-slide{ aspect-ratio:16/9; } }
+
+  /* ---------- Product cards ---------- */
+  .grid{ display:grid; gap:18px; }
+  .grid-4{ grid-template-columns:repeat(4,1fr); }
+  @media (max-width:1020px){ .grid-4{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:700px){ .grid-4{ grid-template-columns:repeat(2,1fr); } }
+
+  .product-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card);
+    overflow:hidden; display:flex; flex-direction:column; transition:box-shadow .3s ease, transform .3s ease;
+    position:relative;
+  }
+  .product-card:hover{ box-shadow:var(--shadow-md); transform:translateY(-3px); }
+  .product-media{ position:relative; aspect-ratio:1/1; background:var(--surface-alt); overflow:hidden; }
+  .product-media .tile{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem;
+    transition:transform .5s ease;
+  }
+  .product-card:hover .product-media .tile{ transform:scale(1.08); }
+  .badge{
+    position:absolute; top:10px; right:10px; font-size:.68rem; font-weight:800; padding:4px 9px;
+    border-radius:var(--radius-pill); z-index:2;
+  }
+  .badge.new{ background:var(--primary-tint); color:var(--primary); }
+  .badge.sale{ background:var(--sale-tint); color:var(--sale); }
+  .badge.best{ background:var(--accent-tint); color:#8E0B21; }
+  .fav-btn{
+    position:absolute; top:10px; left:10px; z-index:2; width:34px; height:34px; border-radius:50%;
+    background:rgba(255,255,255,.9); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+    color:var(--ink-soft); transition:color .2s, transform .2s;
+  }
+  .fav-btn:hover{ transform:scale(1.08); }
+  .fav-btn.active{ color:var(--sale); }
+  .fav-btn.active .icon{ fill:var(--sale); stroke:var(--sale); }
+
+  .product-info{ padding:14px 14px 16px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .store-name{ font-size:.72rem; color:var(--ink-soft); font-weight:600; }
+  .product-name{ font-size:.9rem; font-weight:700; line-height:1.4; }
+  .rating{ display:flex; align-items:center; gap:5px; font-size:.76rem; color:var(--ink-soft); }
+  .rating .stars{ color:var(--star); display:flex; gap:1px; }
+  .rating .icon{ width:13px; height:13px; }
+  .price-row{ display:flex; align-items:baseline; gap:8px; margin-top:2px; }
+  .price-now{ font-weight:800; font-size:1.02rem; color:var(--primary); }
+  .price-old{ font-size:.8rem; color:var(--ink-soft); text-decoration:line-through; }
+  .discount-pct{ font-size:.72rem; font-weight:700; color:var(--sale); }
+  .card-actions{ display:flex; gap:8px; margin-top:10px; }
+  .add-cart-btn{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+    background:var(--primary); color:#fff; border:none; border-radius:var(--radius-pill);
+    padding:9px 10px; font-size:.8rem; font-weight:700; transition:background .2s, transform .15s;
+  }
+  .add-cart-btn:hover{ background:var(--primary-dark); }
+  .add-cart-btn:active{ transform:scale(.96); }
+
+  /* ---------- Flash deals ---------- */
+  .flash{
+    background:var(--surface); border:1px solid var(--border); border-radius:24px;
+    padding:28px 24px; display:flex; flex-direction:column; gap:20px;
+  }
+  .flash-head{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .flash-title{ display:flex; align-items:center; gap:10px; }
+  .flash-title h2{ font-size:1.3rem; font-weight:800; }
+  .flash-title .flame{ font-size:1.3rem; }
+  .countdown{ display:flex; align-items:center; gap:8px; background:var(--sale-tint); color:var(--sale);
+    padding:8px 14px; border-radius:var(--radius-pill); font-weight:800; font-size:.9rem; font-variant-numeric:tabular-nums; }
+
+  /* ---------- Promo banners ---------- */
+  .promo-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:760px){ .promo-grid{ grid-template-columns:1fr; } }
+  .promo-card{
+    border-radius:var(--radius-card); padding:30px 26px; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; gap:10px; min-height:180px; justify-content:center;
+  }
+  .promo-card.p1{ background:var(--primary-tint); }
+  .promo-card.p2{ background:var(--accent-tint); }
+  .promo-card h3{ font-size:1.25rem; font-weight:800; max-width:16ch; }
+  .promo-card p{ color:var(--ink-soft); font-size:.88rem; max-width:28ch; }
+  .promo-card .emoji-deco{ position:absolute; font-size:5rem; opacity:.18; left:14px; bottom:-14px; }
+
+  /* ---------- Stores ---------- */
+  .store-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card);
+    padding:20px; text-align:center; transition:transform .25s, box-shadow .25s;
+  }
+  .store-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); }
+  .store-logo{ width:56px; height:56px; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; }
+  .store-card h4{ font-size:.92rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:4px; }
+  .verified{ color:var(--primary); width:14px; height:14px; }
+  .store-card .rating{ justify-content:center; margin-top:4px; }
+
+  /* ---------- Trust / services ---------- */
+  .trust-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  @media (max-width:760px){ .trust-grid{ grid-template-columns:repeat(2,1fr); } }
+  .trust-item{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px; padding:10px; }
+  .trust-icon{
+    width:52px; height:52px; border-radius:50%; background:var(--primary-tint); color:var(--primary);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .trust-item h4{ font-size:.9rem; font-weight:700; }
+  .trust-item p{ font-size:.78rem; color:var(--ink-soft); max-width:22ch; }
+
+  /* ---------- Footer ---------- */
+  /* Follows the site theme tokens directly: white surface + dark text in
+     light mode, dark surface + light text in dark mode. --surface and --ink
+     already flip correctly between the two themes (see :root definitions
+     above), so no separate override is needed here. */
+  footer{ background:var(--surface); color:var(--ink-soft); padding:50px 0 24px; margin-top:20px; border-top:1px solid var(--border); }
+  .footer-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:28px; padding-bottom:32px; border-bottom:1px solid var(--border); }
+  @media (max-width:800px){ .footer-grid{ grid-template-columns:1fr 1fr; } }
+  .footer-logo{ display:flex; align-items:center; gap:10px; font-family:'Poppins','Cairo','Tahoma',sans-serif; font-weight:800; font-style:normal; font-size:1.3rem; letter-spacing:.2px; color:var(--ink); margin-bottom:10px; white-space:nowrap; }
+  .footer-logo-img{ height:44px; width:auto; max-width:180px; object-fit:contain; }
+  .footer-logo .dot{ color:var(--accent); font-style:normal; }
+  .footer-grid p.tag{ color:var(--ink-soft); font-size:.85rem; max-width:32ch; }
+  .footer-col h5{ font-size:.85rem; font-weight:700; color:var(--ink); margin-bottom:14px; }
+  .footer-col ul{ list-style:none; display:flex; flex-direction:column; gap:9px; }
+  .footer-col a{ color:var(--ink-soft); font-size:.84rem; transition:color .2s; }
+  .footer-col a:hover{ color:var(--primary); }
+  .footer-bottom{ display:flex; justify-content:space-between; align-items:center; padding-top:20px; flex-wrap:wrap; gap:10px; }
+  .footer-bottom p{ font-size:.78rem; color:var(--ink-soft); }
+  .socials{ display:flex; gap:10px; }
+  .socials a{ width:36px; height:36px; border-radius:50%; background:var(--surface-alt); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--ink); }
+  .socials a:hover{ background:var(--primary-tint); color:var(--primary); }
+
+  /* ---------- Mobile bottom nav ---------- */
+  .bottom-nav{
+    display:none; position:fixed; bottom:0; inset-inline:0; z-index:60;
+    background:var(--surface); border-top:1px solid var(--border);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+    justify-content:space-around; box-shadow:0 -6px 18px rgba(0,0,0,.06);
+  }
+  .bottom-nav a{ display:flex; flex-direction:column; align-items:center; gap:3px; font-size:.65rem; color:var(--ink-soft); font-weight:600; flex:1; }
+  .bottom-nav a.active{ color:var(--primary); }
+  @media (max-width:760px){ .bottom-nav{ display:flex; } body{ padding-bottom:76px; } }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed; bottom:90px; right:20px; left:20px; margin:0 auto; max-width:320px; z-index:100;
+    background:var(--ink); color:var(--surface); padding:13px 18px; border-radius:var(--radius-pill);
+    display:flex; align-items:center; gap:8px; font-size:.85rem; font-weight:700;
+    box-shadow:0 14px 30px rgba(0,0,0,.25); transform:translateY(20px); opacity:0; pointer-events:none;
+    transition:transform .35s ease, opacity .35s ease;
+  }
+  .toast.show{ transform:translateY(0); opacity:1; }
+  @media (min-width:761px){ .toast{ bottom:24px; } }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+
+  /* ===== هوية الهيدر: خلفية حمراء كاملة + شعار مميز ===== */
+  header, header.scrolled{
+    background:linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 65%, #E63946 100%) !important;
+    border-bottom:1px solid rgba(255,255,255,.18) !important;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; }
+  .site-logo-img{ height:56px; width:auto; max-width:230px; object-fit:contain; }
+  .logo, header .logo{
+    font-family:'Poppins','Cairo','Tahoma',sans-serif !important;
+    font-weight:800 !important; font-style:normal !important;
+    font-size:1.7rem !important; letter-spacing:.2px !important;
+    color:#FFFFFF !important; text-shadow:0 1px 8px rgba(0,0,0,.15);
+  }
+  .logo span.dot, header .logo span.dot{ color:#FFE3E6 !important; font-style:normal; }
+  header .search-bar{
+    background:#FFFFFF !important; border:1px solid rgba(255,255,255,.6) !important;
+  }
+  header .search-bar input{ color:var(--ink) !important; }
+  header .search-bar input::placeholder{ color:var(--ink-soft) !important; opacity:1; }
+  header .search-bar .icon{ color:var(--primary) !important; }
+  header .icon-btn, .header-actions .icon-btn{
+    background:rgba(255,255,255,.16) !important; border:1px solid rgba(255,255,255,.4) !important;
+    color:#FFFFFF !important;
+  }
+  header .icon-btn:hover{ background:rgba(255,255,255,.3) !important; }
+  header .icon-btn .badge{ background:#FFFFFF !important; color:var(--sale) !important; }
+  .cats-nav{ border-top:1px solid rgba(255,255,255,.22) !important; background:transparent !important; }
+  .cats-nav a{ color:rgba(255,255,255,.92) !important; font-weight:700 !important; }
+  .cats-nav a:hover{ color:#FFFFFF !important; text-decoration:underline; }
+  .mobile-search .search-bar{ background:#FFFFFF !important; }
+  @media (max-width:760px){ .logo{ font-size:1.35rem !important; } .site-logo-img{ height:42px !important; max-width:170px !important; } }
+</style>
+<style id="rv-style">
+  .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-up.in-view{opacity:1; transform:translateY(0);}
+  .reveal-right{opacity:0; transform:translateX(56px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-right.in-view{opacity:1; transform:translateX(0);}
+  .reveal-scale{opacity:0; transform:scale(.8); transition:opacity .6s cubic-bezier(.16,.84,.44,1), transform .6s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-scale.in-view{opacity:1; transform:scale(1);}
+  .reveal-word-wrap .reveal-word{display:inline-block; opacity:0; transform:translateY(20px); transition:opacity .5s cubic-bezier(.16,.84,.44,1), transform .5s cubic-bezier(.16,.84,.44,1);}
+  .reveal-word-wrap.in-view .reveal-word{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal-up,.reveal-right,.reveal-scale,.reveal-word-wrap .reveal-word{opacity:1 !important; transform:none !important; transition:none !important;}
+  }
+
+  /* Slightly smaller, app-like interface on mobile so cards/boxes don't stretch full-screen */
+  @media (max-width:760px){
+    html{ zoom:0.85; }
+  }
+
+  /* ---------- Floating cart button ---------- */
+  .cart-fab{
+    position:fixed; top:50%; right:16px; transform:translateY(-50%);
+    width:52px; height:52px; border-radius:50%;
+    background:var(--primary); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--shadow-md); z-index:150;
+    transition:transform .2s ease, background .2s ease;
+  }
+  .cart-fab:hover{ background:var(--primary-dark); transform:translateY(-50%) scale(1.07); }
+  .cart-fab-badge{
+    position:absolute; top:-4px; left:-4px; background:#fff; color:var(--primary);
+    font-size:.65rem; font-weight:800; min-width:18px; height:18px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; padding:0 3px;
+    border:1px solid var(--primary-tint);
+  }
+  .cart-fab-badge.is-zero{ display:none; }
+  @media (max-width:760px){
+    .cart-fab{ width:44px; height:44px; right:10px; }
+    .cart-fab svg{ width:19px; height:19px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.4 8 2 4 6 4c2.2 0 3.8 1.2 6 3.6C14.2 5.2 15.8 4 18 4c4 0 5.6 4 4 7.8-2.5 4.6-10 9.2-10 9.2z"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.9-5.3 5 1.4 7.1L12 18.2 5.7 21.6l1.4-7.1-5.3-5 7.2-.9z"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h5v-6h2v6h5V10"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><rect x="1" y="6" width="14" height="11" rx="1.5"/><path d="M15 10h4l3 3.5V17h-7z"/><circle cx="6" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2l8 3.5V11c0 5.4-3.5 8.7-8 10-4.5-1.3-8-4.6-8-10V5.5z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11A8 8 0 1 0 18.6 16"/><path d="M20 5v6h-6"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="2.5" y="13" width="5" height="7" rx="2"/><rect x="16.5" y="13" width="5" height="7" rx="2"/></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path d="M13.5 21v-8h2.6l.4-3h-3V8c0-.9.3-1.5 1.6-1.5H16V4c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.1V10H7v3h2.6v8z" stroke="none" fill="currentColor"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></symbol>
+  <symbol id="i-tw" viewBox="0 0 24 24"><path d="M21 5.5c-.7.3-1.5.5-2.3.6.8-.5 1.4-1.3 1.7-2.3-.8.5-1.7.8-2.6 1a4 4 0 0 0-6.9 3.7A11.5 11.5 0 0 1 2.6 4.2a4 4 0 0 0 1.2 5.4c-.6 0-1.2-.2-1.7-.5v.1a4 4 0 0 0 3.2 4 4 4 0 0 1-1.8.1 4 4 0 0 0 3.8 2.8A8 8 0 0 1 1 17.9a11.5 11.5 0 0 0 6.3 1.9c7.5 0 11.7-6.4 11.7-11.9v-.5c.8-.6 1.5-1.3 2-2z" stroke="none" fill="currentColor"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.7 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.7-4-9s1.4-6.5 4-9z"/></symbol>
+</svg>
+
+<header id="site-header">
+  <div class="header-top">
+    <a href="ez-market-home.html" class="logo" id="site-logo">
+      <img src="ez12.jpg" alt="شعار EZ Market" class="site-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+      <span id="site-logo-text">EZ Market<span class="dot">.</span></span>
+    </a>
+    <div class="search-bar">
+      <svg class="icon"><use href="#i-search"/></svg>
+      <input type="text" id="home-search" data-ar-placeholder="ابحث عن منتج، تصنيف، أو متجر..." data-en-placeholder="Search for a product, category, or store..." placeholder="ابحث عن منتج، تصنيف، أو متجر..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}">
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
+    </div>
+  </div>
+  <div class="mobile-search">
+    <div class="search-bar">
+      <svg class="icon"><use href="#i-search"/></svg>
+      <input type="text" data-ar-placeholder="ابحث في EZ Market..." data-en-placeholder="Search EZ Market..." placeholder="ابحث في EZ Market..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}">
+    </div>
+  </div>
+  <nav class="cats-nav">
+    <ul>
+      <li><a href="ez-market-products.html?cat=electronics">الإلكترونيات</a></li>
+      <li><a href="ez-market-products.html?cat=phones">الهواتف والأجهزة</a></li>
+      <li><a href="ez-market-products.html?cat=fashion">الأزياء والملابس</a></li>
+      <li><a href="ez-market-products.html?cat=home">المنزل والمطبخ</a></li>
+      <li><a href="ez-market-products.html?cat=beauty">الجمال والعناية</a></li>
+      <li><a href="ez-market-products.html?cat=sports">الرياضة واللياقة</a></li>
+      <li><a href="ez-market-products.html?cat=kids">الأطفال والألعاب</a></li>
+      <li><a href="ez-market-products.html?cat=auto">السيارات والإكسسوارات</a></li>
+      <li><a href="ez-market-products.html?cat=deals">العروض والخصومات</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="nav-drawer-overlay" id="nav-drawer-overlay" onclick="closeNavDrawer()"></div>
+<aside class="nav-drawer" id="nav-drawer" aria-label="قائمة التنقل الكاملة">
+  <div class="nav-drawer-head">
+    <a href="ez-market-home.html" class="logo">EZ Market<span class="dot">.</span></a>
+    <button class="nav-drawer-close" onclick="closeNavDrawer()" aria-label="إغلاق القائمة"><svg class="icon"><use href="#i-chevron"/></svg></button>
+  </div>
+  <div class="nav-quick" role="group" aria-label="اختصارات سريعة">
+    <a class="nav-quick-item" href="ez-market-account.html" aria-label="حسابي">
+      <span class="icon-btn"><svg class="icon"><use href="#i-user"/></svg></span>
+      <span class="nav-quick-label" data-ar="حسابي" data-en="Account">حسابي</span>
+    </a>
+    <a class="nav-quick-item" href="ez-market-cart.html" aria-label="السلة" id="cart-btn">
+      <span class="icon-btn"><svg class="icon"><use href="#i-cart"/></svg><span class="badge" id="cart-count">0</span></span>
+      <span class="nav-quick-label" data-ar="السلة" data-en="Cart">السلة</span>
+    </a>
+    <a class="nav-quick-item" href="ez-market-account.html?tab=favorites" aria-label="المفضلة">
+      <span class="icon-btn"><svg class="icon"><use href="#i-heart"/></svg></span>
+      <span class="nav-quick-label" data-ar="المفضلة" data-en="Wishlist">المفضلة</span>
+    </a>
+    <button class="nav-quick-item" id="theme-toggle" type="button" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري">
+      <span class="icon-btn"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></span>
+      <span class="nav-quick-label" data-ar="الوضع الليلي" data-en="Dark Mode">الوضع الليلي</span>
+    </button>
+    <button class="nav-quick-item" id="lang-toggle" type="button" onclick="toggleLanguage()" aria-label="تبديل اللغة / Switch language">
+      <span class="icon-btn"><svg class="icon"><use href="#i-globe"/></svg></span>
+      <span class="nav-quick-label" id="lang-toggle-label">English</span>
+    </button>
+  </div>
+  <nav class="nav-drawer-links">
+    <a href="ez-market-home.html" class="nav-link"><svg class="icon"><use href="#i-home"/></svg><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a href="ez-market-search.html" class="nav-link"><svg class="icon"><use href="#i-search"/></svg><span data-ar="البحث" data-en="Search">البحث</span></a>
+    <a href="ez-market-auth.html" class="nav-link"><svg class="icon"><use href="#i-user"/></svg><span data-ar="تسجيل الدخول / إنشاء حساب" data-en="Log In / Sign Up">تسجيل الدخول / إنشاء حساب</span></a>
+
+    <div class="nav-drawer-divider"></div>
+    <span class="nav-drawer-label" data-ar="التصنيفات" data-en="Categories">التصنيفات</span>
+    <a href="ez-market-products.html?cat=electronics" class="nav-link sub" data-ar="الإلكترونيات" data-en="Electronics">الإلكترونيات</a>
+    <a href="ez-market-products.html?cat=phones" class="nav-link sub" data-ar="الهواتف والأجهزة" data-en="Phones & Devices">الهواتف والأجهزة</a>
+    <a href="ez-market-products.html?cat=fashion" class="nav-link sub" data-ar="الأزياء والملابس" data-en="Fashion & Clothing">الأزياء والملابس</a>
+    <a href="ez-market-products.html?cat=home" class="nav-link sub" data-ar="المنزل والمطبخ" data-en="Home & Kitchen">المنزل والمطبخ</a>
+    <a href="ez-market-products.html?cat=beauty" class="nav-link sub" data-ar="الجمال والعناية" data-en="Beauty & Care">الجمال والعناية</a>
+    <a href="ez-market-products.html?cat=sports" class="nav-link sub" data-ar="الرياضة واللياقة" data-en="Sports & Fitness">الرياضة واللياقة</a>
+    <a href="ez-market-products.html?cat=kids" class="nav-link sub" data-ar="الأطفال والألعاب" data-en="Kids & Toys">الأطفال والألعاب</a>
+    <a href="ez-market-products.html?cat=auto" class="nav-link sub" data-ar="السيارات والإكسسوارات" data-en="Auto & Accessories">السيارات والإكسسوارات</a>
+    <a href="ez-market-products.html?cat=deals" class="nav-link sub" data-ar="العروض والخصومات" data-en="Deals & Discounts">العروض والخصومات</a>
+
+    <div class="nav-drawer-divider"></div>
+    <span class="nav-drawer-label" data-ar="للبائعين والإدارة" data-en="For Sellers & Admin">للبائعين والإدارة</span>
+    <a href="ez-market-seller.html" class="nav-link"><svg class="icon"><use href="#i-headset"/></svg><span data-ar="لوحة البائع" data-en="Seller Dashboard">لوحة البائع</span></a>
+    <a href="ez-market-store.html" class="nav-link"><svg class="icon"><use href="#i-grid"/></svg><span data-ar="صفحة متجر نموذجية" data-en="Sample Store Page">صفحة متجر نموذجية</span></a>
+    <a href="ez-market-admin.html" class="nav-link"><svg class="icon"><use href="#i-shield"/></svg><span data-ar="لوحة التحكم الإدارية" data-en="Admin Dashboard">لوحة التحكم الإدارية</span></a>
+  </nav>
+</aside>
+
+
+<section class="hero" id="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="hero-badge" data-ar="🛍️ أكثر من 5000 منتج من بائعين موثوقين" data-en="🛍️ Over 5,000 products from trusted sellers">🛍️ أكثر من 5000 منتج من بائعين موثوقين</span>
+      <h1 id="hero-rotate-title" class="hero-rotate"><span class="hrt-inner" data-ar="تسوّق بسهولة، واختر ما يناسبك" data-en="Shop with ease, choose what suits you">تسوّق بسهولة، واختر ما يناسبك</span></h1>
+      <p data-ar="اكتشف آلاف المنتجات من متاجر وبائعين مختلفين في مكان واحد، بأسعار موثوقة وتوصيل سريع لكل مناطق المملكة." data-en="Discover thousands of products from different stores and sellers in one place, with trusted prices and fast delivery across the country.">اكتشف آلاف المنتجات من متاجر وبائعين مختلفين في مكان واحد، بأسعار موثوقة وتوصيل سريع لكل مناطق المملكة.</p>
+      <div class="hero-ctas">
+        <a href="#featured" class="btn btn-accent" data-ar="تسوق الآن" data-en="Shop Now">تسوق الآن</a>
+        <a href="ez-market-products.html" class="btn btn-ghost-light" data-ar="استكشف المنتجات" data-en="Explore Products">استكشف المنتجات</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <!-- Ads -->
+  <section id="ads">
+    <div class="ads-carousel reveal" id="ads-carousel">
+      <div class="ads-track" id="ads-track"></div>
+    </div>
+  </section>
+
+  <!-- Flash deals -->
+  <section>
+    <div class="flash reveal">
+      <div class="flash-head">
+        <div class="flash-title">
+          <span class="flame">⚡</span>
+          <h2 data-ar="عروض اليوم" data-en="Today's Deals">عروض اليوم</h2>
+        </div>
+        <div class="countdown" id="countdown">ينتهي خلال 00:00:00</div>
+      </div>
+      <div class="grid grid-4" id="flash-grid"></div>
+    </div>
+  </section>
+
+  <!-- Featured products -->
+  <section id="featured">
+    <div class="section-head reveal">
+      <div>
+        <h2 data-ar="منتجات مميزة" data-en="Featured Products">منتجات مميزة</h2>
+        <p data-ar="الأعلى تقييمًا هذا الأسبوع" data-en="Top rated this week">الأعلى تقييمًا هذا الأسبوع</p>
+      </div>
+      <a href="ez-market-products.html" class="see-all"><span data-ar="عرض الكل" data-en="View All">عرض الكل</span> <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
+    </div>
+    <div class="grid grid-4" id="featured-grid"></div>
+  </section>
+
+  <!-- Promo banners -->
+  <section>
+    <div class="promo-grid reveal">
+      <div class="promo-card p1">
+        <span class="emoji-deco">🚚</span>
+        <h3 data-ar="شحن مجاني" data-en="Free Shipping">شحن مجاني</h3>
+        <p data-ar="على الطلبات فوق 200 ر.س لجميع مناطق المملكة" data-en="On orders over SAR 200 to all regions">على الطلبات فوق 200 ر.س لجميع مناطق المملكة</p>
+        <a href="ez-market-products.html" class="btn btn-primary" style="width:fit-content; margin-top:6px;" data-ar="تسوق الآن" data-en="Shop Now">تسوق الآن</a>
+      </div>
+      <div class="promo-card p2">
+        <span class="emoji-deco">🎁</span>
+        <h3 data-ar="خصم 20% على أول طلب" data-en="20% Off Your First Order">خصم 20% على أول طلب</h3>
+        <p data-ar="استخدم الكود EZFIRST عند إتمام الطلب" data-en="Use code EZFIRST at checkout">استخدم الكود EZFIRST عند إتمام الطلب</p>
+        <a href="ez-market-products.html" class="btn" style="background:var(--accent); color:#FFFFFF; width:fit-content; margin-top:6px;" data-ar="احصل على الكود" data-en="Get the Code">احصل على الكود</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Best sellers -->
+  <section>
+    <div class="section-head reveal">
+      <div>
+        <h2 data-ar="الأكثر مبيعًا" data-en="Best Sellers">الأكثر مبيعًا</h2>
+        <p data-ar="المنتجات التي يفضلها عملاؤنا" data-en="The products our customers prefer">المنتجات التي يفضلها عملاؤنا</p>
+      </div>
+      <a href="ez-market-products.html" class="see-all"><span data-ar="عرض الكل" data-en="View All">عرض الكل</span> <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
+    </div>
+    <div class="grid grid-4" id="best-grid"></div>
+  </section>
+
+  <!-- New arrivals -->
+  <section>
+    <div class="section-head reveal">
+      <div>
+        <h2 data-ar="وصل حديثًا" data-en="New Arrivals">وصل حديثًا</h2>
+        <p data-ar="أحدث الإضافات على المنصة" data-en="The latest additions to the platform">أحدث الإضافات على المنصة</p>
+      </div>
+      <a href="ez-market-products.html" class="see-all"><span data-ar="عرض الكل" data-en="View All">عرض الكل</span> <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
+    </div>
+    <div class="grid grid-4" id="new-grid"></div>
+  </section>
+
+  <!-- Stores -->
+  <section>
+    <div class="section-head reveal">
+      <div>
+        <h2 data-ar="متاجر مميزة" data-en="Featured Stores">متاجر مميزة</h2>
+        <p data-ar="بائعون موثوقون على EZ Market" data-en="Trusted sellers on EZ Market">بائعون موثوقون على EZ Market</p>
+      </div>
+      <a href="ez-market-store.html" class="see-all"><span data-ar="اكتشف المتاجر" data-en="Discover Stores">اكتشف المتاجر</span> <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
+    </div>
+    <div class="grid grid-4" id="stores-grid"></div>
+  </section>
+
+  <!-- Trust -->
+  <section>
+    <div class="trust-grid reveal">
+      <div class="trust-item">
+        <div class="trust-icon"><svg class="icon"><use href="#i-truck"/></svg></div>
+        <h4 data-ar="توصيل سريع" data-en="Fast Delivery">توصيل سريع</h4>
+        <p data-ar="خلال 24-72 ساعة لمعظم المناطق" data-en="Within 24-72 hours for most areas">خلال 24-72 ساعة لمعظم المناطق</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><svg class="icon"><use href="#i-shield"/></svg></div>
+        <h4 data-ar="دفع آمن" data-en="Secure Payment">دفع آمن</h4>
+        <p data-ar="حماية كاملة لبياناتك المالية" data-en="Full protection for your financial data">حماية كاملة لبياناتك المالية</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><svg class="icon"><use href="#i-refresh"/></svg></div>
+        <h4 data-ar="إرجاع سهل" data-en="Easy Returns">إرجاع سهل</h4>
+        <p data-ar="استرجاع أو استبدال خلال 14 يومًا" data-en="Return or exchange within 14 days">استرجاع أو استبدال خلال 14 يومًا</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon"><svg class="icon"><use href="#i-headset"/></svg></div>
+        <h4 data-ar="دعم متواصل" data-en="24/7 Support">دعم متواصل</h4>
+        <p data-ar="فريق خدمة العملاء جاهز يوميًا" data-en="Our customer service team is ready daily">فريق خدمة العملاء جاهز يوميًا</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <div class="footer-logo">
+        <img src="ez12.jpg" alt="شعار EZ Market" class="footer-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+        <span id="footer-logo-text">EZ Market<span class="dot">.</span></span>
+      </div>
+      <p class="tag" data-ar="كل ما تريد، في مكان واحد. منصة تجارية تجمع أفضل البائعين والمنتجات في تجربة تسوّق واحدة موثوقة." data-en="Everything you want, in one place. A marketplace bringing together the best sellers and products in one trusted shopping experience.">كل ما تريد، في مكان واحد. منصة تجارية تجمع أفضل البائعين والمنتجات في تجربة تسوّق واحدة موثوقة.</p>
+    </div>
+    <div class="footer-col">
+      <h5 data-ar="عن المنصة" data-en="About the Platform">عن المنصة</h5>
+      <ul>
+        <li><a href="#" data-ar="عن EZ Market" data-en="About EZ Market">عن EZ Market</a></li>
+        <li><a href="ez-market-seller.html" data-ar="بيع معنا" data-en="Sell With Us">بيع معنا</a></li>
+        <li><a href="#" data-ar="تواصل معنا" data-en="Contact Us">تواصل معنا</a></li>
+        <li><a href="#" data-ar="مركز المساعدة" data-en="Help Center">مركز المساعدة</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5 data-ar="خدمة العملاء" data-en="Customer Service">خدمة العملاء</h5>
+      <ul>
+        <li><a href="#" data-ar="الأسئلة الشائعة" data-en="FAQ">الأسئلة الشائعة</a></li>
+        <li><a href="#" data-ar="الشحن والتوصيل" data-en="Shipping & Delivery">الشحن والتوصيل</a></li>
+        <li><a href="#" data-ar="سياسة الاسترجاع" data-en="Return Policy">سياسة الاسترجاع</a></li>
+        <li><a href="ez-market-account.html?tab=orders" data-ar="تتبع طلبك" data-en="Track Your Order">تتبع طلبك</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5 data-ar="قانوني" data-en="Legal">قانوني</h5>
+      <ul>
+        <li><a href="#" data-ar="سياسة الخصوصية" data-en="Privacy Policy">سياسة الخصوصية</a></li>
+        <li><a href="#" data-ar="الشروط والأحكام" data-en="Terms & Conditions">الشروط والأحكام</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <p data-ar="© 2026 EZ Market. جميع الحقوق محفوظة." data-en="© 2026 EZ Market. All rights reserved.">© 2026 EZ Market. جميع الحقوق محفوظة.</p>
+    <div class="socials">
+      <a href="#" aria-label="فيسبوك"><svg class="icon" style="width:16px;height:16px"><use href="#i-fb"/></svg></a>
+      <a href="#" aria-label="إنستغرام"><svg class="icon" style="width:16px;height:16px"><use href="#i-ig"/></svg></a>
+      <a href="#" aria-label="تويتر"><svg class="icon" style="width:16px;height:16px"><use href="#i-tw"/></svg></a>
+    </div>
+  </div>
+</footer>
+
+<nav class="bottom-nav">
+  <a href="ez-market-home.html" class="active"><svg class="icon" style="width:20px;height:20px"><use href="#i-home"/></svg><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+  <a href="javascript:void(0)" onclick="openNavDrawer()"><svg class="icon" style="width:20px;height:20px"><use href="#i-grid"/></svg><span data-ar="التصنيفات" data-en="Categories">التصنيفات</span></a>
+  <a href="ez-market-search.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-search"/></svg><span data-ar="البحث" data-en="Search">البحث</span></a>
+  <a href="ez-market-cart.html" id="bn-cart"><svg class="icon" style="width:20px;height:20px"><use href="#i-cart"/></svg><span data-ar="السلة" data-en="Cart">السلة</span></a>
+  <a href="ez-market-account.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg><span data-ar="حسابي" data-en="Account">حسابي</span></a>
+</nav>
+
+<div class="toast" id="toast" data-ar="تمت الإضافة إلى السلة" data-en="Added to cart">تمت الإضافة إلى السلة</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Data ---------- */
+  var adImages = [];
+  for(var adNum=20; adNum<=30; adNum++){ adImages.push('ez'+adNum+'.jpg'); }
+
+  function product(name, store, price, oldPrice, rating, reviews, emoji, tint, badge){
+    return {name:name, store:store, price:price, oldPrice:oldPrice, rating:rating, reviews:reviews, emoji:emoji, tint:tint, badge:badge};
+  }
+
+  var flashDeals = [
+    product("سماعة بلوتوث رياضية","متجر الصوتيات",129,259,4.6,214,"🎧","--primary-tint","sale"),
+    product("ساعة ذكية جيل 5","متجر التقنية",349,499,4.4,132,"⌚","--accent-tint","sale"),
+    product("حقيبة ظهر عصرية","متجر الحقائب",99,169,4.7,301,"🎒","--sale-tint","sale"),
+    product("مكواة شعر احترافية","متجر الجمال",79,149,4.3,88,"💇","--primary-tint","sale")
+  ];
+
+  var featured = [
+    product("هاتف ذكي كاميرا مزدوجة","متجر الإلكترونيات",1899,2299,4.8,540,"📱","--sale-tint","best"),
+    product("حذاء رياضي خفيف","متجر الأحذية",219,null,4.5,176,"👟","--primary-tint",null),
+    product("طقم أواني طبخ 10 قطع","متجر المطبخ",349,459,4.6,98,"🍳","--accent-tint","sale"),
+    product("لابتوب رفيع للأعمال","متجر الحواسيب",3299,null,4.7,64,"💻","--primary-tint","new"),
+    product("عطر رجالي فاخر","متجر العطور",189,239,4.4,220,"🧴","--sale-tint","sale"),
+    product("كرسي مكتب مريح","متجر الأثاث",549,699,4.5,77,"🪑","--primary-tint","sale"),
+    product("قميص قطن كلاسيك","متجر الأزياء",89,null,4.2,145,"👕","--accent-tint",null),
+    product("كاميرا فورية","متجر الكاميرات",459,null,4.6,52,"📷","--primary-tint","new")
+  ];
+
+  var bestSellers = [
+    product("سماعات إلغاء ضوضاء","متجر الصوتيات",399,null,4.8,860,"🎧","--primary-tint","best"),
+    product("مكنسة كهربائية لاسلكية","متجر المنزل",599,749,4.6,410,"🧹","--sale-tint","sale"),
+    product("نظارة شمسية أنيقة","متجر الإكسسوارات",129,null,4.5,320,"🕶️","--accent-tint","best"),
+    product("جهاز تابلت 10 بوصة","متجر التقنية",899,1099,4.7,265,"📱","--primary-tint","sale")
+  ];
+
+  var newArrivals = [
+    product("سترة شتوية دافئة","متجر الأزياء",259,null,4.3,18,"🧥","--primary-tint","new"),
+    product("مصباح مكتب ذكي","متجر المنزل",119,null,4.4,9,"💡","--accent-tint","new"),
+    product("زجاجة رياضية حرارية","متجر الرياضة",59,null,4.6,27,"🚰","--sale-tint","new"),
+    product("لعبة تركيب تعليمية","متجر الأطفال",99,null,4.7,14,"🧩","--primary-tint","new")
+  ];
+
+  var stores = [
+    {name:"متجر التقنية", verified:true, rating:4.8, count:214, emoji:"💻", tint:"--primary-tint"},
+    {name:"متجر الأزياء", verified:true, rating:4.6, count:389, emoji:"👗", tint:"--accent-tint"},
+    {name:"متجر المنزل", verified:false, rating:4.5, count:156, emoji:"🏠", tint:"--sale-tint"},
+    {name:"متجر الجمال", verified:true, rating:4.7, count:98, emoji:"💄", tint:"--primary-tint"}
+  ];
+
+  var badgeLabel = {sale:"خصم", best:"الأكثر مبيعًا", new:"جديد"};
+
+  /* ---------- Renderers ---------- */
+  function starIcons(rating){
+    var full = Math.round(rating);
+    var html = '<span class="stars">';
+    for(var i=0;i<5;i++){
+      html += '<svg class="icon" style="width:13px;height:13px;'+(i<full?'fill:var(--star);stroke:var(--star)':'fill:none;stroke:var(--border)')+'"><use href="#i-star"/></svg>';
+    }
+    html += '</span>';
+    return html;
+  }
+
+  function renderAdsCarousel(){
+    var track = document.getElementById('ads-track');
+    if(!track) return;
+
+    function slideHtml(file){
+      return '<div class="ad-slide" data-file="'+file+'"><img src="'+file+'" alt="إعلان" loading="lazy" onerror="this.closest(\'.ad-slide\').classList.add(\'ad-empty\')"></div>';
+    }
+
+    // Build the real slides, then repeat the first slide at the end so the
+    // loop can jump back to the start seamlessly.
+    var html = adImages.map(slideHtml).join('') + slideHtml(adImages[0]);
+    track.innerHTML = html;
+
+    if(reduceMotion || adImages.length < 2) return;
+
+    var index = 0;
+    var total = adImages.length;
+
+    setInterval(function(){
+      index++;
+      track.style.transition = 'transform .6s ease';
+      track.style.transform = 'translateX(-' + (index * 100) + '%)';
+
+      if(index === total){
+        setTimeout(function(){
+          track.style.transition = 'none';
+          track.style.transform = 'translateX(0)';
+          index = 0;
+        }, 620);
+      }
+    }, 3000);
+  }
+
+  function renderProductCard(p){
+    var discount = p.oldPrice ? Math.round((1 - p.price/p.oldPrice)*100) : null;
+    var badgeHtml = p.badge ? '<span class="badge '+p.badge+'">'+badgeLabel[p.badge]+'</span>' : '';
+    var priceOld = p.oldPrice ? '<span class="price-old">'+p.oldPrice+' ر.س</span>' : '';
+    var discHtml = discount ? '<span class="discount-pct">‎-'+discount+'%</span>' : '';
+    return (
+      '<a href="ez-market-product.html" class="product-card reveal">'+
+        '<div class="product-media">'+
+          badgeHtml+
+          '<button class="fav-btn" aria-label="أضف للمفضلة" onclick="event.preventDefault();toggleFav(this)"><svg class="icon" style="width:16px;height:16px"><use href="#i-heart"/></svg></button>'+
+          '<div class="tile" style="background:var('+p.tint+')">'+p.emoji+'</div>'+
+        '</div>'+
+        '<div class="product-info">'+
+          '<span class="store-name">'+p.store+'</span>'+
+          '<span class="product-name">'+p.name+'</span>'+
+          '<div class="rating">'+starIcons(p.rating)+'<span>'+p.rating+' ('+p.reviews+')</span></div>'+
+          '<div class="price-row"><span class="price-now">'+p.price+' ر.س</span>'+priceOld+discHtml+'</div>'+
+          '<div class="card-actions">'+
+            '<button class="add-cart-btn" onclick="event.preventDefault();addToCart(this)"><svg class="icon" style="width:15px;height:15px"><use href="#i-cart"/></svg>أضف للسلة</button>'+
+          '</div>'+
+        '</div>'+
+      '</a>'
+    );
+  }
+
+  function renderGrid(id, list){
+    document.getElementById(id).innerHTML = list.map(renderProductCard).join('');
+  }
+
+  function renderStores(){
+    var el = document.getElementById('stores-grid');
+    el.innerHTML = stores.map(function(s){
+      var verifiedHtml = s.verified ? '<svg class="icon verified"><use href="#i-shield"/></svg>' : '';
+      return (
+        '<a href="ez-market-store.html" class="store-card reveal">'+
+          '<div class="store-logo" style="background:var('+s.tint+')">'+s.emoji+'</div>'+
+          '<h4>'+s.name+' '+verifiedHtml+'</h4>'+
+          '<div class="rating">'+starIcons(s.rating)+'<span>'+s.rating+'</span></div>'+
+          '<p style="font-size:.76rem;color:var(--ink-soft);margin-top:4px;">'+s.count+' منتج</p>'+
+        '</a>'
+      );
+    }).join('');
+  }
+
+  renderAdsCarousel();
+  renderGrid('flash-grid', flashDeals);
+  renderGrid('featured-grid', featured);
+  renderGrid('best-grid', bestSellers);
+  renderGrid('new-grid', newArrivals);
+  renderStores();
+
+  /* ---------- Interactions ---------- */
+  window.toggleFav = function(btn){
+    btn.classList.toggle('active');
+  };
+
+  var cartCount = 0;
+  window.addToCart = function(){
+    cartCount++;
+    document.getElementById('cart-count').textContent = cartCount;
+    showToast(window.ezLang === 'en' ? 'Added to cart' : 'تمت الإضافة إلى السلة');
+  };
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  /* ---------- Sticky header shadow ---------- */
+  var header = document.getElementById('site-header');
+  window.addEventListener('scroll', function(){
+    if(window.scrollY > 6){ header.classList.add('scrolled'); }
+    else{ header.classList.remove('scrolled'); }
+  }, {passive:true});
+
+  /* ---------- Reveal on scroll ---------- */
+  if(!reduceMotion && 'IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.12});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in-view'); });
+  }
+
+  /* ---------- Countdown ---------- */
+  var target = Date.now() + (6*3600 + 24*60 + 10) * 1000;
+  var countdownEl = document.getElementById('countdown');
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    var diff = Math.max(0, target - Date.now());
+    var h = Math.floor(diff/3600000);
+    var m = Math.floor((diff%3600000)/60000);
+    var s = Math.floor((diff%60000)/1000);
+    var prefix = (window.ezLang === 'en') ? 'Ends in ' : 'ينتهي خلال ';
+    countdownEl.textContent = prefix + pad(h) + ':' + pad(m) + ':' + pad(s);
+    if(diff <= 0){ clearInterval(timer); }
+  }
+  tick();
+  var timer = setInterval(tick, 1000);
+
+})();
+</script>
+<script>
+(function(){
+  function syncIcon(){
+    var theme = document.documentElement.getAttribute('data-theme') || 'light';
+    var use = document.querySelector('#theme-icon use');
+    if(use){ use.setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon'); }
+  }
+  window.toggleTheme = function(){
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('ez-theme', next); }catch(e){}
+    syncIcon();
+  };
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', syncIcon);
+  } else {
+    syncIcon();
+  }
+})();
+</script>
+<script>
+(function(){
+  function applyLanguage(lang){
+    window.ezLang = lang;
+    document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'ar');
+
+    document.querySelectorAll('[data-ar][data-en]').forEach(function(el){
+      el.textContent = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-ar');
+    });
+    document.querySelectorAll('[data-ar-placeholder][data-en-placeholder]').forEach(function(el){
+      el.setAttribute('placeholder', lang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-ar-placeholder'));
+    });
+
+    var toggleLabel = document.getElementById('lang-toggle-label');
+    if(toggleLabel){ toggleLabel.textContent = lang === 'en' ? 'العربية' : 'English'; }
+
+    document.title = lang === 'en' ? 'EZ Market — Everything you need, in one place' : 'EZ Market — كل ما تريد، في مكان واحد';
+
+    if(typeof window.updateHeroTitleLang === 'function'){ window.updateHeroTitleLang(); }
+  }
+  window.toggleLanguage = function(){
+    var next = window.ezLang === 'en' ? 'ar' : 'en';
+    try{ localStorage.setItem('ez-lang', next); }catch(e){}
+    applyLanguage(next);
+  };
+  var saved = 'ar';
+  try{ saved = localStorage.getItem('ez-lang') || 'ar'; }catch(e){}
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ applyLanguage(saved); });
+  } else {
+    applyLanguage(saved);
+  }
+})();
+</script>
+<script>
+(function(){
+  var drawer = document.getElementById('nav-drawer');
+  var overlay = document.getElementById('nav-drawer-overlay');
+  if(!drawer || !overlay) return;
+
+  function staggerItems(){
+    var items = drawer.querySelectorAll('.nav-quick-item, .nav-link, .nav-drawer-label');
+    items.forEach(function(el, i){ el.style.transitionDelay = (i * 0.045) + 's'; });
+  }
+
+  window.openNavDrawer = function(){
+    staggerItems();
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeNavDrawer = function(){
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') window.closeNavDrawer();
+  });
+})();
+</script>
+<script>
+(function(){
+  var titlesAr = [
+    'تسوّق بسهولة، واختر ما يناسبك',
+    'كل ما تحتاجه، بضغطة واحدة',
+    'آلاف المنتجات، بائعون موثوقون',
+    'أسعار تنافسية، وتوصيل سريع',
+    'اكتشف عروضًا جديدة كل يوم'
+  ];
+  var titlesEn = [
+    'Shop with ease, choose what suits you',
+    'Everything you need, in one tap',
+    'Thousands of products, trusted sellers',
+    'Competitive prices, fast delivery',
+    'Discover new deals every day'
+  ];
+  var i = 0;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var h1 = document.getElementById('hero-rotate-title');
+  var inner = h1 ? h1.querySelector('.hrt-inner') : null;
+  if(!h1 || !inner) return;
+  window.updateHeroTitleLang = function(){
+    inner.textContent = (window.ezLang === 'en') ? titlesEn[i] : titlesAr[i];
+  };
+  if(reduce) return;
+  setInterval(function(){
+    i = (i + 1) % titlesAr.length;
+    h1.classList.add('hrt-switching');
+    setTimeout(function(){
+      inner.textContent = (window.ezLang === 'en') ? titlesEn[i] : titlesAr[i];
+      h1.classList.remove('hrt-switching');
+    }, 450);
+  }, 2500);
+})();
+</script>
+<script id="rv-script">
+(function(){
+  var rvReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SCALE_SEL = '.product-card,.store-card,.order-card,.order-row-card,.promo-card';
+  var CANDIDATE_SEL = [
+    '.product-card','.store-card','.promo-card','.review-card',
+    '.order-card','.order-row-card','.summary-card','.stat-card','.panel',
+    '.section-head','.page-title','.empty-state','.table-wrap','.breadcrumb',
+    '.grid > *','.ads-carousel','.promo-grid > *','.stat-grid > *',
+    '.trust-grid > *','.form-grid > *','.hero-inner > *'
+  ].join(',');
+  var HEADING_SEL = '.section-head,.page-title,h1,h2';
+  var rvIdx = 0;
+
+  var rvIo = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        rvIo.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'}) : null;
+
+  function rvObserve(el){
+    if(rvReduce || !rvIo){ el.classList.add('in-view'); return; }
+    rvIo.observe(el);
+  }
+
+  function rvWrapWords(el){
+    var text = el.textContent.trim();
+    if(!text) return;
+    var words = text.split(/\s+/);
+    el.innerHTML = words.map(function(w, i){
+      return '<span class="reveal-word" style="transition-delay:'+(i*0.045)+'s">'+w+'</span>';
+    }).join(' ');
+    el.classList.add('reveal-word-wrap');
+    rvObserve(el);
+  }
+
+  function rvTag(el){
+    if(!el || el.nodeType !== 1 || el.hasAttribute('data-rv')) return;
+    if(el.closest && el.closest('nav, header, footer, .theme-fab, script, style')) return;
+    el.setAttribute('data-rv','1');
+    var wordCount = (el.textContent || '').trim().split(/\s+/).length;
+    if(el.matches(SCALE_SEL)){
+      el.classList.add('reveal-scale');
+      el.style.transitionDelay = (0.04 * (rvIdx % 6)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    } else if(el.matches(HEADING_SEL) && wordCount > 0 && wordCount <= 10 && el.children.length === 0){
+      rvWrapWords(el);
+    } else {
+      el.classList.add(rvIdx % 2 === 0 ? 'reveal-up' : 'reveal-right');
+      el.style.transitionDelay = (0.05 * (rvIdx % 5)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    }
+  }
+
+  function rvScan(root){
+    if(!root || !root.querySelectorAll) return;
+    root.querySelectorAll(CANDIDATE_SEL).forEach(rvTag);
+  }
+
+  rvScan(document);
+
+  if('MutationObserver' in window){
+    var rvMo = new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes && m.addedNodes.forEach(function(n){
+          if(n.nodeType !== 1) return;
+          if(n.matches && n.matches(CANDIDATE_SEL)) rvTag(n);
+          rvScan(n);
+        });
+      });
+    });
+    rvMo.observe(document.body, {childList:true, subtree:true});
+  }
+})();
+</script>
+
+<a href="ez-market-cart.html" class="cart-fab" id="cart-fab" aria-label="السلة" data-ar-label="السلة" data-en-label="Cart">
+  <svg class="icon" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+  <span class="cart-fab-badge is-zero" id="cart-fab-count">0</span>
+</a>
+<script>
+(function(){
+  function syncCartFabBadge(){
+    var src = document.getElementById('cart-count');
+    var fab = document.getElementById('cart-fab-count');
+    if(!fab) return;
+    var n = src ? (parseInt(src.textContent, 10) || 0) : 0;
+    fab.textContent = n;
+    fab.classList.toggle('is-zero', n === 0);
+  }
+  syncCartFabBadge();
+  var src = document.getElementById('cart-count');
+  if(src && 'MutationObserver' in window){
+    new MutationObserver(syncCartFabBadge).observe(src, {childList:true, characterData:true, subtree:true});
+  }
+})();
+</script>
+</body>
+</html>

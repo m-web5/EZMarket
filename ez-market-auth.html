@@ -113,16 +113,6 @@
     background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
     color:var(--ink); box-shadow:var(--shadow-md);
   }
-
-  /* ===== Mobile hardening (100% phone compatibility) ===== */
-  html{ overflow-x:hidden; }
-  body{ overflow-x:hidden; max-width:100vw; }
-  @media (max-width:600px){
-    input, select, textarea{ font-size:16px !important; }
-  }
-  @media (max-width:380px){
-    .wrap{ padding:0 12px; }
-  }
 </style>
 <style id="rv-style">
   .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
@@ -135,6 +125,33 @@
   .reveal-word-wrap.in-view .reveal-word{opacity:1; transform:translateY(0);}
   @media (prefers-reduced-motion: reduce){
     .reveal-up,.reveal-right,.reveal-scale,.reveal-word-wrap .reveal-word{opacity:1 !important; transform:none !important; transition:none !important;}
+  }
+
+  /* Slightly smaller, app-like interface on mobile so cards/boxes don't stretch full-screen */
+  @media (max-width:760px){
+    html{ zoom:0.85; }
+  }
+
+  /* ---------- Floating cart button ---------- */
+  .cart-fab{
+    position:fixed; top:50%; right:16px; transform:translateY(-50%);
+    width:52px; height:52px; border-radius:50%;
+    background:var(--primary); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--shadow-md); z-index:150;
+    transition:transform .2s ease, background .2s ease;
+  }
+  .cart-fab:hover{ background:var(--primary-dark); transform:translateY(-50%) scale(1.07); }
+  .cart-fab-badge{
+    position:absolute; top:-4px; left:-4px; background:#fff; color:var(--primary);
+    font-size:.65rem; font-weight:800; min-width:18px; height:18px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; padding:0 3px;
+    border:1px solid var(--primary-tint);
+  }
+  .cart-fab-badge.is-zero{ display:none; }
+  @media (max-width:760px){
+    .cart-fab{ width:44px; height:44px; right:10px; }
+    .cart-fab svg{ width:19px; height:19px; }
   }
 </style>
 </head>
@@ -326,6 +343,28 @@
       });
     });
     rvMo.observe(document.body, {childList:true, subtree:true});
+  }
+})();
+</script>
+
+<a href="ez-market-cart.html" class="cart-fab" id="cart-fab" aria-label="السلة" data-ar-label="السلة" data-en-label="Cart">
+  <svg class="icon" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+  <span class="cart-fab-badge is-zero" id="cart-fab-count">0</span>
+</a>
+<script>
+(function(){
+  function syncCartFabBadge(){
+    var src = document.getElementById('cart-count');
+    var fab = document.getElementById('cart-fab-count');
+    if(!fab) return;
+    var n = src ? (parseInt(src.textContent, 10) || 0) : 0;
+    fab.textContent = n;
+    fab.classList.toggle('is-zero', n === 0);
+  }
+  syncCartFabBadge();
+  var src = document.getElementById('cart-count');
+  if(src && 'MutationObserver' in window){
+    new MutationObserver(syncCartFabBadge).observe(src, {childList:true, characterData:true, subtree:true});
   }
 })();
 </script>
