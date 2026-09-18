@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('ez-theme');
+    if(!t){ t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سلة التسوق — EZ Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A; --ink-soft:#6B6B6B; --surface:#FFFFFF; --surface-alt:#FAF5F5;
+    --border:#F1D9DB; --primary:#C8102E; --primary-dark:#8E0B21; --primary-tint:#FBE4E7;
+    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0;
+    --shadow-sm:0 4px 14px rgba(20,40,34,.06); --shadow-md:0 14px 34px rgba(20,40,34,.10);
+    --radius-card:18px; --radius-pill:999px; --radius-sm:12px;
+    --font:'Cairo','Tahoma',system-ui,sans-serif; color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+      --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+      --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+    --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+    --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--font); background:var(--surface-alt); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; padding-bottom:64px;}
+  a{color:inherit; text-decoration:none;}
+  button{font-family:var(--font); cursor:pointer;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 20px;}
+  .icon{width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; flex-shrink:0;}
+
+  header{position:sticky; top:0; z-index:50; background:var(--surface); border-bottom:1px solid var(--border);}
+  .header-top{display:flex; align-items:center; gap:18px; padding:14px 20px; max-width:1080px; margin:0 auto;}
+  .logo{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.35rem; color:var(--primary);}
+  .logo span.dot{color:var(--accent);}
+  .header-actions{margin-inline-start:auto; display:flex; gap:6px;}
+  .icon-btn{display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--ink);}
+
+  .page-title{padding:26px 0 6px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .page-title h1{font-size:1.4rem; font-weight:800;}
+  .page-title span{font-size:.86rem; color:var(--ink-soft); font-weight:600;}
+
+  .cart-layout{display:grid; grid-template-columns:1fr 340px; gap:24px; padding:20px 0 60px; align-items:start;}
+  @media (max-width:880px){ .cart-layout{grid-template-columns:1fr;} }
+
+  .cart-items{display:flex; flex-direction:column; gap:14px;}
+  .cart-item{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:16px; display:flex; gap:16px; align-items:center;}
+  .cart-item .thumb{width:84px; height:84px; border-radius:var(--radius-sm); background:var(--surface-alt); display:flex; align-items:center; justify-content:center; font-size:2.2rem; flex-shrink:0;}
+  .cart-item .info{flex:1; min-width:0;}
+  .cart-item .store{font-size:.72rem; color:var(--ink-soft); font-weight:600;}
+  .cart-item .name{font-size:.92rem; font-weight:700; margin-top:2px;}
+  .cart-item .variant{font-size:.76rem; color:var(--ink-soft); margin-top:4px;}
+  .cart-item .price{font-weight:800; color:var(--primary); margin-top:6px; font-size:.95rem;}
+  .cart-item .old-price{font-size:.76rem; color:var(--ink-soft); text-decoration:line-through; margin-inline-start:6px;}
+  .item-actions{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
+  .qty-control{display:flex; align-items:center; border:1.5px solid var(--border); border-radius:var(--radius-pill); overflow:hidden;}
+  .qty-control button{width:32px; height:32px; background:var(--surface); border:none; font-size:1rem; color:var(--ink);}
+  .qty-control span{width:28px; text-align:center; font-weight:700; font-size:.86rem;}
+  .item-links{display:flex; gap:12px; font-size:.75rem;}
+  .item-links button{background:none; border:none; color:var(--ink-soft); font-family:var(--font);}
+  .item-links button:hover{color:var(--sale);}
+  .item-links button.save-link:hover{color:var(--primary);}
+
+  @media (max-width:560px){
+    .cart-item{flex-wrap:wrap;}
+    .item-actions{flex-direction:row; width:100%; justify-content:space-between; align-items:center;}
+  }
+
+  .summary-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:22px; position:sticky; top:80px;}
+  .summary-card h3{font-size:1.05rem; font-weight:800; margin-bottom:16px;}
+  .summary-row{display:flex; justify-content:space-between; font-size:.88rem; color:var(--ink-soft); padding:7px 0;}
+  .summary-row.total{border-top:1px solid var(--border); margin-top:8px; padding-top:14px; font-weight:800; color:var(--ink); font-size:1.05rem;}
+  .summary-row.total span:last-child{color:var(--primary);}
+  .coupon-row{display:flex; gap:8px; margin:16px 0;}
+  .coupon-row input{flex:1; border:1px solid var(--border); border-radius:var(--radius-pill); padding:10px 14px; font-family:var(--font); font-size:.84rem; background:var(--surface); color:var(--ink);}
+  .coupon-row button{background:var(--ink); color:var(--surface); border:none; border-radius:var(--radius-pill); padding:0 18px; font-weight:700; font-size:.82rem;}
+  .btn-checkout{width:100%; background:var(--primary); color:#fff; border:none; border-radius:var(--radius-pill); padding:14px; font-weight:700; font-size:.94rem; margin-top:8px;}
+  .btn-checkout:hover{background:var(--primary-dark);}
+  .secure-note{display:flex; align-items:center; justify-content:center; gap:6px; font-size:.75rem; color:var(--ink-soft); margin-top:12px;}
+
+  .saved-section{margin-top:30px;}
+  .saved-section h3{font-size:1rem; font-weight:800; margin-bottom:14px;}
+  .saved-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  @media (max-width:700px){ .saved-grid{grid-template-columns:repeat(2,1fr);} }
+  .saved-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; text-align:center; font-size:.8rem;}
+  .saved-card .thumb{width:100%; aspect-ratio:1/1; background:var(--surface-alt); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:8px;}
+  .saved-card button{margin-top:8px; width:100%; background:var(--primary-tint); color:var(--primary); border:none; border-radius:var(--radius-pill); padding:7px; font-weight:700; font-size:.75rem;}
+
+  .empty-state{text-align:center; padding:80px 20px;}
+  .empty-state .emoji{font-size:4rem; margin-bottom:16px;}
+  .empty-state h2{font-size:1.2rem; font-weight:800; margin-bottom:8px;}
+  .empty-state p{color:var(--ink-soft); font-size:.88rem; margin-bottom:22px;}
+  .empty-state a{display:inline-block; background:var(--primary); color:#fff; padding:12px 26px; border-radius:var(--radius-pill); font-weight:700; font-size:.9rem;}
+  .hidden{display:none !important;}
+
+  footer{background:var(--ink); color:var(--surface-alt); padding:36px 0 20px; margin-top:20px; text-align:center; font-size:.8rem;}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  /* ===== هوية الهيدر: خلفية حمراء كاملة + شعار مميز ===== */
+  header, header.scrolled{
+    background:linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 65%, #E63946 100%) !important;
+    border-bottom:1px solid rgba(255,255,255,.18) !important;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; }
+  .site-logo-img{ height:38px; width:auto; max-width:160px; object-fit:contain; }
+  .logo, header .logo{
+    font-family:'Poppins','Cairo','Tahoma',sans-serif !important;
+    font-weight:800 !important; font-style:italic;
+    font-size:1.9rem !important; letter-spacing:-.5px !important;
+    color:#FFFFFF !important; text-shadow:0 2px 10px rgba(0,0,0,.18);
+  }
+  .logo span.dot, header .logo span.dot{ color:#FFE3E6 !important; font-style:normal; }
+  header .search-bar{
+    background:#FFFFFF !important; border:1px solid rgba(255,255,255,.6) !important;
+  }
+  header .search-bar input{ color:var(--ink) !important; }
+  header .search-bar input::placeholder{ color:var(--ink-soft) !important; opacity:1; }
+  header .search-bar .icon{ color:var(--primary) !important; }
+  header .icon-btn, .header-actions .icon-btn{
+    background:rgba(255,255,255,.16) !important; border:1px solid rgba(255,255,255,.4) !important;
+    color:#FFFFFF !important;
+  }
+  header .icon-btn:hover{ background:rgba(255,255,255,.3) !important; }
+  header .icon-btn .badge{ background:#FFFFFF !important; color:var(--sale) !important; }
+  .cats-nav{ border-top:1px solid rgba(255,255,255,.22) !important; background:transparent !important; }
+  .cats-nav a{ color:rgba(255,255,255,.92) !important; font-weight:700 !important; }
+  .cats-nav a:hover{ color:#FFFFFF !important; text-decoration:underline; }
+  .mobile-search .search-bar{ background:#FFFFFF !important; }
+  @media (max-width:760px){ .logo{ font-size:1.5rem !important; } }
+</style>
+<style id="rv-style">
+  .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-up.in-view{opacity:1; transform:translateY(0);}
+  .reveal-right{opacity:0; transform:translateX(56px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-right.in-view{opacity:1; transform:translateX(0);}
+  .reveal-scale{opacity:0; transform:scale(.8); transition:opacity .6s cubic-bezier(.16,.84,.44,1), transform .6s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-scale.in-view{opacity:1; transform:scale(1);}
+  .reveal-word-wrap .reveal-word{display:inline-block; opacity:0; transform:translateY(20px); transition:opacity .5s cubic-bezier(.16,.84,.44,1), transform .5s cubic-bezier(.16,.84,.44,1);}
+  .reveal-word-wrap.in-view .reveal-word{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal-up,.reveal-right,.reveal-scale,.reveal-word-wrap .reveal-word{opacity:1 !important; transform:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.4 8 2 4 6 4c2.2 0 3.8 1.2 6 3.6C14.2 5.2 15.8 4 18 4c4 0 5.6 4 4 7.8-2.5 4.6-10 9.2-10 9.2z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2l8 3.5V11c0 5.4-3.5 8.7-8 10-4.5-1.3-8-4.6-8-10V5.5z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
+</svg>
+
+<header>
+  <div class="header-top">
+    <a href="ez-market-home.html" class="logo" id="site-logo">
+      <img src="ez12.jpg" alt="شعار EZ Market" class="site-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+      <span id="site-logo-text">EZ Market<span class="dot">.</span></span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></button>
+      <a class="icon-btn" href="ez-market-account.html?tab=favorites"><svg class="icon"><use href="#i-heart"/></svg></a>
+      <a class="icon-btn" href="ez-market-account.html"><svg class="icon"><use href="#i-user"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-title">
+    <h1>سلة التسوق</h1>
+    <span id="items-count">3 منتجات</span>
+  </div>
+
+  <div id="cart-full">
+    <div class="cart-layout">
+      <div class="cart-items" id="cart-items"></div>
+
+      <aside class="summary-card">
+        <h3>ملخص الطلب</h3>
+        <div class="summary-row"><span>الإجمالي الفرعي</span><span id="s-subtotal">0 ر.س</span></div>
+        <div class="summary-row"><span>الخصم</span><span id="s-discount" style="color:var(--sale)">0 ر.س</span></div>
+        <div class="summary-row"><span>رسوم التوصيل</span><span id="s-shipping">0 ر.س</span></div>
+        <div class="coupon-row">
+          <input type="text" placeholder="كود الخصم">
+          <button onclick="applyCoupon()">تطبيق</button>
+        </div>
+        <div class="summary-row total"><span>الإجمالي النهائي</span><span id="s-total">0 ر.س</span></div>
+        <button class="btn-checkout" onclick="checkout()">إتمام الطلب</button>
+        <div class="secure-note"><svg class="icon" style="width:14px;height:14px"><use href="#i-shield"/></svg>الدفع آمن ومشفّر بالكامل</div>
+      </aside>
+    </div>
+
+    <div class="saved-section">
+      <h3>محفوظ لاحقًا</h3>
+      <div class="saved-grid" id="saved-grid"></div>
+    </div>
+  </div>
+
+  <div id="cart-empty" class="empty-state hidden">
+    <div class="emoji">🛒</div>
+    <h2>سلتك فارغة حاليًا</h2>
+    <p>لم تقم بإضافة أي منتجات بعد. تصفّح المنتجات وابدأ التسوق الآن.</p>
+    <a href="ez-market-home.html">تصفّح المنتجات</a>
+  </div>
+</main>
+
+<footer><div class="wrap">© 2026 EZ Market. جميع الحقوق محفوظة.</div></footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var items = [
+    {id:1, name:"سماعة بلوتوث إلغاء ضوضاء", store:"متجر الصوتيات", variant:"أسود · قياسي", price:399, oldPrice:499, qty:1, emoji:"🎧", tint:"--accent-tint"},
+    {id:2, name:"حذاء رياضي خفيف", store:"متجر الأحذية", variant:"مقاس 42", price:219, oldPrice:null, qty:2, emoji:"👟", tint:"--primary-tint"},
+    {id:3, name:"ساعة ذكية جيل 5", store:"متجر التقنية", variant:"فضي", price:349, oldPrice:499, qty:1, emoji:"⌚", tint:"--sale-tint"}
+  ];
+
+  var saved = [
+    {name:"عطر رجالي فاخر", price:189, emoji:"🧴"},
+    {name:"مصباح مكتب ذكي", price:119, emoji:"💡"}
+  ];
+
+  function money(n){ return n.toLocaleString('en-US') + ' ر.س'; }
+
+  function render(){
+    var wrap = document.getElementById('cart-items');
+    if(items.length === 0){
+      document.getElementById('cart-full').classList.add('hidden');
+      document.getElementById('cart-empty').classList.remove('hidden');
+      return;
+    }
+    document.getElementById('cart-full').classList.remove('hidden');
+    document.getElementById('cart-empty').classList.add('hidden');
+
+    wrap.innerHTML = items.map(function(it){
+      var oldHtml = it.oldPrice ? '<span class="old-price">'+it.oldPrice+' ر.س</span>' : '';
+      return (
+        '<div class="cart-item" data-id="'+it.id+'">'+
+          '<div class="thumb" style="background:var('+it.tint+')">'+it.emoji+'</div>'+
+          '<div class="info">'+
+            '<div class="store">'+it.store+'</div>'+
+            '<div class="name">'+it.name+'</div>'+
+            '<div class="variant">'+it.variant+'</div>'+
+            '<div class="price">'+it.price+' ر.س'+oldHtml+'</div>'+
+          '</div>'+
+          '<div class="item-actions">'+
+            '<div class="qty-control">'+
+              '<button onclick="changeQty('+it.id+',-1)">−</button>'+
+              '<span>'+it.qty+'</span>'+
+              '<button onclick="changeQty('+it.id+',1)">+</button>'+
+            '</div>'+
+            '<div class="item-links">'+
+              '<button class="save-link" onclick="saveForLater('+it.id+')">حفظ لاحقًا</button>'+
+              '<button onclick="removeItem('+it.id+')">حذف</button>'+
+            '</div>'+
+          '</div>'+
+        '</div>'
+      );
+    }).join('');
+
+    document.getElementById('items-count').textContent = items.reduce(function(a,b){return a+b.qty;},0) + ' منتجات';
+
+    var subtotal = items.reduce(function(a,it){ return a + it.price*it.qty; }, 0);
+    var discount = items.reduce(function(a,it){ return a + (it.oldPrice ? (it.oldPrice-it.price)*it.qty : 0); }, 0);
+    var shipping = subtotal >= 200 ? 0 : 20;
+    var total = subtotal + shipping;
+    document.getElementById('s-subtotal').textContent = money(subtotal);
+    document.getElementById('s-discount').textContent = '-' + money(discount);
+    document.getElementById('s-shipping').textContent = shipping === 0 ? 'مجاني' : money(shipping);
+    document.getElementById('s-total').textContent = money(total);
+
+    document.getElementById('saved-grid').innerHTML = saved.map(function(s){
+      return '<div class="saved-card"><div class="thumb">'+s.emoji+'</div>'+s.name+'<br><b>'+s.price+' ر.س</b><button onclick="moveToCart(\''+s.name+'\')">نقل للسلة</button></div>';
+    }).join('');
+  }
+
+  window.changeQty = function(id, delta){
+    var it = items.find(function(x){return x.id===id;});
+    if(!it) return;
+    it.qty = Math.max(1, Math.min(10, it.qty+delta));
+    render();
+  };
+  window.removeItem = function(id){
+    items = items.filter(function(x){return x.id!==id;});
+    render();
+  };
+  window.saveForLater = function(id){
+    var it = items.find(function(x){return x.id===id;});
+    if(it){ saved.push({name:it.name, price:it.price, emoji:it.emoji}); }
+    window.removeItem(id);
+  };
+  window.moveToCart = function(name){
+    alert('تمت إضافة "'+name+'" إلى السلة');
+  };
+  window.applyCoupon = function(){
+    alert('تم تطبيق الكوبون إن كان صالحًا');
+  };
+  window.checkout = function(){
+    if(items.length === 0){ return; }
+    window.location.href = 'ez-market-checkout.html';
+  };
+
+  render();
+})();
+</script>
+<script>
+(function(){
+  function syncIcon(){
+    var theme = document.documentElement.getAttribute('data-theme') || 'light';
+    var use = document.querySelector('#theme-icon use');
+    if(use){ use.setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon'); }
+  }
+  window.toggleTheme = function(){
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('ez-theme', next); }catch(e){}
+    syncIcon();
+  };
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', syncIcon);
+  } else {
+    syncIcon();
+  }
+})();
+</script>
+<script id="rv-script">
+(function(){
+  var rvReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SCALE_SEL = '.product-card,.store-card,.order-card,.order-row-card,.promo-card';
+  var CANDIDATE_SEL = [
+    '.product-card','.cat-card','.store-card','.promo-card','.review-card',
+    '.order-card','.order-row-card','.summary-card','.stat-card','.panel',
+    '.section-head','.page-title','.empty-state','.table-wrap','.breadcrumb',
+    '.grid > *','.cats-grid > *','.promo-grid > *','.stat-grid > *',
+    '.trust-grid > *','.form-grid > *','.hero-inner > *'
+  ].join(',');
+  var HEADING_SEL = '.section-head,.page-title,h1,h2';
+  var rvIdx = 0;
+
+  var rvIo = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        rvIo.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'}) : null;
+
+  function rvObserve(el){
+    if(rvReduce || !rvIo){ el.classList.add('in-view'); return; }
+    rvIo.observe(el);
+  }
+
+  function rvWrapWords(el){
+    var text = el.textContent.trim();
+    if(!text) return;
+    var words = text.split(/\s+/);
+    el.innerHTML = words.map(function(w, i){
+      return '<span class="reveal-word" style="transition-delay:'+(i*0.045)+'s">'+w+'</span>';
+    }).join(' ');
+    el.classList.add('reveal-word-wrap');
+    rvObserve(el);
+  }
+
+  function rvTag(el){
+    if(!el || el.nodeType !== 1 || el.hasAttribute('data-rv')) return;
+    if(el.closest && el.closest('nav, header, footer, .theme-fab, script, style')) return;
+    el.setAttribute('data-rv','1');
+    var wordCount = (el.textContent || '').trim().split(/\s+/).length;
+    if(el.matches(SCALE_SEL)){
+      el.classList.add('reveal-scale');
+      el.style.transitionDelay = (0.04 * (rvIdx % 6)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    } else if(el.matches(HEADING_SEL) && wordCount > 0 && wordCount <= 10 && el.children.length === 0){
+      rvWrapWords(el);
+    } else {
+      el.classList.add(rvIdx % 2 === 0 ? 'reveal-up' : 'reveal-right');
+      el.style.transitionDelay = (0.05 * (rvIdx % 5)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    }
+  }
+
+  function rvScan(root){
+    if(!root || !root.querySelectorAll) return;
+    root.querySelectorAll(CANDIDATE_SEL).forEach(rvTag);
+  }
+
+  rvScan(document);
+
+  if('MutationObserver' in window){
+    var rvMo = new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes && m.addedNodes.forEach(function(n){
+          if(n.nodeType !== 1) return;
+          if(n.matches && n.matches(CANDIDATE_SEL)) rvTag(n);
+          rvScan(n);
+        });
+      });
+    });
+    rvMo.observe(document.body, {childList:true, subtree:true});
+  }
+})();
+</script>
+</body>
+</html>

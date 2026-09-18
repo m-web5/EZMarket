@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('ez-theme');
+    if(!t){ t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إتمام الطلب — EZ Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A; --ink-soft:#6B6B6B; --surface:#FFFFFF; --surface-alt:#FAF5F5;
+    --border:#F1D9DB; --primary:#C8102E; --primary-dark:#8E0B21; --primary-tint:#FBE4E7;
+    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0;
+    --shadow-sm:0 4px 14px rgba(20,40,34,.06); --shadow-md:0 14px 34px rgba(20,40,34,.10);
+    --radius-card:18px; --radius-pill:999px; --radius-sm:12px;
+    --font:'Cairo','Tahoma',system-ui,sans-serif; color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+      --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+      --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+    --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+    --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--font); background:var(--surface-alt); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased;}
+  a{color:inherit; text-decoration:none;}
+  button, input, select{font-family:var(--font);}
+  button{cursor:pointer;}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 20px;}
+  .icon{width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; flex-shrink:0;}
+
+  header{background:var(--surface); border-bottom:1px solid var(--border);}
+  .header-top{display:flex; align-items:center; justify-content:space-between; padding:16px 20px; max-width:1000px; margin:0 auto;}
+  .logo{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.3rem; color:var(--primary);}
+  .logo span.dot{color:var(--accent);}
+  .secure-tag{display:flex; align-items:center; gap:6px; font-size:.78rem; color:var(--ink-soft); font-weight:600;}
+
+  /* Stepper */
+  .stepper{display:flex; align-items:center; justify-content:center; gap:4px; padding:26px 20px 6px; max-width:1000px; margin:0 auto; overflow-x:auto;}
+  .step{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+  .step-circle{width:30px; height:30px; border-radius:50%; background:var(--surface); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:800; color:var(--ink-soft); transition:all .3s;}
+  .step.done .step-circle{background:var(--primary); border-color:var(--primary); color:#fff;}
+  .step.active .step-circle{background:var(--primary-tint); border-color:var(--primary); color:var(--primary);}
+  .step-label{font-size:.76rem; font-weight:700; color:var(--ink-soft); white-space:nowrap;}
+  .step.active .step-label, .step.done .step-label{color:var(--ink);}
+  .step-line{width:26px; height:2px; background:var(--border); flex-shrink:0;}
+  .step-line.done{background:var(--primary);}
+  @media (max-width:640px){ .step-label{display:none;} }
+
+  .checkout-layout{display:grid; grid-template-columns:1fr 320px; gap:24px; padding:28px 0 60px; align-items:start;}
+  @media (max-width:860px){ .checkout-layout{grid-template-columns:1fr;} }
+
+  .panel{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:26px;}
+  .panel h2{font-size:1.15rem; font-weight:800; margin-bottom:20px;}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .form-grid .full{grid-column:1/-1;}
+  @media (max-width:560px){ .form-grid{grid-template-columns:1fr;} }
+  label{display:block; font-size:.8rem; font-weight:700; margin-bottom:6px; color:var(--ink-soft);}
+  input[type=text], input[type=email], input[type=tel]{
+    width:100%; border:1px solid var(--border); border-radius:var(--radius-sm); padding:11px 14px;
+    font-size:.88rem; background:var(--surface); color:var(--ink); outline:none; transition:border-color .2s;
+  }
+  input:focus{border-color:var(--primary);}
+
+  .option-card{border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; display:flex; align-items:center; gap:12px; margin-bottom:12px; cursor:pointer; transition:border-color .2s, background .2s;}
+  .option-card.selected{border-color:var(--primary); background:var(--primary-tint);}
+  .option-card input{accent-color:var(--primary); width:18px; height:18px;}
+  .option-card .meta{flex:1;}
+  .option-card .meta b{font-size:.88rem; display:block;}
+  .option-card .meta span{font-size:.78rem; color:var(--ink-soft);}
+  .option-card .price{font-weight:800; font-size:.88rem; color:var(--primary);}
+
+  .review-block{border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:16px;}
+  .review-block:last-child{border-bottom:none; margin-bottom:0; padding-bottom:0;}
+  .review-block h4{font-size:.85rem; font-weight:800; margin-bottom:6px; display:flex; justify-content:space-between;}
+  .review-block h4 a{font-size:.76rem; color:var(--primary); font-weight:700;}
+  .review-block p{font-size:.84rem; color:var(--ink-soft);}
+  .review-item{display:flex; align-items:center; gap:12px; padding:8px 0;}
+  .review-item .thumb{width:48px; height:48px; border-radius:var(--radius-sm); background:var(--surface-alt); display:flex; align-items:center; justify-content:center; font-size:1.4rem;}
+  .review-item .info{flex:1; font-size:.82rem;}
+  .review-item .info b{font-weight:700; display:block;}
+  .review-item .price{font-weight:800; font-size:.84rem; color:var(--primary);}
+
+  .step-actions{display:flex; justify-content:space-between; margin-top:22px; gap:12px;}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 24px; border-radius:var(--radius-pill); font-weight:700; font-size:.88rem; border:1.5px solid transparent;}
+  .btn-primary{background:var(--primary); color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-outline{background:transparent; border-color:var(--border); color:var(--ink);}
+  .btn-outline:hover{border-color:var(--primary); color:var(--primary);}
+
+  .summary-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:22px; position:sticky; top:20px;}
+  .summary-card h3{font-size:1rem; font-weight:800; margin-bottom:14px;}
+  .summary-row{display:flex; justify-content:space-between; font-size:.86rem; color:var(--ink-soft); padding:6px 0;}
+  .summary-row.total{border-top:1px solid var(--border); margin-top:8px; padding-top:12px; font-weight:800; color:var(--ink); font-size:1rem;}
+  .summary-row.total span:last-child{color:var(--primary);}
+  .mini-item{display:flex; gap:10px; align-items:center; padding:6px 0; font-size:.78rem; color:var(--ink-soft);}
+  .mini-item .thumb{width:36px; height:36px; border-radius:8px; background:var(--surface-alt); display:flex; align-items:center; justify-content:center; font-size:1.1rem;}
+
+  .step-view{display:none;}
+  .step-view.active{display:block;}
+
+  /* Success page */
+  .success-wrap{text-align:center; padding:60px 20px 40px; max-width:640px; margin:0 auto;}
+  .success-icon{width:76px; height:76px; border-radius:50%; background:var(--primary-tint); color:var(--primary); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:2.2rem;}
+  .success-wrap h1{font-size:1.5rem; font-weight:800;}
+  .success-wrap p{color:var(--ink-soft); margin-top:8px; font-size:.9rem;}
+  .order-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:22px; margin-top:26px; text-align:right;}
+  .order-row{display:flex; justify-content:space-between; padding:8px 0; font-size:.86rem; border-bottom:1px dashed var(--border);}
+  .order-row:last-child{border-bottom:none;}
+  .order-row span:first-child{color:var(--ink-soft);}
+  .order-row span:last-child{font-weight:700;}
+
+  .timeline{margin-top:30px; text-align:right;}
+  .timeline h3{font-size:1rem; font-weight:800; margin-bottom:18px;}
+  .tl-item{display:flex; gap:14px; padding-bottom:22px; position:relative;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{content:''; position:absolute; top:26px; bottom:0; right:11px; width:2px; background:var(--border);}
+  .tl-item:last-child::before{display:none;}
+  .tl-dot{width:24px; height:24px; border-radius:50%; background:var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; z-index:1;}
+  .tl-item.done .tl-dot{background:var(--primary);}
+  .tl-item.done .tl-dot::after{content:'✓'; color:#fff; font-size:.7rem; font-weight:800;}
+  .tl-text b{font-size:.86rem; display:block;}
+  .tl-text span{font-size:.76rem; color:var(--ink-soft);}
+
+  .success-ctas{display:flex; gap:12px; justify-content:center; margin-top:30px; flex-wrap:wrap;}
+
+  footer{background:var(--ink); color:var(--surface-alt); padding:30px 0; margin-top:20px; text-align:center; font-size:.8rem;}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  /* ===== هوية الهيدر: خلفية حمراء كاملة + شعار مميز ===== */
+  header, header.scrolled{
+    background:linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 65%, #E63946 100%) !important;
+    border-bottom:1px solid rgba(255,255,255,.18) !important;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; }
+  .site-logo-img{ height:38px; width:auto; max-width:160px; object-fit:contain; }
+  .logo, header .logo{
+    font-family:'Poppins','Cairo','Tahoma',sans-serif !important;
+    font-weight:800 !important; font-style:italic;
+    font-size:1.9rem !important; letter-spacing:-.5px !important;
+    color:#FFFFFF !important; text-shadow:0 2px 10px rgba(0,0,0,.18);
+  }
+  .logo span.dot, header .logo span.dot{ color:#FFE3E6 !important; font-style:normal; }
+  header .search-bar{
+    background:#FFFFFF !important; border:1px solid rgba(255,255,255,.6) !important;
+  }
+  header .search-bar input{ color:var(--ink) !important; }
+  header .search-bar input::placeholder{ color:var(--ink-soft) !important; opacity:1; }
+  header .search-bar .icon{ color:var(--primary) !important; }
+  header .icon-btn, .header-actions .icon-btn{
+    background:rgba(255,255,255,.16) !important; border:1px solid rgba(255,255,255,.4) !important;
+    color:#FFFFFF !important;
+  }
+  header .icon-btn:hover{ background:rgba(255,255,255,.3) !important; }
+  header .icon-btn .badge{ background:#FFFFFF !important; color:var(--sale) !important; }
+  .cats-nav{ border-top:1px solid rgba(255,255,255,.22) !important; background:transparent !important; }
+  .cats-nav a{ color:rgba(255,255,255,.92) !important; font-weight:700 !important; }
+  .cats-nav a:hover{ color:#FFFFFF !important; text-decoration:underline; }
+  .mobile-search .search-bar{ background:#FFFFFF !important; }
+  @media (max-width:760px){ .logo{ font-size:1.5rem !important; } }
+</style>
+<style id="rv-style">
+  .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-up.in-view{opacity:1; transform:translateY(0);}
+  .reveal-right{opacity:0; transform:translateX(56px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-right.in-view{opacity:1; transform:translateX(0);}
+  .reveal-scale{opacity:0; transform:scale(.8); transition:opacity .6s cubic-bezier(.16,.84,.44,1), transform .6s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-scale.in-view{opacity:1; transform:scale(1);}
+  .reveal-word-wrap .reveal-word{display:inline-block; opacity:0; transform:translateY(20px); transition:opacity .5s cubic-bezier(.16,.84,.44,1), transform .5s cubic-bezier(.16,.84,.44,1);}
+  .reveal-word-wrap.in-view .reveal-word{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal-up,.reveal-right,.reveal-scale,.reveal-word-wrap .reveal-word{opacity:1 !important; transform:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2l8 3.5V11c0 5.4-3.5 8.7-8 10-4.5-1.3-8-4.6-8-10V5.5z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
+</svg>
+
+<header>
+  <div class="header-top">
+    <a href="ez-market-home.html" class="logo" id="site-logo">
+      <img src="ez12.jpg" alt="شعار EZ Market" class="site-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+      <span id="site-logo-text">EZ Market<span class="dot">.</span></span>
+    </a>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div class="secure-tag"><svg class="icon" style="width:15px;height:15px"><use href="#i-shield"/></svg>الدفع آمن ومشفّر</div>
+      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري" style="display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--ink);"><svg class="icon" id="theme-icon" style="width:17px;height:17px"><use href="#i-moon"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div id="checkout-flow">
+  <div class="stepper" id="stepper"></div>
+
+  <main class="wrap">
+    <div class="checkout-layout">
+      <div>
+        <!-- Step 1: Customer info -->
+        <div class="step-view active" data-step="1">
+          <div class="panel">
+            <h2>بيانات العميل</h2>
+            <div class="form-grid">
+              <div><label>الاسم الكامل</label><input type="text" placeholder="مثال: أحمد سالم" value="أحمد سالم"></div>
+              <div><label>رقم الهاتف</label><input type="tel" placeholder="05XXXXXXXX" value="0501234567"></div>
+              <div class="full"><label>البريد الإلكتروني</label><input type="email" placeholder="example@email.com" value="ahmed@email.com"></div>
+            </div>
+            <div class="step-actions">
+              <span></span>
+              <button class="btn btn-primary" onclick="goStep(2)">التالي</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Address -->
+        <div class="step-view" data-step="2">
+          <div class="panel">
+            <h2>عنوان التوصيل</h2>
+            <div class="form-grid">
+              <div><label>المدينة</label><input type="text" value="الرياض"></div>
+              <div><label>المنطقة/الحي</label><input type="text" value="حي النرجس"></div>
+              <div class="full"><label>الشارع وتفاصيل إضافية</label><input type="text" value="شارع الأمير سلطان، مبنى 12"></div>
+            </div>
+            <div class="step-actions">
+              <button class="btn btn-outline" onclick="goStep(1)">السابق</button>
+              <button class="btn btn-primary" onclick="goStep(3)">التالي</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Delivery method -->
+        <div class="step-view" data-step="3">
+          <div class="panel">
+            <h2>طريقة التوصيل</h2>
+            <label class="option-card selected"><input type="radio" name="delivery" checked><span class="meta"><b>توصيل قياسي</b><span>خلال 3-5 أيام عمل</span></span><span class="price">مجاني</span></label>
+            <label class="option-card"><input type="radio" name="delivery"><span class="meta"><b>توصيل سريع</b><span>خلال 24 ساعة</span></span><span class="price">30 ر.س</span></label>
+            <div class="step-actions">
+              <button class="btn btn-outline" onclick="goStep(2)">السابق</button>
+              <button class="btn btn-primary" onclick="goStep(4)">التالي</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Payment -->
+        <div class="step-view" data-step="4">
+          <div class="panel">
+            <h2>طريقة الدفع</h2>
+            <label class="option-card selected"><input type="radio" name="pay" checked><span class="meta"><b>الدفع عند الاستلام</b><span>ادفع نقدًا عند وصول الطلب</span></span></label>
+            <label class="option-card"><input type="radio" name="pay"><span class="meta"><b>بطاقة ائتمان/مدى</b><span>دفع فوري وآمن</span></span></label>
+            <label class="option-card"><input type="radio" name="pay"><span class="meta"><b>محفظة رقمية</b><span>Apple Pay وغيرها</span></span></label>
+            <div class="step-actions">
+              <button class="btn btn-outline" onclick="goStep(3)">السابق</button>
+              <button class="btn btn-primary" onclick="goStep(5)">التالي</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Review -->
+        <div class="step-view" data-step="5">
+          <div class="panel">
+            <h2>مراجعة الطلب</h2>
+            <div class="review-block">
+              <h4>بيانات العميل <a onclick="goStep(1)">تعديل</a></h4>
+              <p>أحمد سالم — 0501234567 — ahmed@email.com</p>
+            </div>
+            <div class="review-block">
+              <h4>عنوان التوصيل <a onclick="goStep(2)">تعديل</a></h4>
+              <p>الرياض، حي النرجس، شارع الأمير سلطان، مبنى 12</p>
+            </div>
+            <div class="review-block">
+              <h4>التوصيل والدفع <a onclick="goStep(3)">تعديل</a></h4>
+              <p>توصيل قياسي (3-5 أيام) — الدفع عند الاستلام</p>
+            </div>
+            <div class="review-block">
+              <h4>المنتجات (3)</h4>
+              <div class="review-item"><div class="thumb">🎧</div><div class="info"><b>سماعة بلوتوث إلغاء ضوضاء</b>الكمية: 1</div><div class="price">399 ر.س</div></div>
+              <div class="review-item"><div class="thumb">👟</div><div class="info"><b>حذاء رياضي خفيف</b>الكمية: 2</div><div class="price">438 ر.س</div></div>
+              <div class="review-item"><div class="thumb">⌚</div><div class="info"><b>ساعة ذكية جيل 5</b>الكمية: 1</div><div class="price">349 ر.س</div></div>
+            </div>
+            <div class="step-actions">
+              <button class="btn btn-outline" onclick="goStep(4)">السابق</button>
+              <button class="btn btn-primary" onclick="confirmOrder()">تأكيد الطلب</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="summary-card">
+        <h3>ملخص الطلب</h3>
+        <div class="mini-item"><div class="thumb">🎧</div>سماعة بلوتوث × 1</div>
+        <div class="mini-item"><div class="thumb">👟</div>حذاء رياضي × 2</div>
+        <div class="mini-item"><div class="thumb">⌚</div>ساعة ذكية × 1</div>
+        <div class="summary-row"><span>الإجمالي الفرعي</span><span>1,186 ر.س</span></div>
+        <div class="summary-row"><span>رسوم التوصيل</span><span>مجاني</span></div>
+        <div class="summary-row total"><span>الإجمالي النهائي</span><span>1,186 ر.س</span></div>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<!-- Success screen -->
+<div id="success-view" style="display:none;">
+  <main class="wrap">
+    <div class="success-wrap">
+      <div class="success-icon">✓</div>
+      <h1>تم استلام طلبك بنجاح</h1>
+      <p>شكرًا لك، سنقوم بتجهيز طلبك وإشعارك بكل تحديث عبر الرسائل والبريد الإلكتروني.</p>
+
+      <div class="order-card">
+        <div class="order-row"><span>رقم الطلب</span><span>#EZ10248</span></div>
+        <div class="order-row"><span>تاريخ الطلب</span><span id="order-date"></span></div>
+        <div class="order-row"><span>المبلغ الإجمالي</span><span>1,186 ر.س</span></div>
+        <div class="order-row"><span>حالة الطلب</span><span style="color:var(--primary)">تم التأكيد</span></div>
+      </div>
+
+      <div class="timeline">
+        <h3>تتبع الطلب</h3>
+        <div class="tl-item done"><div class="tl-dot"></div><div class="tl-text"><b>تم إنشاء الطلب</b><span>تم استلام طلبك في النظام</span></div></div>
+        <div class="tl-item done"><div class="tl-dot"></div><div class="tl-text"><b>تم تأكيد الطلب</b><span>جاري تجهيز الطلب من المتجر</span></div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-text"><b>تم تسليم الطلب لشركة التوصيل</b><span>بانتظار الاستلام من المتجر</span></div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-text"><b>في الطريق إليك</b><span>سيتم إشعارك عند خروج الطلب للتوصيل</span></div></div>
+        <div class="tl-item"><div class="tl-dot"></div><div class="tl-text"><b>تم التسليم</b><span>سيتم التحديث عند استلامك الطلب</span></div></div>
+      </div>
+
+      <div class="success-ctas">
+        <a href="ez-market-home.html" class="btn btn-outline">متابعة التسوق</a>
+        <a href="ez-market-account.html?tab=orders" class="btn btn-primary">تتبع الطلب</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer><div class="wrap">© 2026 EZ Market. جميع الحقوق محفوظة.</div></footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var steps = [
+    {n:1, label:"البيانات"},
+    {n:2, label:"العنوان"},
+    {n:3, label:"التوصيل"},
+    {n:4, label:"الدفع"},
+    {n:5, label:"المراجعة"}
+  ];
+  var current = 1;
+
+  function renderStepper(){
+    var el = document.getElementById('stepper');
+    el.innerHTML = steps.map(function(s, i){
+      var cls = s.n < current ? 'done' : (s.n === current ? 'active' : '');
+      var line = i < steps.length-1 ? '<div class="step-line '+(s.n < current ? 'done' : '')+'"></div>' : '';
+      return '<div class="step '+cls+'"><div class="step-circle">'+(s.n < current ? '✓' : s.n)+'</div><span class="step-label">'+s.label+'</span></div>'+line;
+    }).join('');
+  }
+
+  window.goStep = function(n){
+    current = n;
+    document.querySelectorAll('.step-view').forEach(function(v){
+      v.classList.toggle('active', parseInt(v.dataset.step,10) === n);
+    });
+    renderStepper();
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+
+  window.confirmOrder = function(){
+    document.getElementById('checkout-flow').style.display = 'none';
+    document.getElementById('success-view').style.display = 'block';
+    document.getElementById('order-date').textContent = new Date().toLocaleDateString('ar-SA');
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+
+  renderStepper();
+})();
+</script>
+<script>
+(function(){
+  function syncIcon(){
+    var theme = document.documentElement.getAttribute('data-theme') || 'light';
+    var use = document.querySelector('#theme-icon use');
+    if(use){ use.setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon'); }
+  }
+  window.toggleTheme = function(){
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('ez-theme', next); }catch(e){}
+    syncIcon();
+  };
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', syncIcon);
+  } else {
+    syncIcon();
+  }
+})();
+</script>
+<script id="rv-script">
+(function(){
+  var rvReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SCALE_SEL = '.product-card,.store-card,.order-card,.order-row-card,.promo-card';
+  var CANDIDATE_SEL = [
+    '.product-card','.cat-card','.store-card','.promo-card','.review-card',
+    '.order-card','.order-row-card','.summary-card','.stat-card','.panel',
+    '.section-head','.page-title','.empty-state','.table-wrap','.breadcrumb',
+    '.grid > *','.cats-grid > *','.promo-grid > *','.stat-grid > *',
+    '.trust-grid > *','.form-grid > *','.hero-inner > *'
+  ].join(',');
+  var HEADING_SEL = '.section-head,.page-title,h1,h2';
+  var rvIdx = 0;
+
+  var rvIo = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        rvIo.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'}) : null;
+
+  function rvObserve(el){
+    if(rvReduce || !rvIo){ el.classList.add('in-view'); return; }
+    rvIo.observe(el);
+  }
+
+  function rvWrapWords(el){
+    var text = el.textContent.trim();
+    if(!text) return;
+    var words = text.split(/\s+/);
+    el.innerHTML = words.map(function(w, i){
+      return '<span class="reveal-word" style="transition-delay:'+(i*0.045)+'s">'+w+'</span>';
+    }).join(' ');
+    el.classList.add('reveal-word-wrap');
+    rvObserve(el);
+  }
+
+  function rvTag(el){
+    if(!el || el.nodeType !== 1 || el.hasAttribute('data-rv')) return;
+    if(el.closest && el.closest('nav, header, footer, .theme-fab, script, style')) return;
+    el.setAttribute('data-rv','1');
+    var wordCount = (el.textContent || '').trim().split(/\s+/).length;
+    if(el.matches(SCALE_SEL)){
+      el.classList.add('reveal-scale');
+      el.style.transitionDelay = (0.04 * (rvIdx % 6)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    } else if(el.matches(HEADING_SEL) && wordCount > 0 && wordCount <= 10 && el.children.length === 0){
+      rvWrapWords(el);
+    } else {
+      el.classList.add(rvIdx % 2 === 0 ? 'reveal-up' : 'reveal-right');
+      el.style.transitionDelay = (0.05 * (rvIdx % 5)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    }
+  }
+
+  function rvScan(root){
+    if(!root || !root.querySelectorAll) return;
+    root.querySelectorAll(CANDIDATE_SEL).forEach(rvTag);
+  }
+
+  rvScan(document);
+
+  if('MutationObserver' in window){
+    var rvMo = new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes && m.addedNodes.forEach(function(n){
+          if(n.nodeType !== 1) return;
+          if(n.matches && n.matches(CANDIDATE_SEL)) rvTag(n);
+          rvScan(n);
+        });
+      });
+    });
+    rvMo.observe(document.body, {childList:true, subtree:true});
+  }
+})();
+</script>
+</body>
+</html>

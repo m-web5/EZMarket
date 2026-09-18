@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('ez-theme');
+    if(!t){ t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الإدارة — EZ Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A; --ink-soft:#6B6B6B; --surface:#FFFFFF; --surface-alt:#FAF5F5;
+    --border:#F1D9DB; --primary:#C8102E; --primary-dark:#8E0B21; --primary-tint:#FBE4E7;
+    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0;
+    --sidebar:#7A0C1F; --sidebar-text:#E9C9CC; --sidebar-active:#591019;
+    --shadow-sm:0 4px 14px rgba(20,40,34,.06); --shadow-md:0 14px 34px rgba(20,40,34,.10);
+    --radius-card:16px; --radius-pill:999px; --radius-sm:10px;
+    --font:'Cairo','Tahoma',system-ui,sans-serif; color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+      --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+      --sidebar:#120A0B; --sidebar-text:#C9A8AC; --sidebar-active:#7A0C1F;
+      --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+    --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+    --sidebar:#120A0B; --sidebar-text:#C9A8AC; --sidebar-active:#7A0C1F;
+    --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--font); background:var(--surface-alt); color:var(--ink); line-height:1.5; -webkit-font-smoothing:antialiased;}
+  a{color:inherit; text-decoration:none;}
+  button, select{font-family:var(--font); cursor:pointer;}
+  .icon{width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; flex-shrink:0;}
+
+  .app{display:grid; grid-template-columns:240px 1fr; min-height:100vh;}
+  @media (max-width:900px){ .app{grid-template-columns:1fr;} }
+
+  .sidebar{background:var(--sidebar); color:var(--sidebar-text); padding:20px 14px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  @media (max-width:900px){ .sidebar{display:none;} }
+  .sb-logo{color:#fff; font-weight:800; font-size:1.2rem; padding:0 8px 22px;}
+  .sb-logo span{color:var(--accent);}
+  .sb-section{font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; opacity:.6; padding:14px 10px 6px;}
+  .sb-link{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 12px; border-radius:var(--radius-sm); font-size:.83rem; font-weight:600; margin-bottom:2px;}
+  .sb-link .l{display:flex; align-items:center; gap:10px;}
+  .sb-link.active{background:var(--sidebar-active); color:#fff;}
+  .sb-link:hover:not(.active){background:rgba(255,255,255,.05); color:#fff;}
+  .sb-count{background:var(--sale); color:#fff; font-size:.65rem; font-weight:800; padding:1px 7px; border-radius:99px;}
+
+  .main{padding:22px 24px 50px;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; gap:14px; flex-wrap:wrap;}
+  .topbar h1{font-size:1.3rem; font-weight:800;}
+  .topbar p{font-size:.8rem; color:var(--ink-soft); margin-top:2px;}
+  .range-select{border:1px solid var(--border); border-radius:var(--radius-pill); padding:9px 16px; font-size:.82rem; background:var(--surface); color:var(--ink); font-weight:600;}
+
+  .stat-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:22px;}
+  @media (max-width:1100px){ .stat-grid{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:640px){ .stat-grid{grid-template-columns:repeat(2,1fr);} }
+  .stat-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:16px;}
+  .stat-card .label{font-size:.74rem; color:var(--ink-soft); font-weight:600;}
+  .stat-card .value{font-size:1.25rem; font-weight:800; margin-top:8px;}
+  .stat-card .delta{font-size:.7rem; font-weight:700; margin-top:6px;}
+  .delta.up{color:var(--primary);}
+  .delta.down{color:var(--sale);}
+
+  .content-grid{display:grid; grid-template-columns:1.6fr 1fr; gap:18px; margin-bottom:18px; align-items:start;}
+  @media (max-width:960px){ .content-grid{grid-template-columns:1fr;} }
+  .panel{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:20px;}
+  .panel-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+  .panel-head h3{font-size:.98rem; font-weight:800;}
+  .panel-head a{font-size:.78rem; color:var(--primary); font-weight:700;}
+
+  .chart-bars{display:flex; align-items:flex-end; gap:8px; height:160px; padding-top:10px;}
+  .chart-bars .bar-col{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .chart-bars .bar{width:100%; border-radius:5px 5px 0 0; background:var(--primary-tint);}
+  .chart-bars .bar.top{background:var(--primary);}
+  .chart-bars .bar-label{font-size:.62rem; color:var(--ink-soft);}
+
+  .legend-list{display:flex; flex-direction:column; gap:12px;}
+  .legend-row{display:flex; align-items:center; gap:10px; font-size:.82rem;}
+  .legend-dot{width:10px; height:10px; border-radius:50%; flex-shrink:0;}
+  .legend-row .name{flex:1; color:var(--ink-soft);}
+  .legend-row .val{font-weight:800;}
+  .bar-track{height:6px; background:var(--surface-alt); border-radius:99px; margin-top:4px; overflow:hidden;}
+  .bar-track .fill{height:100%; border-radius:99px;}
+
+  table{width:100%; border-collapse:collapse; font-size:.82rem;}
+  th{text-align:right; color:var(--ink-soft); font-weight:700; font-size:.74rem; padding:8px 10px; border-bottom:1px solid var(--border);}
+  td{padding:11px 10px; border-bottom:1px solid var(--border); vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  .table-wrap{overflow-x:auto;}
+  .cell-flex{display:flex; align-items:center; gap:10px;}
+  .cell-flex .thumb{width:34px; height:34px; border-radius:50%; background:var(--surface-alt); display:flex; align-items:center; justify-content:center; font-size:.95rem; font-weight:700; color:var(--ink-soft);}
+  .status-pill{font-size:.7rem; font-weight:800; padding:4px 10px; border-radius:var(--radius-pill); white-space:nowrap;}
+  .status-pill.pending{background:var(--accent-tint); color:#8E0B21;}
+  .status-pill.approved{background:var(--primary-tint); color:var(--primary);}
+  .status-pill.rejected{background:var(--sale-tint); color:var(--sale);}
+  .status-pill.delivered{background:var(--primary-tint); color:var(--primary);}
+  .status-pill.processing{background:#EFEFEF; color:#3A3A3A;}
+  .row-actions{display:flex; gap:6px;}
+  .row-actions button{padding:6px 12px; border-radius:var(--radius-pill); border:none; font-size:.72rem; font-weight:800;}
+  .row-actions .accept{background:var(--primary-tint); color:var(--primary);}
+  .row-actions .reject{background:var(--sale-tint); color:var(--sale);}
+
+  @media (max-width:900px){
+    .mobile-topbar{display:flex; align-items:center; justify-content:space-between; background:var(--surface); border-bottom:1px solid var(--border); padding:14px 18px; position:sticky; top:0; z-index:20;}
+    .mobile-topbar .logo{font-weight:800; color:var(--primary);}
+  }
+  @media (min-width:901px){ .mobile-topbar{display:none;} }
+</style>
+<style id="rv-style">
+  .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-up.in-view{opacity:1; transform:translateY(0);}
+  .reveal-right{opacity:0; transform:translateX(56px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-right.in-view{opacity:1; transform:translateX(0);}
+  .reveal-scale{opacity:0; transform:scale(.8); transition:opacity .6s cubic-bezier(.16,.84,.44,1), transform .6s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-scale.in-view{opacity:1; transform:scale(1);}
+  .reveal-word-wrap .reveal-word{display:inline-block; opacity:0; transform:translateY(20px); transition:opacity .5s cubic-bezier(.16,.84,.44,1), transform .5s cubic-bezier(.16,.84,.44,1);}
+  .reveal-word-wrap.in-view .reveal-word{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal-up,.reveal-right,.reveal-scale,.reveal-word-wrap .reveal-word{opacity:1 !important; transform:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c1-3.6 3.8-6 6.5-6s5.5 2.4 6.5 6"/><circle cx="17.5" cy="9" r="2.6"/><path d="M15 14c2.2.4 4 2.3 4.8 5.4"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9"/><path d="M4 9v11h16V9"/><path d="M9 20v-6h6v6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.6 12.6L12 4H4v8l8.6 8.6a2 2 0 0 0 2.8 0l5.2-5.2a2 2 0 0 0 0-2.8z"/><circle cx="8.5" cy="8.5" r="1.2"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="15" r="1.4"/></symbol>
+  <symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.2"/><circle cx="17" cy="17" r="2.2"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.9-5.3 5 1.4 7.1L12 18.2 5.7 21.6l1.4-7.1-5.3-5 7.2-.9z"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8h-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3h-.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.6 1z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
+</svg>
+
+<div class="mobile-topbar">
+  <a href="ez-market-home.html" class="logo" style="color:inherit;">EZ Market — الإدارة</a>
+  <svg class="icon"><use href="#i-grid"/></svg>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <a href="ez-market-home.html" class="sb-logo" style="color:inherit; text-decoration:none;">EZ Market <span>الإدارة</span></a>
+    <div class="sb-section">عام</div>
+    <a class="sb-link active"><span class="l"><svg class="icon"><use href="#i-grid"/></svg>لوحة التحكم</span></a>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-users"/></svg>المستخدمون</span></a>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-store"/></svg>البائعون</span><span class="sb-count">5</span></a>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-store"/></svg>المتاجر</span></a>
+    <div class="sb-section">الكتالوج</div>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-box"/></svg>المنتجات</span><span class="sb-count">12</span></a>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-tag"/></svg>التصنيفات</span></a>
+    <div class="sb-section">العمليات</div>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-receipt"/></svg>الطلبات</span></a>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-wallet"/></svg>المدفوعات</span></a>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-percent"/></svg>الكوبونات</span></a>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-star"/></svg>التقييمات</span></a>
+    <div class="sb-section">النظام</div>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-chart"/></svg>التقارير</span></a>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-bell"/></svg>الإشعارات</span></a>
+    <a class="sb-link"><span class="l"><svg class="icon"><use href="#i-settings"/></svg>الإعدادات</span></a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>نظرة عامة على المنصة</h1>
+        <p>أداء EZ Market خلال آخر 30 يومًا</p>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <select class="range-select">
+          <option>آخر 7 أيام</option>
+          <option selected>آخر 30 يومًا</option>
+          <option>آخر 3 أشهر</option>
+          <option>نطاق مخصص</option>
+        </select>
+        <a href="ez-market-home.html" style="font-size:.8rem; font-weight:700; color:var(--ink-soft); border:1px solid var(--border); border-radius:999px; padding:9px 16px; white-space:nowrap;">العودة للمتجر</a>
+        <button id="theme-toggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري" style="display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--ink);"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></button>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><span class="label">إجمالي المبيعات</span><div class="value">412,600 ر.س</div><div class="delta up">▲ 9.2%</div></div>
+      <div class="stat-card"><span class="label">إجمالي الطلبات</span><div class="value">3,180</div><div class="delta up">▲ 4.6%</div></div>
+      <div class="stat-card"><span class="label">العملاء</span><div class="value">9,842</div><div class="delta up">▲ 2.1%</div></div>
+      <div class="stat-card"><span class="label">البائعون النشطون</span><div class="value">126</div><div class="delta up">▲ 5 هذا الشهر</div></div>
+      <div class="stat-card"><span class="label">متوسط قيمة الطلب</span><div class="value">129 ر.س</div><div class="delta down">▼ 1.3%</div></div>
+    </div>
+
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-head"><h3>المبيعات اليومية</h3><a href="#">عرض التقرير الكامل</a></div>
+        <div class="chart-bars" id="chart"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>الأكثر مبيعًا حسب التصنيف</h3></div>
+        <div class="legend-list" id="cat-legend"></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:18px;">
+      <div class="panel-head"><h3>طلبات انضمام بائعين جدد</h3><a href="#">عرض الكل</a></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>اسم المتجر</th><th>صاحب المتجر</th><th>النشاط</th><th>تاريخ الطلب</th><th>الحالة</th><th></th></tr></thead>
+          <tbody id="seller-requests"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h3>أحدث الطلبات على المنصة</h3><a href="#">عرض كل الطلبات</a></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>رقم الطلب</th><th>العميل</th><th>المتجر</th><th>الإجمالي</th><th>الحالة</th></tr></thead>
+          <tbody id="platform-orders"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var chartData = [22,34,28,40,31,45,38,50,42,55,48,60,44,58];
+  var max = Math.max.apply(null, chartData);
+  document.getElementById('chart').innerHTML = chartData.map(function(v,i){
+    var h = Math.round((v/max)*100);
+    return '<div class="bar-col"><div class="bar '+(i===chartData.length-1?'top':'')+'" style="height:'+h+'%"></div>'+(i%2===0?'<span class="bar-label">'+(i+1)+'</span>':'<span class="bar-label"></span>')+'</div>';
+  }).join('');
+
+  var cats = [
+    {name:"الإلكترونيات", pct:34, color:"var(--primary)"},
+    {name:"الأزياء", pct:24, color:"var(--accent)"},
+    {name:"المنزل والمطبخ", pct:18, color:"#3A3A3A"},
+    {name:"الجمال والعناية", pct:14, color:"var(--sale)"},
+    {name:"أخرى", pct:10, color:"var(--ink-soft)"}
+  ];
+  document.getElementById('cat-legend').innerHTML = cats.map(function(c){
+    return '<div class="legend-row-wrap"><div class="legend-row"><span class="legend-dot" style="background:'+c.color+'"></span><span class="name">'+c.name+'</span><span class="val">'+c.pct+'%</span></div><div class="bar-track"><div class="fill" style="width:'+c.pct+'%; background:'+c.color+'"></div></div></div>';
+  }).join('');
+
+  var requests = [
+    {store:"متجر الأناقة", owner:"سلمى الحربي", type:"أزياء نسائية", date:"14 سبتمبر 2026", status:"pending", label:"قيد المراجعة"},
+    {store:"عالم الإلكترونيات", owner:"عبدالله الزهراني", type:"إلكترونيات", date:"12 سبتمبر 2026", status:"pending", label:"قيد المراجعة"},
+    {store:"بيت الديكور", owner:"منى القرني", type:"منزل وديكور", date:"9 سبتمبر 2026", status:"approved", label:"تم القبول"},
+    {store:"سبورت زون", owner:"تركي العنزي", type:"رياضة", date:"6 سبتمبر 2026", status:"rejected", label:"مرفوض"}
+  ];
+  document.getElementById('seller-requests').innerHTML = requests.map(function(r){
+    var actions = r.status === 'pending'
+      ? '<div class="row-actions"><button class="accept">قبول</button><button class="reject">رفض</button></div>'
+      : '';
+    return '<tr><td><div class="cell-flex"><div class="thumb">'+r.store.charAt(0)+'</div>'+r.store+'</div></td><td>'+r.owner+'</td><td>'+r.type+'</td><td>'+r.date+'</td><td><span class="status-pill '+r.status+'">'+r.label+'</span></td><td>'+actions+'</td></tr>';
+  }).join('');
+
+  var orders = [
+    {id:"EZ10248", customer:"أحمد سالم", store:"متجر الصوتيات", total:1186, status:"processing", label:"قيد التجهيز"},
+    {id:"EZ10247", customer:"نورة العتيبي", store:"متجر الأزياء", total:259, status:"delivered", label:"تم التسليم"},
+    {id:"EZ10246", customer:"خالد المطيري", store:"متجر التقنية", total:748, status:"delivered", label:"تم التسليم"},
+    {id:"EZ10245", customer:"ريم القحطاني", store:"متجر الجمال", total:129, status:"processing", label:"قيد التجهيز"},
+    {id:"EZ10244", customer:"فهد الدوسري", store:"متجر المنزل", total:2140, status:"delivered", label:"تم التسليم"}
+  ];
+  document.getElementById('platform-orders').innerHTML = orders.map(function(o){
+    return '<tr><td>#'+o.id+'</td><td>'+o.customer+'</td><td>'+o.store+'</td><td>'+o.total+' ر.س</td><td><span class="status-pill '+o.status+'">'+o.label+'</span></td></tr>';
+  }).join('');
+})();
+</script>
+<script>
+(function(){
+  function syncIcon(){
+    var theme = document.documentElement.getAttribute('data-theme') || 'light';
+    var use = document.querySelector('#theme-icon use');
+    if(use){ use.setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon'); }
+  }
+  window.toggleTheme = function(){
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('ez-theme', next); }catch(e){}
+    syncIcon();
+  };
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', syncIcon);
+  } else {
+    syncIcon();
+  }
+})();
+</script>
+<script id="rv-script">
+(function(){
+  var rvReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SCALE_SEL = '.product-card,.store-card,.order-card,.order-row-card,.promo-card';
+  var CANDIDATE_SEL = [
+    '.product-card','.cat-card','.store-card','.promo-card','.review-card',
+    '.order-card','.order-row-card','.summary-card','.stat-card','.panel',
+    '.section-head','.page-title','.empty-state','.table-wrap','.breadcrumb',
+    '.grid > *','.cats-grid > *','.promo-grid > *','.stat-grid > *',
+    '.trust-grid > *','.form-grid > *','.hero-inner > *'
+  ].join(',');
+  var HEADING_SEL = '.section-head,.page-title,h1,h2';
+  var rvIdx = 0;
+
+  var rvIo = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        rvIo.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'}) : null;
+
+  function rvObserve(el){
+    if(rvReduce || !rvIo){ el.classList.add('in-view'); return; }
+    rvIo.observe(el);
+  }
+
+  function rvWrapWords(el){
+    var text = el.textContent.trim();
+    if(!text) return;
+    var words = text.split(/\s+/);
+    el.innerHTML = words.map(function(w, i){
+      return '<span class="reveal-word" style="transition-delay:'+(i*0.045)+'s">'+w+'</span>';
+    }).join(' ');
+    el.classList.add('reveal-word-wrap');
+    rvObserve(el);
+  }
+
+  function rvTag(el){
+    if(!el || el.nodeType !== 1 || el.hasAttribute('data-rv')) return;
+    if(el.closest && el.closest('nav, header, footer, .theme-fab, script, style')) return;
+    el.setAttribute('data-rv','1');
+    var wordCount = (el.textContent || '').trim().split(/\s+/).length;
+    if(el.matches(SCALE_SEL)){
+      el.classList.add('reveal-scale');
+      el.style.transitionDelay = (0.04 * (rvIdx % 6)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    } else if(el.matches(HEADING_SEL) && wordCount > 0 && wordCount <= 10 && el.children.length === 0){
+      rvWrapWords(el);
+    } else {
+      el.classList.add(rvIdx % 2 === 0 ? 'reveal-up' : 'reveal-right');
+      el.style.transitionDelay = (0.05 * (rvIdx % 5)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    }
+  }
+
+  function rvScan(root){
+    if(!root || !root.querySelectorAll) return;
+    root.querySelectorAll(CANDIDATE_SEL).forEach(rvTag);
+  }
+
+  rvScan(document);
+
+  if('MutationObserver' in window){
+    var rvMo = new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes && m.addedNodes.forEach(function(n){
+          if(n.nodeType !== 1) return;
+          if(n.matches && n.matches(CANDIDATE_SEL)) rvTag(n);
+          rvScan(n);
+        });
+      });
+    });
+    rvMo.observe(document.body, {childList:true, subtree:true});
+  }
+})();
+</script>
+</body>
+</html>

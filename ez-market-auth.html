@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('ez-theme');
+    if(!t){ t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل الدخول — EZ Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A; --ink-soft:#6B6B6B; --surface:#FFFFFF; --surface-alt:#FAF5F5;
+    --border:#F1D9DB; --primary:#C8102E; --primary-dark:#8E0B21; --primary-tint:#FBE4E7;
+    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0;
+    --shadow-md:0 14px 34px rgba(20,40,34,.10);
+    --radius-card:20px; --radius-pill:999px; --radius-sm:12px;
+    --font:'Cairo','Tahoma',system-ui,sans-serif; color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+      --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+      --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+    --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+    --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:var(--font); background:var(--surface-alt); color:var(--ink); line-height:1.6;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  button, input{font-family:var(--font);}
+  button{cursor:pointer;}
+  .icon{width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; flex-shrink:0;}
+
+  .auth-shell{
+    width:100%; max-width:940px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card);
+    box-shadow:var(--shadow-md); display:grid; grid-template-columns:1fr 1fr; overflow:hidden; min-height:560px;
+  }
+  @media (max-width:800px){ .auth-shell{grid-template-columns:1fr;} }
+
+  .auth-visual{
+    background:linear-gradient(155deg, var(--primary-dark), var(--primary) 70%);
+    color:#fff; padding:40px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden;
+  }
+  @media (max-width:800px){ .auth-visual{display:none;} }
+  .auth-visual .logo{font-weight:800; font-size:1.3rem;}
+  .auth-visual .logo span{color:var(--accent);}
+  .auth-visual .blob{position:absolute; width:260px; height:260px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,.18), transparent 65%); bottom:-60px; left:-60px;}
+  .auth-visual h2{font-size:1.5rem; font-weight:800; line-height:1.5; max-width:16ch; position:relative;}
+  .auth-visual p{font-size:.86rem; color:rgba(255,255,255,.8); margin-top:10px; max-width:28ch; position:relative;}
+  .visual-cards{display:flex; gap:10px; position:relative; margin-top:20px;}
+  .vc{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); border-radius:12px; padding:10px 12px; font-size:.75rem; font-weight:700;}
+
+  .auth-form{padding:44px 40px; display:flex; flex-direction:column;}
+  .mode-tabs{display:flex; background:var(--surface-alt); border-radius:var(--radius-pill); padding:4px; margin-bottom:26px;}
+  .mode-tabs button{flex:1; padding:10px; border:none; background:none; border-radius:var(--radius-pill); font-weight:700; font-size:.85rem; color:var(--ink-soft);}
+  .mode-tabs button.active{background:var(--surface); color:var(--primary); box-shadow:0 2px 6px rgba(0,0,0,.06);}
+
+  .auth-form h1{font-size:1.3rem; font-weight:800;}
+  .auth-form .sub{font-size:.84rem; color:var(--ink-soft); margin-top:4px; margin-bottom:24px;}
+
+  .view{display:none; flex-direction:column; gap:14px;}
+  .view.active{display:flex;}
+
+  label{font-size:.78rem; font-weight:700; color:var(--ink-soft); display:block; margin-bottom:6px;}
+  .field input{width:100%; border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; font-size:.88rem; background:var(--surface); color:var(--ink); outline:none; transition:border-color .2s;}
+  .field input:focus{border-color:var(--primary);}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:420px){ .row2{grid-template-columns:1fr;} }
+
+  .forgot-row{display:flex; justify-content:space-between; align-items:center; font-size:.8rem;}
+  .forgot-row a{color:var(--primary); font-weight:700;}
+  .remember{display:flex; align-items:center; gap:6px; color:var(--ink-soft);}
+  .remember input{accent-color:var(--primary);}
+
+  .btn-primary{background:var(--primary); color:#fff; border:none; border-radius:var(--radius-pill); padding:13px; font-weight:700; font-size:.9rem; margin-top:6px;}
+  .btn-primary:hover{background:var(--primary-dark);}
+
+  .divider{display:flex; align-items:center; gap:10px; margin:20px 0; color:var(--ink-soft); font-size:.76rem;}
+  .divider::before, .divider::after{content:''; flex:1; height:1px; background:var(--border);}
+
+  .social-row{display:flex; gap:10px;}
+  .social-btn{flex:1; display:flex; align-items:center; justify-content:center; gap:8px; border:1px solid var(--border); border-radius:var(--radius-pill); padding:11px; font-size:.82rem; font-weight:700; background:var(--surface); color:var(--ink);}
+  .social-btn:hover{border-color:var(--primary); color:var(--primary);}
+
+  .switch-note{text-align:center; font-size:.82rem; color:var(--ink-soft); margin-top:22px;}
+  .switch-note a{color:var(--primary); font-weight:700;}
+
+  .terms-note{font-size:.75rem; color:var(--ink-soft); display:flex; align-items:flex-start; gap:6px;}
+  .terms-note input{margin-top:3px; accent-color:var(--primary);}
+  .terms-note a{color:var(--primary); font-weight:700;}
+
+  .theme-fab{
+    position:fixed; top:18px; left:18px; z-index:20; width:42px; height:42px; border-radius:50%;
+    background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+    color:var(--ink); box-shadow:var(--shadow-md);
+  }
+</style>
+<style id="rv-style">
+  .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-up.in-view{opacity:1; transform:translateY(0);}
+  .reveal-right{opacity:0; transform:translateX(56px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-right.in-view{opacity:1; transform:translateX(0);}
+  .reveal-scale{opacity:0; transform:scale(.8); transition:opacity .6s cubic-bezier(.16,.84,.44,1), transform .6s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-scale.in-view{opacity:1; transform:scale(1);}
+  .reveal-word-wrap .reveal-word{display:inline-block; opacity:0; transform:translateY(20px); transition:opacity .5s cubic-bezier(.16,.84,.44,1), transform .5s cubic-bezier(.16,.84,.44,1);}
+  .reveal-word-wrap.in-view .reveal-word{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal-up,.reveal-right,.reveal-scale,.reveal-word-wrap .reveal-word{opacity:1 !important; transform:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-google" viewBox="0 0 24 24"><path d="M21.6 12.2c0-.7-.06-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z" stroke="none" fill="currentColor"/><path d="M12 22c2.7 0 5-.9 6.6-2.5l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z" stroke="none" fill="currentColor"/></symbol>
+  <symbol id="i-apple" viewBox="0 0 24 24"><path d="M16.4 12.5c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.8-3.5.8-.7 0-1.9-.8-3.1-.8-1.6 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.2.9-1.3 1.3-2.5 1.3-2.6-.1 0-2.4-.9-2.4-3.8z" stroke="none" fill="currentColor"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
+</svg>
+
+<button class="theme-fab" id="theme-toggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري"><svg class="icon" id="theme-icon" style="width:19px;height:19px"><use href="#i-moon"/></svg></button>
+
+<div class="auth-shell">
+  <div class="auth-visual">
+    <div class="blob"></div>
+    <a href="ez-market-home.html" class="logo" style="color:#fff;">EZ Market <span>.</span></a>
+    <div style="position:relative;">
+      <h2>كل ما تريد، في مكان واحد</h2>
+      <p>انضم لآلاف العملاء الذين يتسوقون بثقة من EZ Market يوميًا.</p>
+      <div class="visual-cards">
+        <div class="vc">🚚 توصيل سريع</div>
+        <div class="vc">🔒 دفع آمن</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-form">
+    <div class="mode-tabs">
+      <button class="active" onclick="setMode('login', this)">تسجيل الدخول</button>
+      <button onclick="setMode('register', this)">إنشاء حساب</button>
+    </div>
+
+    <!-- Login -->
+    <div class="view active" id="view-login">
+      <h1>مرحبًا بك في EZ Market</h1>
+      <p class="sub">سجّل الدخول لمتابعة التسوق وإدارة طلباتك</p>
+
+      <div class="field"><label>البريد الإلكتروني أو رقم الهاتف</label><input type="text" placeholder="example@email.com"></div>
+      <div class="field"><label>كلمة المرور</label><input type="password" placeholder="••••••••"></div>
+
+      <div class="forgot-row">
+        <label class="remember"><input type="checkbox"> تذكرني</label>
+        <a href="#" onclick="setMode('forgot', event)">نسيت كلمة المرور؟</a>
+      </div>
+
+      <button class="btn-primary" onclick="alert('تم تسجيل الدخول (تجريبي)'); window.location.href='ez-market-account.html';">تسجيل الدخول</button>
+
+      <div class="divider">أو تابع باستخدام</div>
+      <div class="social-row">
+        <button class="social-btn"><svg class="icon" style="width:16px;height:16px"><use href="#i-google"/></svg>Google</button>
+        <button class="social-btn"><svg class="icon" style="width:16px;height:16px"><use href="#i-apple"/></svg>Apple</button>
+      </div>
+
+      <p class="switch-note">ليس لديك حساب؟ <a href="#" onclick="setMode('register', event)">أنشئ حسابًا جديدًا</a></p>
+    </div>
+
+    <!-- Register -->
+    <div class="view" id="view-register">
+      <h1>أنشئ حسابك في EZ Market</h1>
+      <p class="sub">خطوة واحدة تفصلك عن آلاف المنتجات</p>
+
+      <div class="row2">
+        <div class="field"><label>الاسم الأول</label><input type="text" placeholder="أحمد"></div>
+        <div class="field"><label>اسم العائلة</label><input type="text" placeholder="سالم"></div>
+      </div>
+      <div class="field"><label>البريد الإلكتروني</label><input type="email" placeholder="example@email.com"></div>
+      <div class="field"><label>رقم الهاتف</label><input type="tel" placeholder="05XXXXXXXX"></div>
+      <div class="field"><label>كلمة المرور</label><input type="password" placeholder="••••••••"></div>
+
+      <label class="terms-note"><input type="checkbox"> أوافق على <a href="#">الشروط والأحكام</a> و<a href="#">سياسة الخصوصية</a></label>
+
+      <button class="btn-primary" onclick="alert('تم إنشاء الحساب (تجريبي)'); window.location.href='ez-market-account.html';">إنشاء الحساب</button>
+
+      <p class="switch-note">لديك حساب بالفعل؟ <a href="#" onclick="setMode('login', event)">تسجيل الدخول</a></p>
+    </div>
+
+    <!-- Forgot password -->
+    <div class="view" id="view-forgot">
+      <h1>إعادة تعيين كلمة المرور</h1>
+      <p class="sub">أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين</p>
+      <div class="field"><label>البريد الإلكتروني</label><input type="email" placeholder="example@email.com"></div>
+      <button class="btn-primary" onclick="alert('تم إرسال رابط إعادة التعيين (تجريبي)')">إرسال الرابط</button>
+      <p class="switch-note"><a href="#" onclick="setMode('login', event)">العودة لتسجيل الدخول</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setMode(name, evtOrBtn){
+    if(evtOrBtn && evtOrBtn.preventDefault) evtOrBtn.preventDefault();
+    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+    document.getElementById('view-'+name).classList.add('active');
+    document.querySelectorAll('.mode-tabs button').forEach(function(b){ b.classList.remove('active'); });
+    if(evtOrBtn && evtOrBtn.tagName === 'BUTTON'){ evtOrBtn.classList.add('active'); }
+    else if(name === 'login'){ document.querySelectorAll('.mode-tabs button')[0].classList.add('active'); }
+    else if(name === 'register'){ document.querySelectorAll('.mode-tabs button')[1].classList.add('active'); }
+  }
+
+  function syncThemeIcon(){
+    var theme = document.documentElement.getAttribute('data-theme') || 'light';
+    var use = document.querySelector('#theme-icon use');
+    if(use){ use.setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon'); }
+  }
+  window.toggleTheme = function(){
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('ez-theme', next); }catch(e){}
+    syncThemeIcon();
+  };
+  syncThemeIcon();
+</script>
+<script id="rv-script">
+(function(){
+  var rvReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SCALE_SEL = '.product-card,.store-card,.order-card,.order-row-card,.promo-card';
+  var CANDIDATE_SEL = [
+    '.product-card','.cat-card','.store-card','.promo-card','.review-card',
+    '.order-card','.order-row-card','.summary-card','.stat-card','.panel',
+    '.section-head','.page-title','.empty-state','.table-wrap','.breadcrumb',
+    '.grid > *','.cats-grid > *','.promo-grid > *','.stat-grid > *',
+    '.trust-grid > *','.form-grid > *','.hero-inner > *'
+  ].join(',');
+  var HEADING_SEL = '.section-head,.page-title,h1,h2';
+  var rvIdx = 0;
+
+  var rvIo = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        rvIo.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'}) : null;
+
+  function rvObserve(el){
+    if(rvReduce || !rvIo){ el.classList.add('in-view'); return; }
+    rvIo.observe(el);
+  }
+
+  function rvWrapWords(el){
+    var text = el.textContent.trim();
+    if(!text) return;
+    var words = text.split(/\s+/);
+    el.innerHTML = words.map(function(w, i){
+      return '<span class="reveal-word" style="transition-delay:'+(i*0.045)+'s">'+w+'</span>';
+    }).join(' ');
+    el.classList.add('reveal-word-wrap');
+    rvObserve(el);
+  }
+
+  function rvTag(el){
+    if(!el || el.nodeType !== 1 || el.hasAttribute('data-rv')) return;
+    if(el.closest && el.closest('nav, header, footer, .theme-fab, script, style')) return;
+    el.setAttribute('data-rv','1');
+    var wordCount = (el.textContent || '').trim().split(/\s+/).length;
+    if(el.matches(SCALE_SEL)){
+      el.classList.add('reveal-scale');
+      el.style.transitionDelay = (0.04 * (rvIdx % 6)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    } else if(el.matches(HEADING_SEL) && wordCount > 0 && wordCount <= 10 && el.children.length === 0){
+      rvWrapWords(el);
+    } else {
+      el.classList.add(rvIdx % 2 === 0 ? 'reveal-up' : 'reveal-right');
+      el.style.transitionDelay = (0.05 * (rvIdx % 5)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    }
+  }
+
+  function rvScan(root){
+    if(!root || !root.querySelectorAll) return;
+    root.querySelectorAll(CANDIDATE_SEL).forEach(rvTag);
+  }
+
+  rvScan(document);
+
+  if('MutationObserver' in window){
+    var rvMo = new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes && m.addedNodes.forEach(function(n){
+          if(n.nodeType !== 1) return;
+          if(n.matches && n.matches(CANDIDATE_SEL)) rvTag(n);
+          rvScan(n);
+        });
+      });
+    });
+    rvMo.observe(document.body, {childList:true, subtree:true});
+  }
+})();
+</script>
+</body>
+</html>

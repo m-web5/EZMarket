@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('ez-theme');
+    if(!t){ t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سماعة بلوتوث إلغاء ضوضاء — EZ Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A; --ink-soft:#6B6B6B; --surface:#FFFFFF; --surface-alt:#FAF5F5; --surface-raise:#FFFFFF;
+    --border:#F1D9DB; --primary:#C8102E; --primary-dark:#8E0B21; --primary-tint:#FBE4E7;
+    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0; --star:#E63946;
+    --shadow-sm:0 4px 14px rgba(20,40,34,.06); --shadow-md:0 14px 34px rgba(20,40,34,.10);
+    --radius-card:18px; --radius-pill:999px; --radius-sm:12px;
+    --font:'Cairo','Tahoma',system-ui,sans-serif; color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316; --surface-raise:#2A171A;
+      --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418; --star:#FF6B76;
+      --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316; --surface-raise:#2A171A;
+    --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418; --star:#FF6B76;
+    --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--font); background:var(--surface-alt); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; padding-bottom:64px;}
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  button{font-family:var(--font); cursor:pointer;}
+  .wrap{max-width:1160px; margin:0 auto; padding:0 20px;}
+  .icon{width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; flex-shrink:0;}
+
+  header{position:sticky; top:0; z-index:50; background:var(--surface); border-bottom:1px solid var(--border);}
+  .header-top{display:flex; align-items:center; gap:18px; padding:14px 20px; max-width:1160px; margin:0 auto;}
+  .logo{display:flex; align-items:center; gap:8px; font-weight:800; font-size:1.35rem; color:var(--primary); white-space:nowrap;}
+  .logo span.dot{color:var(--accent);}
+  .search-bar{flex:1; display:flex; align-items:center; gap:10px; background:var(--surface-alt); border:1px solid var(--border); border-radius:var(--radius-pill); padding:9px 16px; max-width:520px;}
+  .search-bar input{border:none; background:none; outline:none; width:100%; color:var(--ink); font-family:var(--font); font-size:.92rem;}
+  .search-bar .icon{color:var(--ink-soft);}
+  .header-actions{display:flex; align-items:center; gap:6px; margin-inline-start:auto;}
+  .icon-btn{position:relative; display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--ink);}
+  .icon-btn .badge{position:absolute; top:-4px; left:-4px; background:var(--sale); color:#fff; font-size:.65rem; font-weight:700; min-width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
+  .breadcrumb{display:flex; align-items:center; gap:6px; padding:12px 20px; max-width:1160px; margin:0 auto; font-size:.82rem; color:var(--ink-soft);}
+  .breadcrumb a:hover{color:var(--primary);}
+  .breadcrumb .sep{opacity:.5;}
+  .breadcrumb .current{color:var(--ink); font-weight:700;}
+  @media (max-width:860px){ .search-bar{display:none;} }
+
+  .pdp{display:grid; grid-template-columns:1fr 1fr; gap:44px; padding:20px 0 50px;}
+  @media (max-width:900px){ .pdp{grid-template-columns:1fr; gap:24px;} }
+
+  /* Gallery */
+  .gallery-main{position:relative; aspect-ratio:1/1; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); display:flex; align-items:center; justify-content:center; font-size:7rem; overflow:hidden;}
+  .gallery-main .badge{position:absolute; top:14px; right:14px; background:var(--sale-tint); color:var(--sale); font-size:.75rem; font-weight:800; padding:5px 12px; border-radius:var(--radius-pill);}
+  .gallery-thumbs{display:flex; gap:10px; margin-top:12px;}
+  .gallery-thumbs button{width:70px; height:70px; border-radius:var(--radius-sm); border:2px solid var(--border); background:var(--surface-alt); font-size:1.7rem; display:flex; align-items:center; justify-content:center; transition:border-color .2s;}
+  .gallery-thumbs button.active{border-color:var(--primary);}
+
+  /* Info */
+  .cat-pill{display:inline-block; background:var(--primary-tint); color:var(--primary); font-size:.78rem; font-weight:700; padding:6px 14px; border-radius:var(--radius-pill); width:fit-content;}
+  .pdp-title{font-size:1.5rem; font-weight:800; margin-top:14px; line-height:1.4;}
+  .pdp-rating{display:flex; align-items:center; gap:8px; margin-top:8px; font-size:.85rem; color:var(--ink-soft);}
+  .pdp-rating .stars{color:var(--star); display:flex; gap:1px;}
+  .pdp-rating a{color:var(--primary); font-weight:700;}
+  .pdp-price{display:flex; align-items:baseline; gap:12px; margin-top:16px;}
+  .pdp-price .now{font-size:1.9rem; font-weight:800; color:var(--primary);}
+  .pdp-price .old{font-size:1.1rem; color:var(--ink-soft); text-decoration:line-through;}
+  .pdp-price .disc{font-size:.85rem; font-weight:800; color:var(--sale); background:var(--sale-tint); padding:4px 10px; border-radius:var(--radius-pill);}
+
+  .countdown-bar{display:flex; align-items:center; gap:10px; background:var(--accent-tint); color:#8E0B21; border-radius:var(--radius-pill); padding:10px 16px; font-size:.86rem; font-weight:700; margin-top:18px; width:fit-content;}
+  .countdown-bar b{font-variant-numeric:tabular-nums;}
+
+  .option-block{margin-top:22px;}
+  .option-block h4{font-size:.86rem; font-weight:700; margin-bottom:10px;}
+  .swatches{display:flex; gap:10px; flex-wrap:wrap;}
+  .swatch-color{width:34px; height:34px; border-radius:50%; border:2px solid var(--border); cursor:pointer; position:relative;}
+  .swatch-color.active{outline:2px solid var(--primary); outline-offset:2px;}
+  .swatch-size{min-width:46px; height:42px; padding:0 10px; border-radius:var(--radius-sm); border:1.5px solid var(--border); background:var(--surface); font-weight:700; font-size:.85rem; color:var(--ink); transition:all .2s;}
+  .swatch-size.active{background:var(--ink); color:var(--surface); border-color:var(--ink);}
+  .swatch-size:disabled{opacity:.35; cursor:not-allowed; text-decoration:line-through;}
+
+  .qty-row{display:flex; align-items:center; gap:16px; margin-top:22px;}
+  .qty-control{display:flex; align-items:center; border:1.5px solid var(--border); border-radius:var(--radius-pill); overflow:hidden;}
+  .qty-control button{width:38px; height:40px; background:var(--surface); border:none; font-size:1.1rem; color:var(--ink);}
+  .qty-control span{width:36px; text-align:center; font-weight:700;}
+  .stock-note{font-size:.8rem; color:var(--primary); font-weight:700;}
+
+  .pdp-ctas{display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:14px 22px; border-radius:var(--radius-pill); font-weight:700; font-size:.92rem; border:1.5px solid transparent; transition:transform .2s, background .2s;}
+  .btn-dark{background:var(--ink); color:var(--surface); flex:1;}
+  .btn-dark:hover{transform:translateY(-1px);}
+  .btn-outline{background:transparent; border-color:var(--primary); color:var(--primary); flex:1;}
+  .fav-toggle{width:52px; height:52px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--ink-soft); background:var(--surface); flex-shrink:0;}
+  .fav-toggle.active{color:var(--sale); border-color:var(--sale-tint); background:var(--sale-tint);}
+  .fav-toggle.active .icon{fill:var(--sale); stroke:var(--sale);}
+
+  .trust-mini{display:flex; gap:18px; margin-top:26px; flex-wrap:wrap;}
+  .trust-mini div{display:flex; align-items:center; gap:8px; font-size:.78rem; color:var(--ink-soft); font-weight:600;}
+  .trust-mini .icon{color:var(--primary); width:18px; height:18px;}
+
+  /* Accordion */
+  .accordion{margin-top:30px; border-top:1px solid var(--border);}
+  .acc-item{border-bottom:1px solid var(--border);}
+  .acc-head{display:flex; align-items:center; justify-content:space-between; padding:16px 2px; font-weight:700; font-size:.94rem;}
+  .acc-head .icon{transition:transform .25s;}
+  .acc-item.open .acc-head .icon{transform:rotate(180deg);}
+  .acc-body{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .acc-body-inner{padding:0 2px 16px; font-size:.86rem; color:var(--ink-soft); line-height:1.8;}
+  .acc-body-inner ul{padding-inline-start:18px;}
+
+  /* Related */
+  section.related{padding:10px 0 50px;}
+  .section-head{display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:22px;}
+  .section-head h2{font-size:1.3rem; font-weight:800;}
+  .grid{display:grid; gap:18px; grid-template-columns:repeat(4,1fr);}
+  @media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  .product-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); overflow:hidden; transition:box-shadow .3s, transform .3s;}
+  .product-card:hover{box-shadow:var(--shadow-md); transform:translateY(-3px);}
+  .product-media{aspect-ratio:1/1; background:var(--surface-alt); display:flex; align-items:center; justify-content:center; font-size:2.6rem;}
+  .product-info{padding:12px 14px 14px;}
+  .product-name{font-size:.86rem; font-weight:700;}
+  .price-now{font-weight:800; color:var(--primary); font-size:.94rem; margin-top:4px; display:block;}
+
+  /* Reviews */
+  .reviews{margin-top:6px;}
+  .review-summary{display:flex; align-items:center; gap:24px; flex-wrap:wrap; padding:20px 0;}
+  .rs-score{font-size:2.4rem; font-weight:800;}
+  .review-card{border-top:1px solid var(--border); padding:16px 0;}
+  .review-card .who{font-weight:700; font-size:.86rem;}
+  .review-card .stars{color:var(--star); display:flex; gap:1px; margin:4px 0;}
+  .review-card p{font-size:.85rem; color:var(--ink-soft);}
+
+  footer{background:var(--ink); color:var(--surface-alt); padding:36px 0 20px; margin-top:20px; text-align:center; font-size:.8rem;}
+  .bottom-nav{display:none; position:fixed; bottom:0; inset-inline:0; z-index:60; background:var(--surface); border-top:1px solid var(--border); padding:8px 6px calc(8px + env(safe-area-inset-bottom)); justify-content:space-around; box-shadow:0 -6px 18px rgba(0,0,0,.06);}
+  .bottom-nav a{display:flex; flex-direction:column; align-items:center; gap:3px; font-size:.65rem; color:var(--ink-soft); font-weight:600; flex:1;}
+  @media (max-width:760px){ .bottom-nav{display:flex;} body{padding-bottom:76px;} }
+
+  .toast{position:fixed; bottom:90px; right:20px; left:20px; margin:0 auto; max-width:320px; z-index:100; background:var(--ink); color:var(--surface); padding:13px 18px; border-radius:var(--radius-pill); display:flex; align-items:center; gap:8px; font-size:.85rem; font-weight:700; box-shadow:0 14px 30px rgba(0,0,0,.25); transform:translateY(20px); opacity:0; pointer-events:none; transition:transform .35s ease, opacity .35s ease;}
+  .toast.show{transform:translateY(0); opacity:1;}
+  @media (min-width:761px){ .toast{bottom:24px;} }
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  /* ===== هوية الهيدر: خلفية حمراء كاملة + شعار مميز ===== */
+  header, header.scrolled{
+    background:linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 65%, #E63946 100%) !important;
+    border-bottom:1px solid rgba(255,255,255,.18) !important;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; }
+  .site-logo-img{ height:38px; width:auto; max-width:160px; object-fit:contain; }
+  .logo, header .logo{
+    font-family:'Poppins','Cairo','Tahoma',sans-serif !important;
+    font-weight:800 !important; font-style:italic;
+    font-size:1.9rem !important; letter-spacing:-.5px !important;
+    color:#FFFFFF !important; text-shadow:0 2px 10px rgba(0,0,0,.18);
+  }
+  .logo span.dot, header .logo span.dot{ color:#FFE3E6 !important; font-style:normal; }
+  header .search-bar{
+    background:#FFFFFF !important; border:1px solid rgba(255,255,255,.6) !important;
+  }
+  header .search-bar input{ color:var(--ink) !important; }
+  header .search-bar input::placeholder{ color:var(--ink-soft) !important; opacity:1; }
+  header .search-bar .icon{ color:var(--primary) !important; }
+  header .icon-btn, .header-actions .icon-btn{
+    background:rgba(255,255,255,.16) !important; border:1px solid rgba(255,255,255,.4) !important;
+    color:#FFFFFF !important;
+  }
+  header .icon-btn:hover{ background:rgba(255,255,255,.3) !important; }
+  header .icon-btn .badge{ background:#FFFFFF !important; color:var(--sale) !important; }
+  .cats-nav{ border-top:1px solid rgba(255,255,255,.22) !important; background:transparent !important; }
+  .cats-nav a{ color:rgba(255,255,255,.92) !important; font-weight:700 !important; }
+  .cats-nav a:hover{ color:#FFFFFF !important; text-decoration:underline; }
+  .mobile-search .search-bar{ background:#FFFFFF !important; }
+  @media (max-width:760px){ .logo{ font-size:1.5rem !important; } }
+</style>
+<style id="rv-style">
+  .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-up.in-view{opacity:1; transform:translateY(0);}
+  .reveal-right{opacity:0; transform:translateX(56px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-right.in-view{opacity:1; transform:translateX(0);}
+  .reveal-scale{opacity:0; transform:scale(.8); transition:opacity .6s cubic-bezier(.16,.84,.44,1), transform .6s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-scale.in-view{opacity:1; transform:scale(1);}
+  .reveal-word-wrap .reveal-word{display:inline-block; opacity:0; transform:translateY(20px); transition:opacity .5s cubic-bezier(.16,.84,.44,1), transform .5s cubic-bezier(.16,.84,.44,1);}
+  .reveal-word-wrap.in-view .reveal-word{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal-up,.reveal-right,.reveal-scale,.reveal-word-wrap .reveal-word{opacity:1 !important; transform:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.4 8 2 4 6 4c2.2 0 3.8 1.2 6 3.6C14.2 5.2 15.8 4 18 4c4 0 5.6 4 4 7.8-2.5 4.6-10 9.2-10 9.2z"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.9-5.3 5 1.4 7.1L12 18.2 5.7 21.6l1.4-7.1-5.3-5 7.2-.9z"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><rect x="1" y="6" width="14" height="11" rx="1.5"/><path d="M15 10h4l3 3.5V17h-7z"/><circle cx="6" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11A8 8 0 1 0 18.6 16"/><path d="M20 5v6h-6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2l8 3.5V11c0 5.4-3.5 8.7-8 10-4.5-1.3-8-4.6-8-10V5.5z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h5v-6h2v6h5V10"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
+</svg>
+
+<header>
+  <div class="header-top">
+    <a href="ez-market-home.html" class="logo" id="site-logo">
+      <img src="ez12.jpg" alt="شعار EZ Market" class="site-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+      <span id="site-logo-text">EZ Market<span class="dot">.</span></span>
+    </a>
+    <div class="search-bar"><svg class="icon"><use href="#i-search"/></svg><input type="text" placeholder="ابحث عن منتج، تصنيف، أو متجر..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}"></div>
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></button>
+      <a class="icon-btn" href="ez-market-account.html?tab=favorites"><svg class="icon"><use href="#i-heart"/></svg></a>
+      <a class="icon-btn" href="ez-market-cart.html"><svg class="icon"><use href="#i-cart"/></svg><span class="badge" id="cart-count">0</span></a>
+      <a class="icon-btn" href="ez-market-account.html"><svg class="icon"><use href="#i-user"/></svg></a>
+    </div>
+  </div>
+  <div class="breadcrumb">
+    <a href="ez-market-home.html">الرئيسية</a><span class="sep">/</span>
+    <a href="ez-market-products.html?cat=electronics">الإلكترونيات</a><span class="sep">/</span>
+    <span class="current">سماعة بلوتوث إلغاء ضوضاء</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="pdp">
+    <div>
+      <div class="gallery-main" id="gallery-main">
+        <span class="badge">خصم 20%</span>
+        <span id="gallery-emoji">🎧</span>
+      </div>
+      <div class="gallery-thumbs">
+        <button class="active" onclick="setImg(this,'🎧')">🎧</button>
+        <button onclick="setImg(this,'📦')">📦</button>
+        <button onclick="setImg(this,'🔌')">🔌</button>
+        <button onclick="setImg(this,'🎵')">🎵</button>
+      </div>
+    </div>
+
+    <div>
+      <span class="cat-pill">صوتيات</span>
+      <h1 class="pdp-title">سماعة بلوتوث لاسلكية بخاصية إلغاء الضوضاء</h1>
+      <div class="pdp-rating">
+        <span class="stars" id="rating-stars"></span>
+        <span>4.6</span>
+        <a href="#reviews">(860 تقييم)</a>
+      </div>
+      <div class="pdp-price">
+        <span class="now">399 ر.س</span>
+        <span class="old">499 ر.س</span>
+        <span class="disc">وفّر 20%</span>
+      </div>
+
+      <div class="countdown-bar">⏳ ينتهي العرض خلال <b id="countdown">06:24:10</b></div>
+
+      <div class="option-block">
+        <h4>اللون</h4>
+        <div class="swatches">
+          <button class="swatch-color active" style="background:#1B1F1E" aria-label="أسود"></button>
+          <button class="swatch-color" style="background:#EDEAE2" aria-label="فضي"></button>
+          <button class="swatch-color" style="background:#C8102E" aria-label="أخضر"></button>
+        </div>
+      </div>
+
+      <div class="option-block">
+        <h4>هل يحتاج المنتج مقاسًا؟ (مثال Variant)</h4>
+        <div class="swatches">
+          <button class="swatch-size active">قياسي</button>
+          <button class="swatch-size">إصدار Pro</button>
+          <button class="swatch-size" disabled>إصدار Max</button>
+        </div>
+      </div>
+
+      <div class="qty-row">
+        <div class="qty-control">
+          <button onclick="changeQty(-1)">−</button>
+          <span id="qty">1</span>
+          <button onclick="changeQty(1)">+</button>
+        </div>
+        <span class="stock-note">متوفر — 24 قطعة متبقية</span>
+      </div>
+
+      <div class="pdp-ctas">
+        <button class="btn btn-outline" onclick="addToCart()"><svg class="icon" style="width:17px;height:17px"><use href="#i-cart"/></svg>أضف للسلة</button>
+        <button class="btn btn-dark" onclick="buyNow()">اشترِ الآن</button>
+        <button class="fav-toggle" onclick="this.classList.toggle('active')" aria-label="أضف للمفضلة"><svg class="icon"><use href="#i-heart"/></svg></button>
+      </div>
+
+      <div class="trust-mini">
+        <div><svg class="icon"><use href="#i-truck"/></svg>توصيل 2-4 أيام</div>
+        <div><svg class="icon"><use href="#i-refresh"/></svg>إرجاع خلال 14 يومًا</div>
+        <div><svg class="icon"><use href="#i-shield"/></svg>ضمان سنة كاملة</div>
+      </div>
+
+      <div class="accordion">
+        <div class="acc-item open">
+          <div class="acc-head" onclick="toggleAcc(this)">الوصف والمواصفات <svg class="icon"><use href="#i-chevron-down"/></svg></div>
+          <div class="acc-body"><div class="acc-body-inner">
+            سماعة لاسلكية مريحة بتقنية إلغاء الضوضاء النشط، بطارية تدوم حتى 30 ساعة، ووسائد أذن ناعمة مناسبة للاستخدام الطويل. تتصل عبر بلوتوث 5.3 مع دعم شحن سريع.
+            <ul><li>عمر بطارية: حتى 30 ساعة</li><li>بلوتوث 5.3</li><li>مقاومة للماء IPX4</li><li>ميكروفون مزدوج لمكالمات واضحة</li></ul>
+          </div></div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="toggleAcc(this)">الشحن والتوصيل <svg class="icon"><use href="#i-chevron-down"/></svg></div>
+          <div class="acc-body"><div class="acc-body-inner">التوصيل خلال 2-4 أيام عمل داخل المدن الرئيسية، وحتى 6 أيام للمناطق الأخرى. شحن مجاني للطلبات فوق 200 ر.س.</div></div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="toggleAcc(this)">سياسة الإرجاع <svg class="icon"><use href="#i-chevron-down"/></svg></div>
+          <div class="acc-body"><div class="acc-body-inner">يمكنك إرجاع أو استبدال المنتج خلال 14 يومًا من الاستلام، بشرط أن يكون بحالته الأصلية وبتغليفه الكامل.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="reviews" id="reviews">
+    <div class="section-head"><h2>تقييمات العملاء</h2></div>
+    <div class="review-summary">
+      <div class="rs-score">4.6</div>
+      <div>
+        <div class="stars" id="rs-stars" style="color:var(--star)"></div>
+        <p style="color:var(--ink-soft); font-size:.82rem; margin-top:4px;">بناءً على 860 تقييمًا</p>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="who">سارة أ.</div>
+      <div class="stars">★★★★★</div>
+      <p>جودة صوت ممتازة وإلغاء الضوضاء فعّال جدًا، البطارية تدوم طويلًا.</p>
+    </div>
+    <div class="review-card">
+      <div class="who">محمد ك.</div>
+      <div class="stars">★★★★☆</div>
+      <p>مريحة للاستخدام الطويل، التوصيل وصل في الموعد المحدد تمامًا.</p>
+    </div>
+  </section>
+
+  <section class="related">
+    <div class="section-head"><h2>منتجات مشابهة</h2></div>
+    <div class="grid" id="related-grid"></div>
+  </section>
+</main>
+
+<footer><div class="wrap">© 2026 EZ Market. جميع الحقوق محفوظة.</div></footer>
+
+<nav class="bottom-nav">
+  <a href="ez-market-home.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-home"/></svg>الرئيسية</a>
+  <a href="ez-market-products.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-grid"/></svg>التصنيفات</a>
+  <a href="ez-market-search.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-search"/></svg>البحث</a>
+  <a href="ez-market-cart.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-cart"/></svg>السلة</a>
+  <a href="ez-market-account.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg>حسابي</a>
+</nav>
+
+<div class="toast" id="toast">تمت الإضافة إلى السلة</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function starsHtml(rating, size){
+    size = size || 14;
+    var full = Math.round(rating);
+    var html = '';
+    for(var i=0;i<5;i++){
+      html += '<svg class="icon" style="width:'+size+'px;height:'+size+'px;'+(i<full?'fill:var(--star);stroke:var(--star)':'fill:none;stroke:var(--border)')+'"><use href="#i-star"/></svg>';
+    }
+    return html;
+  }
+  document.getElementById('rating-stars').innerHTML = starsHtml(4.6,15);
+  document.getElementById('rs-stars').innerHTML = starsHtml(4.6,18);
+
+  window.setImg = function(btn, emoji){
+    document.querySelectorAll('.gallery-thumbs button').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('gallery-emoji').textContent = emoji;
+  };
+
+  document.querySelectorAll('.swatch-color').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.swatch-color').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.swatch-size:not(:disabled)').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.swatch-size').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+    });
+  });
+
+  var qty = 1;
+  window.changeQty = function(delta){
+    qty = Math.max(1, Math.min(24, qty + delta));
+    document.getElementById('qty').textContent = qty;
+  };
+
+  var cartCount = 0;
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._tt);
+    window._tt = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+  window.addToCart = function(){
+    cartCount += qty;
+    document.getElementById('cart-count').textContent = cartCount;
+    showToast('تمت إضافة '+qty+' إلى السلة');
+  };
+  window.buyNow = function(){
+    showToast('جاري تحويلك لإتمام الطلب...');
+    setTimeout(function(){ window.location.href = 'ez-market-checkout.html'; }, 700);
+  };
+
+  window.toggleAcc = function(head){
+    var item = head.parentElement;
+    var body = item.querySelector('.acc-body');
+    var wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.acc-item').forEach(function(i){
+      i.classList.remove('open');
+      i.querySelector('.acc-body').style.maxHeight = null;
+    });
+    if(!wasOpen){
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  };
+  // init open state height
+  document.querySelectorAll('.acc-item.open .acc-body').forEach(function(b){
+    b.style.maxHeight = b.scrollHeight + 'px';
+  });
+
+  var related = [
+    {name:"مكبر صوت لاسلكي محمول", price:219, emoji:"🔊", tint:"--sale-tint"},
+    {name:"سماعة رأس للألعاب", price:349, emoji:"🎮", tint:"--accent-tint"},
+    {name:"شاحن سريع 65 واط", price:79, emoji:"🔌", tint:"--primary-tint"},
+    {name:"ساعة ذكية جيل 5", price:349, emoji:"⌚", tint:"--sale-tint"}
+  ];
+  document.getElementById('related-grid').innerHTML = related.map(function(p){
+    return '<a href="ez-market-product.html" class="product-card"><div class="product-media" style="background:var('+p.tint+')">'+p.emoji+'</div><div class="product-info"><span class="product-name">'+p.name+'</span><span class="price-now">'+p.price+' ر.س</span></div></a>';
+  }).join('');
+
+  var target = Date.now() + (6*3600 + 24*60 + 10) * 1000;
+  var el = document.getElementById('countdown');
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    var diff = Math.max(0, target - Date.now());
+    var h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+    el.textContent = pad(h)+':'+pad(m)+':'+pad(s);
+    if(diff<=0) clearInterval(timer);
+  }
+  tick();
+  var timer = setInterval(tick, 1000);
+})();
+</script>
+<script>
+(function(){
+  function syncIcon(){
+    var theme = document.documentElement.getAttribute('data-theme') || 'light';
+    var use = document.querySelector('#theme-icon use');
+    if(use){ use.setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon'); }
+  }
+  window.toggleTheme = function(){
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('ez-theme', next); }catch(e){}
+    syncIcon();
+  };
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', syncIcon);
+  } else {
+    syncIcon();
+  }
+})();
+</script>
+<script id="rv-script">
+(function(){
+  var rvReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SCALE_SEL = '.product-card,.store-card,.order-card,.order-row-card,.promo-card';
+  var CANDIDATE_SEL = [
+    '.product-card','.cat-card','.store-card','.promo-card','.review-card',
+    '.order-card','.order-row-card','.summary-card','.stat-card','.panel',
+    '.section-head','.page-title','.empty-state','.table-wrap','.breadcrumb',
+    '.grid > *','.cats-grid > *','.promo-grid > *','.stat-grid > *',
+    '.trust-grid > *','.form-grid > *','.hero-inner > *'
+  ].join(',');
+  var HEADING_SEL = '.section-head,.page-title,h1,h2';
+  var rvIdx = 0;
+
+  var rvIo = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        rvIo.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'}) : null;
+
+  function rvObserve(el){
+    if(rvReduce || !rvIo){ el.classList.add('in-view'); return; }
+    rvIo.observe(el);
+  }
+
+  function rvWrapWords(el){
+    var text = el.textContent.trim();
+    if(!text) return;
+    var words = text.split(/\s+/);
+    el.innerHTML = words.map(function(w, i){
+      return '<span class="reveal-word" style="transition-delay:'+(i*0.045)+'s">'+w+'</span>';
+    }).join(' ');
+    el.classList.add('reveal-word-wrap');
+    rvObserve(el);
+  }
+
+  function rvTag(el){
+    if(!el || el.nodeType !== 1 || el.hasAttribute('data-rv')) return;
+    if(el.closest && el.closest('nav, header, footer, .theme-fab, script, style')) return;
+    el.setAttribute('data-rv','1');
+    var wordCount = (el.textContent || '').trim().split(/\s+/).length;
+    if(el.matches(SCALE_SEL)){
+      el.classList.add('reveal-scale');
+      el.style.transitionDelay = (0.04 * (rvIdx % 6)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    } else if(el.matches(HEADING_SEL) && wordCount > 0 && wordCount <= 10 && el.children.length === 0){
+      rvWrapWords(el);
+    } else {
+      el.classList.add(rvIdx % 2 === 0 ? 'reveal-up' : 'reveal-right');
+      el.style.transitionDelay = (0.05 * (rvIdx % 5)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    }
+  }
+
+  function rvScan(root){
+    if(!root || !root.querySelectorAll) return;
+    root.querySelectorAll(CANDIDATE_SEL).forEach(rvTag);
+  }
+
+  rvScan(document);
+
+  if('MutationObserver' in window){
+    var rvMo = new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes && m.addedNodes.forEach(function(n){
+          if(n.nodeType !== 1) return;
+          if(n.matches && n.matches(CANDIDATE_SEL)) rvTag(n);
+          rvScan(n);
+        });
+      });
+    });
+    rvMo.observe(document.body, {childList:true, subtree:true});
+  }
+})();
+</script>
+</body>
+</html>

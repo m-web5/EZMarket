@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('ez-theme');
+    if(!t){ t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+    document.documentElement.setAttribute('data-theme', t);
+  }catch(e){}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة البائع — EZ Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A1A1A; --ink-soft:#6B6B6B; --surface:#FFFFFF; --surface-alt:#FAF5F5;
+    --border:#F1D9DB; --primary:#C8102E; --primary-dark:#8E0B21; --primary-tint:#FBE4E7;
+    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0;
+    --sidebar:#7A0C1F; --sidebar-text:#E9C9CC; --sidebar-active:#591019;
+    --shadow-sm:0 4px 14px rgba(20,40,34,.06); --shadow-md:0 14px 34px rgba(20,40,34,.10);
+    --radius-card:16px; --radius-pill:999px; --radius-sm:10px;
+    --font:'Cairo','Tahoma',system-ui,sans-serif; color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+      --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+      --sidebar:#120A0B; --sidebar-text:#C9A8AC; --sidebar-active:#241316;
+      --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
+    --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
+    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+    --sidebar:#120A0B; --sidebar-text:#C9A8AC; --sidebar-active:#241316;
+    --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--font); background:var(--surface-alt); color:var(--ink); line-height:1.5; -webkit-font-smoothing:antialiased;}
+  a{color:inherit; text-decoration:none;}
+  button, select{font-family:var(--font); cursor:pointer;}
+  .icon{width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; flex-shrink:0;}
+
+  .app{display:grid; grid-template-columns:240px 1fr; min-height:100vh;}
+  @media (max-width:900px){ .app{grid-template-columns:1fr;} }
+
+  /* Sidebar */
+  .sidebar{background:var(--sidebar); color:var(--sidebar-text); padding:20px 14px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  @media (max-width:900px){ .sidebar{display:none;} }
+  .sb-logo{color:#fff; font-weight:800; font-size:1.2rem; padding:0 8px 22px;}
+  .sb-logo span{color:var(--accent);}
+  .sb-section{font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; opacity:.6; padding:14px 10px 6px;}
+  .sb-link{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); font-size:.85rem; font-weight:600; margin-bottom:2px;}
+  .sb-link.active{background:var(--sidebar-active); color:#fff;}
+  .sb-link:hover:not(.active){background:rgba(255,255,255,.05); color:#fff;}
+  .store-mini{display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.05); border-radius:var(--radius-sm); padding:12px; margin-top:20px;}
+  .store-mini .av{width:36px; height:36px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.9rem;}
+  .store-mini b{color:#fff; font-size:.8rem; display:block;}
+  .store-mini span{font-size:.7rem; opacity:.7;}
+
+  .main{padding:22px 24px 50px;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; gap:14px; flex-wrap:wrap;}
+  .topbar h1{font-size:1.3rem; font-weight:800;}
+  .topbar p{font-size:.8rem; color:var(--ink-soft); margin-top:2px;}
+  .topbar-actions{display:flex; gap:10px; align-items:center;}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:var(--radius-pill); font-weight:700; font-size:.82rem; border:1px solid var(--border); background:var(--surface); color:var(--ink);}
+  .btn-primary{background:var(--primary); color:#fff; border-color:var(--primary);}
+
+  .stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px;}
+  @media (max-width:900px){ .stat-grid{grid-template-columns:repeat(2,1fr);} }
+  .stat-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:18px;}
+  .stat-card .top{display:flex; align-items:center; justify-content:space-between;}
+  .stat-icon{width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;}
+  .stat-card .value{font-size:1.4rem; font-weight:800; margin-top:12px;}
+  .stat-card .label{font-size:.78rem; color:var(--ink-soft); margin-top:2px;}
+  .stat-card .delta{font-size:.72rem; font-weight:700; margin-top:8px;}
+  .delta.up{color:var(--primary);}
+  .delta.down{color:var(--sale);}
+
+  .content-grid{display:grid; grid-template-columns:1.5fr 1fr; gap:18px; margin-bottom:18px; align-items:start;}
+  @media (max-width:960px){ .content-grid{grid-template-columns:1fr;} }
+  .panel{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:20px;}
+  .panel-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+  .panel-head h3{font-size:.98rem; font-weight:800;}
+  .panel-head a{font-size:.78rem; color:var(--primary); font-weight:700;}
+
+  .chart-bars{display:flex; align-items:flex-end; gap:10px; height:150px; padding-top:10px;}
+  .chart-bars .bar-col{flex:1; display:flex; flex-direction:column; align-items:center; gap:8px;}
+  .chart-bars .bar{width:100%; border-radius:6px 6px 0 0; background:var(--primary-tint); position:relative;}
+  .chart-bars .bar.top{background:var(--primary);}
+  .chart-bars .bar-label{font-size:.7rem; color:var(--ink-soft);}
+
+  .low-stock-item{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); font-size:.82rem;}
+  .low-stock-item:last-child{border-bottom:none;}
+  .low-stock-item .thumb{width:34px; height:34px; border-radius:8px; background:var(--surface-alt); display:flex; align-items:center; justify-content:center; font-size:1rem;}
+  .low-stock-item .info{flex:1;}
+  .low-stock-item .qty{font-weight:800; color:var(--sale); font-size:.78rem;}
+
+  table{width:100%; border-collapse:collapse; font-size:.82rem;}
+  th{text-align:right; color:var(--ink-soft); font-weight:700; font-size:.75rem; padding:8px 10px; border-bottom:1px solid var(--border);}
+  td{padding:12px 10px; border-bottom:1px solid var(--border); vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  .table-wrap{overflow-x:auto;}
+  .prod-cell{display:flex; align-items:center; gap:10px;}
+  .prod-cell .thumb{width:38px; height:38px; border-radius:8px; background:var(--surface-alt); display:flex; align-items:center; justify-content:center; font-size:1.1rem;}
+  .status-pill{font-size:.72rem; font-weight:800; padding:4px 10px; border-radius:var(--radius-pill); white-space:nowrap;}
+  .status-pill.processing{background:#EFEFEF; color:#3A3A3A;}
+  .status-pill.shipped{background:var(--accent-tint); color:#8E0B21;}
+  .status-pill.delivered{background:var(--primary-tint); color:var(--primary);}
+  .status-pill.pending{background:var(--surface-alt); color:var(--ink-soft);}
+  .row-actions{display:flex; gap:6px;}
+  .row-actions button{width:30px; height:30px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--ink-soft);}
+
+  @media (max-width:900px){
+    .mobile-topbar{display:flex; align-items:center; justify-content:space-between; background:var(--surface); border-bottom:1px solid var(--border); padding:14px 18px; position:sticky; top:0; z-index:20;}
+    .mobile-topbar .logo{font-weight:800; color:var(--primary);}
+  }
+  @media (min-width:901px){ .mobile-topbar{display:none;} }
+</style>
+<style id="rv-style">
+  .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-up.in-view{opacity:1; transform:translateY(0);}
+  .reveal-right{opacity:0; transform:translateX(56px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-right.in-view{opacity:1; transform:translateX(0);}
+  .reveal-scale{opacity:0; transform:scale(.8); transition:opacity .6s cubic-bezier(.16,.84,.44,1), transform .6s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
+  .reveal-scale.in-view{opacity:1; transform:scale(1);}
+  .reveal-word-wrap .reveal-word{display:inline-block; opacity:0; transform:translateY(20px); transition:opacity .5s cubic-bezier(.16,.84,.44,1), transform .5s cubic-bezier(.16,.84,.44,1);}
+  .reveal-word-wrap.in-view .reveal-word{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal-up,.reveal-right,.reveal-scale,.reveal-word-wrap .reveal-word{opacity:1 !important; transform:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2.9-5.3 5 1.4 7.1L12 18.2 5.7 21.6l1.4-7.1-5.3-5 7.2-.9z"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8h-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3h-.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.6 1z"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="15" r="1.4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
+</svg>
+
+<div class="mobile-topbar">
+  <a href="ez-market-home.html" class="logo" style="color:inherit;">EZ Market — البائع</a>
+  <svg class="icon"><use href="#i-grid"/></svg>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <a href="ez-market-home.html" class="sb-logo" style="color:inherit; text-decoration:none;">EZ Market <span>البائع</span></a>
+    <div class="sb-section">القائمة</div>
+    <a class="sb-link active"><svg class="icon"><use href="#i-grid"/></svg>لوحة التحكم</a>
+    <a class="sb-link"><svg class="icon"><use href="#i-box"/></svg>المنتجات</a>
+    <a class="sb-link"><svg class="icon"><use href="#i-receipt"/></svg>الطلبات</a>
+    <a class="sb-link"><svg class="icon"><use href="#i-chart"/></svg>المبيعات</a>
+    <a class="sb-link"><svg class="icon"><use href="#i-star"/></svg>التقييمات</a>
+    <a class="sb-link"><svg class="icon"><use href="#i-wallet"/></svg>الأرباح والمستحقات</a>
+    <a class="sb-link"><svg class="icon"><use href="#i-settings"/></svg>إعدادات المتجر</a>
+    <a href="ez-market-store.html" class="store-mini" style="text-decoration:none; color:inherit;">
+      <div class="av">تق</div>
+      <div><b>متجر التقنية</b><span>متجر موثّق ✓</span></div>
+    </a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>مرحبًا، متجر التقنية 👋</h1>
+        <p>هذا ملخص أداء متجرك خلال آخر 7 أيام</p>
+      </div>
+      <div class="topbar-actions">
+        <a href="ez-market-home.html" style="font-size:.8rem; font-weight:700; color:var(--ink-soft); border:1px solid var(--border); border-radius:999px; padding:9px 16px; white-space:nowrap; display:flex; align-items:center;">العودة للمتجر</a>
+        <button id="theme-toggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري" style="display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--ink);"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></button>
+        <button class="btn">تصدير التقرير</button>
+        <button class="btn btn-primary"><svg class="icon" style="width:15px;height:15px"><use href="#i-plus"/></svg>إضافة منتج</button>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="top"><span class="label">إجمالي المبيعات</span><div class="stat-icon" style="background:var(--primary-tint); color:var(--primary);"><svg class="icon"><use href="#i-wallet"/></svg></div></div>
+        <div class="value">48,320 ر.س</div>
+        <div class="delta up">▲ 12.4% عن الأسبوع الماضي</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><span class="label">عدد الطلبات</span><div class="stat-icon" style="background:var(--accent-tint); color:#8E0B21;"><svg class="icon"><use href="#i-receipt"/></svg></div></div>
+        <div class="value">214</div>
+        <div class="delta up">▲ 6 طلبات جديدة اليوم</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><span class="label">المنتجات النشطة</span><div class="stat-icon" style="background:#EFEFEF; color:#3A3A3A;"><svg class="icon"><use href="#i-box"/></svg></div></div>
+        <div class="value">86</div>
+        <div class="delta down">▼ 4 منتجات منخفضة المخزون</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><span class="label">تقييم المتجر</span><div class="stat-icon" style="background:var(--sale-tint); color:var(--sale);"><svg class="icon"><use href="#i-star"/></svg></div></div>
+        <div class="value">4.8 / 5</div>
+        <div class="delta up">من 620 تقييمًا</div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-head"><h3>المبيعات — آخر 7 أيام</h3><a href="#">عرض التقرير الكامل</a></div>
+        <div class="chart-bars" id="chart"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>تنبيه: مخزون منخفض</h3><a href="#">إدارة المخزون</a></div>
+        <div id="low-stock"></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:18px;">
+      <div class="panel-head"><h3>أفضل المنتجات مبيعًا</h3><a href="#">عرض الكل</a></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>المنتج</th><th>السعر</th><th>المباع</th><th>المخزون</th><th>التقييم</th></tr></thead>
+          <tbody id="top-products"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h3>أحدث الطلبات</h3><a href="#">عرض كل الطلبات</a></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>رقم الطلب</th><th>العميل</th><th>المنتجات</th><th>الإجمالي</th><th>الحالة</th><th></th></tr></thead>
+          <tbody id="orders-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var chartData = [
+    {d:"سبت", v:38}, {d:"أحد", v:52}, {d:"اثنين", v:44}, {d:"ثلاثاء", v:60},
+    {d:"أربعاء", v:48}, {d:"خميس", v:70}, {d:"جمعة", v:56}
+  ];
+  var max = Math.max.apply(null, chartData.map(function(x){return x.v;}));
+  document.getElementById('chart').innerHTML = chartData.map(function(c, i){
+    var h = Math.round((c.v/max)*100);
+    return '<div class="bar-col"><div class="bar '+(i===5?'top':'')+'" style="height:'+h+'%"></div><span class="bar-label">'+c.d+'</span></div>';
+  }).join('');
+
+  var lowStock = [
+    {name:"سماعة رأس للألعاب", qty:3, emoji:"🎮"},
+    {name:"لوحة مفاتيح ميكانيكية", qty:5, emoji:"⌨️"},
+    {name:"شاحن سريع 65 واط", qty:2, emoji:"🔌"},
+    {name:"ماوس لاسلكي مريح", qty:6, emoji:"🖱️"}
+  ];
+  document.getElementById('low-stock').innerHTML = lowStock.map(function(p){
+    return '<div class="low-stock-item"><div class="thumb">'+p.emoji+'</div><div class="info">'+p.name+'</div><span class="qty">متبقٍ '+p.qty+'</span></div>';
+  }).join('');
+
+  var topProducts = [
+    {name:"سماعة بلوتوث إلغاء ضوضاء", emoji:"🎧", price:399, sold:214, stock:38, rating:4.6},
+    {name:"ساعة ذكية جيل 5", emoji:"⌚", price:349, sold:132, stock:22, rating:4.4},
+    {name:"جهاز تابلت 10 بوصة", emoji:"📱", price:899, sold:88, stock:14, rating:4.7},
+    {name:"شاشة كمبيوتر 27 بوصة", emoji:"🖥️", price:1299, sold:64, stock:9, rating:4.5}
+  ];
+  document.getElementById('top-products').innerHTML = topProducts.map(function(p){
+    return '<tr><td><div class="prod-cell"><div class="thumb">'+p.emoji+'</div>'+p.name+'</div></td><td>'+p.price+' ر.س</td><td>'+p.sold+'</td><td>'+p.stock+'</td><td>⭐ '+p.rating+'</td></tr>';
+  }).join('');
+
+  var orders = [
+    {id:"EZ10248", customer:"أحمد سالم", items:3, total:1186, status:"shipped", label:"قيد التوصيل"},
+    {id:"EZ10247", customer:"نورة العتيبي", items:1, total:259, status:"processing", label:"قيد التجهيز"},
+    {id:"EZ10246", customer:"خالد المطيري", items:2, total:748, status:"delivered", label:"تم التسليم"},
+    {id:"EZ10245", customer:"ريم القحطاني", items:1, total:129, status:"pending", label:"بانتظار التأكيد"},
+    {id:"EZ10244", customer:"فهد الدوسري", items:4, total:2140, status:"delivered", label:"تم التسليم"}
+  ];
+  document.getElementById('orders-table').innerHTML = orders.map(function(o){
+    return '<tr><td>#'+o.id+'</td><td>'+o.customer+'</td><td>'+o.items+' منتج</td><td>'+o.total+' ر.س</td><td><span class="status-pill '+o.status+'">'+o.label+'</span></td><td><div class="row-actions"><button><svg class="icon" style="width:15px;height:15px"><use href="#i-eye"/></svg></button></div></td></tr>';
+  }).join('');
+})();
+</script>
+<script>
+(function(){
+  function syncIcon(){
+    var theme = document.documentElement.getAttribute('data-theme') || 'light';
+    var use = document.querySelector('#theme-icon use');
+    if(use){ use.setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon'); }
+  }
+  window.toggleTheme = function(){
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('ez-theme', next); }catch(e){}
+    syncIcon();
+  };
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', syncIcon);
+  } else {
+    syncIcon();
+  }
+})();
+</script>
+<script id="rv-script">
+(function(){
+  var rvReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SCALE_SEL = '.product-card,.store-card,.order-card,.order-row-card,.promo-card';
+  var CANDIDATE_SEL = [
+    '.product-card','.cat-card','.store-card','.promo-card','.review-card',
+    '.order-card','.order-row-card','.summary-card','.stat-card','.panel',
+    '.section-head','.page-title','.empty-state','.table-wrap','.breadcrumb',
+    '.grid > *','.cats-grid > *','.promo-grid > *','.stat-grid > *',
+    '.trust-grid > *','.form-grid > *','.hero-inner > *'
+  ].join(',');
+  var HEADING_SEL = '.section-head,.page-title,h1,h2';
+  var rvIdx = 0;
+
+  var rvIo = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        rvIo.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'}) : null;
+
+  function rvObserve(el){
+    if(rvReduce || !rvIo){ el.classList.add('in-view'); return; }
+    rvIo.observe(el);
+  }
+
+  function rvWrapWords(el){
+    var text = el.textContent.trim();
+    if(!text) return;
+    var words = text.split(/\s+/);
+    el.innerHTML = words.map(function(w, i){
+      return '<span class="reveal-word" style="transition-delay:'+(i*0.045)+'s">'+w+'</span>';
+    }).join(' ');
+    el.classList.add('reveal-word-wrap');
+    rvObserve(el);
+  }
+
+  function rvTag(el){
+    if(!el || el.nodeType !== 1 || el.hasAttribute('data-rv')) return;
+    if(el.closest && el.closest('nav, header, footer, .theme-fab, script, style')) return;
+    el.setAttribute('data-rv','1');
+    var wordCount = (el.textContent || '').trim().split(/\s+/).length;
+    if(el.matches(SCALE_SEL)){
+      el.classList.add('reveal-scale');
+      el.style.transitionDelay = (0.04 * (rvIdx % 6)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    } else if(el.matches(HEADING_SEL) && wordCount > 0 && wordCount <= 10 && el.children.length === 0){
+      rvWrapWords(el);
+    } else {
+      el.classList.add(rvIdx % 2 === 0 ? 'reveal-up' : 'reveal-right');
+      el.style.transitionDelay = (0.05 * (rvIdx % 5)) + 's';
+      rvIdx++;
+      rvObserve(el);
+    }
+  }
+
+  function rvScan(root){
+    if(!root || !root.querySelectorAll) return;
+    root.querySelectorAll(CANDIDATE_SEL).forEach(rvTag);
+  }
+
+  rvScan(document);
+
+  if('MutationObserver' in window){
+    var rvMo = new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes && m.addedNodes.forEach(function(n){
+          if(n.nodeType !== 1) return;
+          if(n.matches && n.matches(CANDIDATE_SEL)) rvTag(n);
+          rvScan(n);
+        });
+      });
+    });
+    rvMo.observe(document.body, {childList:true, subtree:true});
+  }
+})();
+</script>
+</body>
+</html>
