@@ -140,6 +140,16 @@
   .cats-nav a:hover{ color:#FFFFFF !important; text-decoration:underline; }
   .mobile-search .search-bar{ background:#FFFFFF !important; }
   @media (max-width:760px){ .logo{ font-size:1.5rem !important; } }
+
+  /* ===== Mobile hardening (100% phone compatibility) ===== */
+  html{ overflow-x:hidden; }
+  body{ overflow-x:hidden; max-width:100vw; }
+  @media (max-width:600px){
+    input, select, textarea{ font-size:16px !important; }
+  }
+  @media (max-width:380px){
+    .wrap{ padding:0 12px; }
+  }
 </style>
 <style id="rv-style">
   .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
