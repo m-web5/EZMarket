@@ -124,6 +124,12 @@
   .nav-drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:0 18px 16px; border-bottom:1px solid var(--border); margin-bottom:10px; }
   .nav-drawer-head .logo{ font-size:1.2rem; }
   .nav-drawer-close{ width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--surface-alt); display:flex; align-items:center; justify-content:center; color:var(--ink); transform:rotate(90deg); flex-shrink:0; }
+  .nav-quick{ display:grid; grid-template-columns:repeat(5,1fr); gap:4px; padding:4px 10px 14px; margin-bottom:6px; border-bottom:1px solid var(--border); }
+  .nav-quick-item{ display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; padding:6px 0; cursor:pointer; color:var(--ink); font-family:inherit; opacity:0; transform:translateX(24px); transition:opacity .4s ease, transform .4s ease; }
+  .nav-drawer.open .nav-quick-item{ opacity:1; transform:translateX(0); }
+  .nav-quick-item .icon-btn{ width:42px; height:42px; }
+  .nav-quick-item:hover .icon-btn{ background:var(--primary-tint); color:var(--primary); border-color:var(--primary); transform:translateY(-1px); }
+  .nav-quick-label{ font-size:.66rem; font-weight:700; color:var(--ink-soft); white-space:nowrap; }
   .nav-drawer-links{ display:flex; flex-direction:column; padding:0 10px; }
   .nav-link{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:12px; font-weight:700; font-size:.92rem; color:var(--ink); opacity:0; transform:translateX(24px); transition:opacity .4s ease, transform .4s ease, background .2s ease; }
   .nav-link:hover{ background:var(--surface-alt); color:var(--primary); }
@@ -133,7 +139,7 @@
   .nav-drawer-divider{ height:1px; background:var(--border); margin:12px 10px; }
   .nav-drawer-label{ display:block; padding:6px 12px 2px; font-size:.72rem; font-weight:800; color:var(--ink-soft); letter-spacing:.02em; opacity:0; transform:translateX(24px); transition:opacity .4s ease, transform .4s ease; }
   .nav-drawer.open .nav-drawer-label{ opacity:1; transform:translateX(0); }
-  @media (prefers-reduced-motion: reduce){ .nav-drawer, .nav-link, .nav-drawer-label{ transition:none !important; } }
+  @media (prefers-reduced-motion: reduce){ .nav-drawer, .nav-link, .nav-drawer-label, .nav-quick-item{ transition:none !important; } }
   .icon-btn{
     position:relative; display:flex; align-items:center; justify-content:center;
     width:42px; height:42px; border-radius:50%; border:1px solid var(--border);
@@ -212,24 +218,30 @@
   .reveal{ opacity:0; transform:translateY(16px); transition:opacity .55s ease, transform .55s ease; }
   .reveal.in-view{ opacity:1; transform:translateY(0); }
 
-  /* ---------- Categories ---------- */
-  .cats-grid{
-    display:grid; grid-template-columns:repeat(5,1fr); gap:14px;
+  /* ---------- Ads carousel ---------- */
+  .ads-carousel{
+    position:relative; overflow:hidden; border-radius:var(--radius-card);
+    box-shadow:var(--shadow-sm); border:1px solid var(--border); background:var(--surface-alt);
   }
-  .cat-card{
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card);
-    padding:20px 12px; text-align:center; transition:transform .25s ease, box-shadow .25s ease, border-color .25s;
+  .ads-track{ display:flex; direction:ltr; will-change:transform; }
+  .ad-slide{ position:relative; flex:0 0 100%; aspect-ratio:3/1; background:var(--surface-alt); }
+  .ad-slide img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .ad-slide.ad-empty img{ display:none; }
+  .ad-slide.ad-empty{
+    display:flex; align-items:center; justify-content:center;
+    border:2px dashed var(--border); box-sizing:border-box;
   }
-  .cat-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); border-color:var(--primary); }
-  .cat-icon{ font-size:1.7rem; margin-bottom:8px; }
-  .cat-card span{ font-size:.82rem; font-weight:600; color:var(--ink); }
-  @media (max-width:760px){ .cats-grid{ grid-template-columns:repeat(3,1fr); } }
+  .ad-slide.ad-empty::before{
+    content:"🖼️  " attr(data-file);
+    color:var(--ink-soft); font-weight:700; font-size:.95rem; letter-spacing:.02em;
+  }
+  @media (max-width:760px){ .ad-slide{ aspect-ratio:16/9; } }
 
   /* ---------- Product cards ---------- */
   .grid{ display:grid; gap:18px; }
   .grid-4{ grid-template-columns:repeat(4,1fr); }
   @media (max-width:1020px){ .grid-4{ grid-template-columns:repeat(3,1fr); } }
-  @media (max-width:700px){ .grid-4{ grid-template-columns:repeat(2,1fr); } .cats-grid{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:700px){ .grid-4{ grid-template-columns:repeat(2,1fr); } }
 
   .product-card{
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card);
@@ -326,20 +338,26 @@
   .trust-item p{ font-size:.78rem; color:var(--ink-soft); max-width:22ch; }
 
   /* ---------- Footer ---------- */
-  footer{ background:var(--ink); color:var(--surface-alt); padding:50px 0 24px; margin-top:20px; }
-  :root[data-theme="dark"] footer, @media (prefers-color-scheme:dark){ footer{ background:#120A0B; } }
-  .footer-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:28px; padding-bottom:32px; border-bottom:1px solid rgba(255,255,255,.12); }
+  /* Follows the site theme tokens directly: white surface + dark text in
+     light mode, dark surface + light text in dark mode. --surface and --ink
+     already flip correctly between the two themes (see :root definitions
+     above), so no separate override is needed here. */
+  footer{ background:var(--surface); color:var(--ink-soft); padding:50px 0 24px; margin-top:20px; border-top:1px solid var(--border); }
+  .footer-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:28px; padding-bottom:32px; border-bottom:1px solid var(--border); }
   @media (max-width:800px){ .footer-grid{ grid-template-columns:1fr 1fr; } }
-  .footer-logo{ font-weight:800; font-size:1.25rem; color:#fff; margin-bottom:10px; }
-  .footer-grid p.tag{ color:rgba(255,255,255,.6); font-size:.85rem; max-width:32ch; }
-  .footer-col h5{ font-size:.85rem; font-weight:700; color:#fff; margin-bottom:14px; }
+  .footer-logo{ display:flex; align-items:center; gap:10px; font-family:'Poppins','Cairo','Tahoma',sans-serif; font-weight:800; font-style:normal; font-size:1.3rem; letter-spacing:.2px; color:var(--ink); margin-bottom:10px; white-space:nowrap; }
+  .footer-logo-img{ height:44px; width:auto; max-width:180px; object-fit:contain; }
+  .footer-logo .dot{ color:var(--accent); font-style:normal; }
+  .footer-grid p.tag{ color:var(--ink-soft); font-size:.85rem; max-width:32ch; }
+  .footer-col h5{ font-size:.85rem; font-weight:700; color:var(--ink); margin-bottom:14px; }
   .footer-col ul{ list-style:none; display:flex; flex-direction:column; gap:9px; }
-  .footer-col a{ color:rgba(255,255,255,.65); font-size:.84rem; transition:color .2s; }
-  .footer-col a:hover{ color:#fff; }
+  .footer-col a{ color:var(--ink-soft); font-size:.84rem; transition:color .2s; }
+  .footer-col a:hover{ color:var(--primary); }
   .footer-bottom{ display:flex; justify-content:space-between; align-items:center; padding-top:20px; flex-wrap:wrap; gap:10px; }
-  .footer-bottom p{ font-size:.78rem; color:rgba(255,255,255,.5); }
+  .footer-bottom p{ font-size:.78rem; color:var(--ink-soft); }
   .socials{ display:flex; gap:10px; }
-  .socials a{ width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; color:#fff; }
+  .socials a{ width:36px; height:36px; border-radius:50%; background:var(--surface-alt); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--ink); }
+  .socials a:hover{ background:var(--primary-tint); color:var(--primary); }
 
   /* ---------- Mobile bottom nav ---------- */
   .bottom-nav{
@@ -373,12 +391,12 @@
     border-bottom:1px solid rgba(255,255,255,.18) !important;
   }
   .logo{ display:flex; align-items:center; gap:10px; }
-  .site-logo-img{ height:38px; width:auto; max-width:160px; object-fit:contain; }
+  .site-logo-img{ height:56px; width:auto; max-width:230px; object-fit:contain; }
   .logo, header .logo{
     font-family:'Poppins','Cairo','Tahoma',sans-serif !important;
-    font-weight:800 !important; font-style:italic;
-    font-size:1.9rem !important; letter-spacing:-.5px !important;
-    color:#FFFFFF !important; text-shadow:0 2px 10px rgba(0,0,0,.18);
+    font-weight:800 !important; font-style:normal !important;
+    font-size:1.7rem !important; letter-spacing:.2px !important;
+    color:#FFFFFF !important; text-shadow:0 1px 8px rgba(0,0,0,.15);
   }
   .logo span.dot, header .logo span.dot{ color:#FFE3E6 !important; font-style:normal; }
   header .search-bar{
@@ -397,17 +415,7 @@
   .cats-nav a{ color:rgba(255,255,255,.92) !important; font-weight:700 !important; }
   .cats-nav a:hover{ color:#FFFFFF !important; text-decoration:underline; }
   .mobile-search .search-bar{ background:#FFFFFF !important; }
-  @media (max-width:760px){ .logo{ font-size:1.5rem !important; } }
-
-  /* ===== Mobile hardening (100% phone compatibility) ===== */
-  html{ overflow-x:hidden; }
-  body{ overflow-x:hidden; max-width:100vw; }
-  @media (max-width:600px){
-    input, select, textarea{ font-size:16px !important; }
-  }
-  @media (max-width:380px){
-    .wrap{ padding:0 12px; }
-  }
+  @media (max-width:760px){ .logo{ font-size:1.35rem !important; } .site-logo-img{ height:42px !important; max-width:170px !important; } }
 </style>
 <style id="rv-style">
   .reveal-up{opacity:0; transform:translateY(34px); transition:opacity .75s cubic-bezier(.16,.84,.44,1), transform .75s cubic-bezier(.16,.84,.44,1); will-change:opacity,transform;}
@@ -420,6 +428,33 @@
   .reveal-word-wrap.in-view .reveal-word{opacity:1; transform:translateY(0);}
   @media (prefers-reduced-motion: reduce){
     .reveal-up,.reveal-right,.reveal-scale,.reveal-word-wrap .reveal-word{opacity:1 !important; transform:none !important; transition:none !important;}
+  }
+
+  /* Slightly smaller, app-like interface on mobile so cards/boxes don't stretch full-screen */
+  @media (max-width:760px){
+    html{ zoom:0.85; }
+  }
+
+  /* ---------- Floating cart button ---------- */
+  .cart-fab{
+    position:fixed; top:50%; right:16px; transform:translateY(-50%);
+    width:52px; height:52px; border-radius:50%;
+    background:var(--primary); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--shadow-md); z-index:150;
+    transition:transform .2s ease, background .2s ease;
+  }
+  .cart-fab:hover{ background:var(--primary-dark); transform:translateY(-50%) scale(1.07); }
+  .cart-fab-badge{
+    position:absolute; top:-4px; left:-4px; background:#fff; color:var(--primary);
+    font-size:.65rem; font-weight:800; min-width:18px; height:18px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; padding:0 3px;
+    border:1px solid var(--primary-tint);
+  }
+  .cart-fab-badge.is-zero{ display:none; }
+  @media (max-width:760px){
+    .cart-fab{ width:44px; height:44px; right:10px; }
+    .cart-fab svg{ width:19px; height:19px; }
   }
 </style>
 </head>
@@ -445,6 +480,7 @@
   <symbol id="i-tw" viewBox="0 0 24 24"><path d="M21 5.5c-.7.3-1.5.5-2.3.6.8-.5 1.4-1.3 1.7-2.3-.8.5-1.7.8-2.6 1a4 4 0 0 0-6.9 3.7A11.5 11.5 0 0 1 2.6 4.2a4 4 0 0 0 1.2 5.4c-.6 0-1.2-.2-1.7-.5v.1a4 4 0 0 0 3.2 4 4 4 0 0 1-1.8.1 4 4 0 0 0 3.8 2.8A8 8 0 0 1 1 17.9a11.5 11.5 0 0 0 6.3 1.9c7.5 0 11.7-6.4 11.7-11.9v-.5c.8-.6 1.5-1.3 2-2z" stroke="none" fill="currentColor"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.7 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.7-4-9s1.4-6.5 4-9z"/></symbol>
 </svg>
 
 <header id="site-header">
@@ -455,20 +491,16 @@
     </a>
     <div class="search-bar">
       <svg class="icon"><use href="#i-search"/></svg>
-      <input type="text" id="home-search" placeholder="ابحث عن منتج، تصنيف، أو متجر..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}">
+      <input type="text" id="home-search" data-ar-placeholder="ابحث عن منتج، تصنيف، أو متجر..." data-en-placeholder="Search for a product, category, or store..." placeholder="ابحث عن منتج، تصنيف، أو متجر..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}">
     </div>
     <div class="header-actions">
       <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
-      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></button>
-      <a class="icon-btn" href="ez-market-account.html?tab=favorites" aria-label="المفضلة"><svg class="icon"><use href="#i-heart"/></svg></a>
-      <a class="icon-btn" href="ez-market-cart.html" aria-label="السلة" id="cart-btn"><svg class="icon"><use href="#i-cart"/></svg><span class="badge" id="cart-count">0</span></a>
-      <a class="icon-btn" href="ez-market-account.html" aria-label="حسابي"><svg class="icon"><use href="#i-user"/></svg></a>
     </div>
   </div>
   <div class="mobile-search">
     <div class="search-bar">
       <svg class="icon"><use href="#i-search"/></svg>
-      <input type="text" placeholder="ابحث في EZ Market..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}">
+      <input type="text" data-ar-placeholder="ابحث في EZ Market..." data-en-placeholder="Search EZ Market..." placeholder="ابحث في EZ Market..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}">
     </div>
   </div>
   <nav class="cats-nav">
@@ -492,31 +524,50 @@
     <a href="ez-market-home.html" class="logo">EZ Market<span class="dot">.</span></a>
     <button class="nav-drawer-close" onclick="closeNavDrawer()" aria-label="إغلاق القائمة"><svg class="icon"><use href="#i-chevron"/></svg></button>
   </div>
+  <div class="nav-quick" role="group" aria-label="اختصارات سريعة">
+    <a class="nav-quick-item" href="ez-market-account.html" aria-label="حسابي">
+      <span class="icon-btn"><svg class="icon"><use href="#i-user"/></svg></span>
+      <span class="nav-quick-label" data-ar="حسابي" data-en="Account">حسابي</span>
+    </a>
+    <a class="nav-quick-item" href="ez-market-cart.html" aria-label="السلة" id="cart-btn">
+      <span class="icon-btn"><svg class="icon"><use href="#i-cart"/></svg><span class="badge" id="cart-count">0</span></span>
+      <span class="nav-quick-label" data-ar="السلة" data-en="Cart">السلة</span>
+    </a>
+    <a class="nav-quick-item" href="ez-market-account.html?tab=favorites" aria-label="المفضلة">
+      <span class="icon-btn"><svg class="icon"><use href="#i-heart"/></svg></span>
+      <span class="nav-quick-label" data-ar="المفضلة" data-en="Wishlist">المفضلة</span>
+    </a>
+    <button class="nav-quick-item" id="theme-toggle" type="button" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري">
+      <span class="icon-btn"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></span>
+      <span class="nav-quick-label" data-ar="الوضع الليلي" data-en="Dark Mode">الوضع الليلي</span>
+    </button>
+    <button class="nav-quick-item" id="lang-toggle" type="button" onclick="toggleLanguage()" aria-label="تبديل اللغة / Switch language">
+      <span class="icon-btn"><svg class="icon"><use href="#i-globe"/></svg></span>
+      <span class="nav-quick-label" id="lang-toggle-label">English</span>
+    </button>
+  </div>
   <nav class="nav-drawer-links">
-    <a href="ez-market-home.html" class="nav-link"><svg class="icon"><use href="#i-home"/></svg>الرئيسية</a>
-    <a href="ez-market-search.html" class="nav-link"><svg class="icon"><use href="#i-search"/></svg>البحث</a>
-    <a href="ez-market-cart.html" class="nav-link"><svg class="icon"><use href="#i-cart"/></svg>سلة المشتريات</a>
-    <a href="ez-market-account.html?tab=favorites" class="nav-link"><svg class="icon"><use href="#i-heart"/></svg>المفضلة</a>
-    <a href="ez-market-account.html" class="nav-link"><svg class="icon"><use href="#i-user"/></svg>حسابي</a>
-    <a href="ez-market-auth.html" class="nav-link"><svg class="icon"><use href="#i-user"/></svg>تسجيل الدخول / إنشاء حساب</a>
+    <a href="ez-market-home.html" class="nav-link"><svg class="icon"><use href="#i-home"/></svg><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+    <a href="ez-market-search.html" class="nav-link"><svg class="icon"><use href="#i-search"/></svg><span data-ar="البحث" data-en="Search">البحث</span></a>
+    <a href="ez-market-auth.html" class="nav-link"><svg class="icon"><use href="#i-user"/></svg><span data-ar="تسجيل الدخول / إنشاء حساب" data-en="Log In / Sign Up">تسجيل الدخول / إنشاء حساب</span></a>
 
     <div class="nav-drawer-divider"></div>
-    <span class="nav-drawer-label">التصنيفات</span>
-    <a href="ez-market-products.html?cat=electronics" class="nav-link sub">الإلكترونيات</a>
-    <a href="ez-market-products.html?cat=phones" class="nav-link sub">الهواتف والأجهزة</a>
-    <a href="ez-market-products.html?cat=fashion" class="nav-link sub">الأزياء والملابس</a>
-    <a href="ez-market-products.html?cat=home" class="nav-link sub">المنزل والمطبخ</a>
-    <a href="ez-market-products.html?cat=beauty" class="nav-link sub">الجمال والعناية</a>
-    <a href="ez-market-products.html?cat=sports" class="nav-link sub">الرياضة واللياقة</a>
-    <a href="ez-market-products.html?cat=kids" class="nav-link sub">الأطفال والألعاب</a>
-    <a href="ez-market-products.html?cat=auto" class="nav-link sub">السيارات والإكسسوارات</a>
-    <a href="ez-market-products.html?cat=deals" class="nav-link sub">العروض والخصومات</a>
+    <span class="nav-drawer-label" data-ar="التصنيفات" data-en="Categories">التصنيفات</span>
+    <a href="ez-market-products.html?cat=electronics" class="nav-link sub" data-ar="الإلكترونيات" data-en="Electronics">الإلكترونيات</a>
+    <a href="ez-market-products.html?cat=phones" class="nav-link sub" data-ar="الهواتف والأجهزة" data-en="Phones & Devices">الهواتف والأجهزة</a>
+    <a href="ez-market-products.html?cat=fashion" class="nav-link sub" data-ar="الأزياء والملابس" data-en="Fashion & Clothing">الأزياء والملابس</a>
+    <a href="ez-market-products.html?cat=home" class="nav-link sub" data-ar="المنزل والمطبخ" data-en="Home & Kitchen">المنزل والمطبخ</a>
+    <a href="ez-market-products.html?cat=beauty" class="nav-link sub" data-ar="الجمال والعناية" data-en="Beauty & Care">الجمال والعناية</a>
+    <a href="ez-market-products.html?cat=sports" class="nav-link sub" data-ar="الرياضة واللياقة" data-en="Sports & Fitness">الرياضة واللياقة</a>
+    <a href="ez-market-products.html?cat=kids" class="nav-link sub" data-ar="الأطفال والألعاب" data-en="Kids & Toys">الأطفال والألعاب</a>
+    <a href="ez-market-products.html?cat=auto" class="nav-link sub" data-ar="السيارات والإكسسوارات" data-en="Auto & Accessories">السيارات والإكسسوارات</a>
+    <a href="ez-market-products.html?cat=deals" class="nav-link sub" data-ar="العروض والخصومات" data-en="Deals & Discounts">العروض والخصومات</a>
 
     <div class="nav-drawer-divider"></div>
-    <span class="nav-drawer-label">للبائعين والإدارة</span>
-    <a href="ez-market-seller.html" class="nav-link"><svg class="icon"><use href="#i-headset"/></svg>لوحة البائع</a>
-    <a href="ez-market-store.html" class="nav-link"><svg class="icon"><use href="#i-grid"/></svg>صفحة متجر نموذجية</a>
-    <a href="ez-market-admin.html" class="nav-link"><svg class="icon"><use href="#i-shield"/></svg>لوحة التحكم الإدارية</a>
+    <span class="nav-drawer-label" data-ar="للبائعين والإدارة" data-en="For Sellers & Admin">للبائعين والإدارة</span>
+    <a href="ez-market-seller.html" class="nav-link"><svg class="icon"><use href="#i-headset"/></svg><span data-ar="لوحة البائع" data-en="Seller Dashboard">لوحة البائع</span></a>
+    <a href="ez-market-store.html" class="nav-link"><svg class="icon"><use href="#i-grid"/></svg><span data-ar="صفحة متجر نموذجية" data-en="Sample Store Page">صفحة متجر نموذجية</span></a>
+    <a href="ez-market-admin.html" class="nav-link"><svg class="icon"><use href="#i-shield"/></svg><span data-ar="لوحة التحكم الإدارية" data-en="Admin Dashboard">لوحة التحكم الإدارية</span></a>
   </nav>
 </aside>
 
@@ -524,12 +575,12 @@
 <section class="hero" id="hero">
   <div class="wrap hero-inner">
     <div>
-      <span class="hero-badge">🛍️ أكثر من 5000 منتج من بائعين موثوقين</span>
-      <h1 id="hero-rotate-title" class="hero-rotate"><span class="hrt-inner">تسوّق بسهولة، واختر ما يناسبك</span></h1>
-      <p>اكتشف آلاف المنتجات من متاجر وبائعين مختلفين في مكان واحد، بأسعار موثوقة وتوصيل سريع لكل مناطق المملكة.</p>
+      <span class="hero-badge" data-ar="🛍️ أكثر من 5000 منتج من بائعين موثوقين" data-en="🛍️ Over 5,000 products from trusted sellers">🛍️ أكثر من 5000 منتج من بائعين موثوقين</span>
+      <h1 id="hero-rotate-title" class="hero-rotate"><span class="hrt-inner" data-ar="تسوّق بسهولة، واختر ما يناسبك" data-en="Shop with ease, choose what suits you">تسوّق بسهولة، واختر ما يناسبك</span></h1>
+      <p data-ar="اكتشف آلاف المنتجات من متاجر وبائعين مختلفين في مكان واحد، بأسعار موثوقة وتوصيل سريع لكل مناطق المملكة." data-en="Discover thousands of products from different stores and sellers in one place, with trusted prices and fast delivery across the country.">اكتشف آلاف المنتجات من متاجر وبائعين مختلفين في مكان واحد، بأسعار موثوقة وتوصيل سريع لكل مناطق المملكة.</p>
       <div class="hero-ctas">
-        <a href="#featured" class="btn btn-accent">تسوق الآن</a>
-        <a href="#categories" class="btn btn-ghost-light">استكشف المنتجات</a>
+        <a href="#featured" class="btn btn-accent" data-ar="تسوق الآن" data-en="Shop Now">تسوق الآن</a>
+        <a href="ez-market-products.html" class="btn btn-ghost-light" data-ar="استكشف المنتجات" data-en="Explore Products">استكشف المنتجات</a>
       </div>
     </div>
   </div>
@@ -537,16 +588,11 @@
 
 <main class="wrap">
 
-  <!-- Categories -->
-  <section id="categories">
-    <div class="section-head reveal">
-      <div>
-        <h2>تصفح حسب التصنيف</h2>
-        <p>اختر من بين أكثر من 10 تصنيفات رئيسية</p>
-      </div>
-      <a href="ez-market-products.html" class="see-all">جميع التصنيفات <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
+  <!-- Ads -->
+  <section id="ads">
+    <div class="ads-carousel reveal" id="ads-carousel">
+      <div class="ads-track" id="ads-track"></div>
     </div>
-    <div class="cats-grid" id="cats-grid"></div>
   </section>
 
   <!-- Flash deals -->
@@ -555,7 +601,7 @@
       <div class="flash-head">
         <div class="flash-title">
           <span class="flame">⚡</span>
-          <h2>عروض اليوم</h2>
+          <h2 data-ar="عروض اليوم" data-en="Today's Deals">عروض اليوم</h2>
         </div>
         <div class="countdown" id="countdown">ينتهي خلال 00:00:00</div>
       </div>
@@ -567,10 +613,10 @@
   <section id="featured">
     <div class="section-head reveal">
       <div>
-        <h2>منتجات مميزة</h2>
-        <p>الأعلى تقييمًا هذا الأسبوع</p>
+        <h2 data-ar="منتجات مميزة" data-en="Featured Products">منتجات مميزة</h2>
+        <p data-ar="الأعلى تقييمًا هذا الأسبوع" data-en="Top rated this week">الأعلى تقييمًا هذا الأسبوع</p>
       </div>
-      <a href="ez-market-products.html" class="see-all">عرض الكل <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
+      <a href="ez-market-products.html" class="see-all"><span data-ar="عرض الكل" data-en="View All">عرض الكل</span> <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
     </div>
     <div class="grid grid-4" id="featured-grid"></div>
   </section>
@@ -580,15 +626,15 @@
     <div class="promo-grid reveal">
       <div class="promo-card p1">
         <span class="emoji-deco">🚚</span>
-        <h3>شحن مجاني</h3>
-        <p>على الطلبات فوق 200 ر.س لجميع مناطق المملكة</p>
-        <a href="ez-market-products.html" class="btn btn-primary" style="width:fit-content; margin-top:6px;">تسوق الآن</a>
+        <h3 data-ar="شحن مجاني" data-en="Free Shipping">شحن مجاني</h3>
+        <p data-ar="على الطلبات فوق 200 ر.س لجميع مناطق المملكة" data-en="On orders over SAR 200 to all regions">على الطلبات فوق 200 ر.س لجميع مناطق المملكة</p>
+        <a href="ez-market-products.html" class="btn btn-primary" style="width:fit-content; margin-top:6px;" data-ar="تسوق الآن" data-en="Shop Now">تسوق الآن</a>
       </div>
       <div class="promo-card p2">
         <span class="emoji-deco">🎁</span>
-        <h3>خصم 20% على أول طلب</h3>
-        <p>استخدم الكود EZFIRST عند إتمام الطلب</p>
-        <a href="ez-market-products.html" class="btn" style="background:var(--accent); color:#FFFFFF; width:fit-content; margin-top:6px;">احصل على الكود</a>
+        <h3 data-ar="خصم 20% على أول طلب" data-en="20% Off Your First Order">خصم 20% على أول طلب</h3>
+        <p data-ar="استخدم الكود EZFIRST عند إتمام الطلب" data-en="Use code EZFIRST at checkout">استخدم الكود EZFIRST عند إتمام الطلب</p>
+        <a href="ez-market-products.html" class="btn" style="background:var(--accent); color:#FFFFFF; width:fit-content; margin-top:6px;" data-ar="احصل على الكود" data-en="Get the Code">احصل على الكود</a>
       </div>
     </div>
   </section>
@@ -597,10 +643,10 @@
   <section>
     <div class="section-head reveal">
       <div>
-        <h2>الأكثر مبيعًا</h2>
-        <p>المنتجات التي يفضلها عملاؤنا</p>
+        <h2 data-ar="الأكثر مبيعًا" data-en="Best Sellers">الأكثر مبيعًا</h2>
+        <p data-ar="المنتجات التي يفضلها عملاؤنا" data-en="The products our customers prefer">المنتجات التي يفضلها عملاؤنا</p>
       </div>
-      <a href="ez-market-products.html" class="see-all">عرض الكل <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
+      <a href="ez-market-products.html" class="see-all"><span data-ar="عرض الكل" data-en="View All">عرض الكل</span> <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
     </div>
     <div class="grid grid-4" id="best-grid"></div>
   </section>
@@ -609,10 +655,10 @@
   <section>
     <div class="section-head reveal">
       <div>
-        <h2>وصل حديثًا</h2>
-        <p>أحدث الإضافات على المنصة</p>
+        <h2 data-ar="وصل حديثًا" data-en="New Arrivals">وصل حديثًا</h2>
+        <p data-ar="أحدث الإضافات على المنصة" data-en="The latest additions to the platform">أحدث الإضافات على المنصة</p>
       </div>
-      <a href="ez-market-products.html" class="see-all">عرض الكل <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
+      <a href="ez-market-products.html" class="see-all"><span data-ar="عرض الكل" data-en="View All">عرض الكل</span> <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
     </div>
     <div class="grid grid-4" id="new-grid"></div>
   </section>
@@ -621,10 +667,10 @@
   <section>
     <div class="section-head reveal">
       <div>
-        <h2>متاجر مميزة</h2>
-        <p>بائعون موثوقون على EZ Market</p>
+        <h2 data-ar="متاجر مميزة" data-en="Featured Stores">متاجر مميزة</h2>
+        <p data-ar="بائعون موثوقون على EZ Market" data-en="Trusted sellers on EZ Market">بائعون موثوقون على EZ Market</p>
       </div>
-      <a href="ez-market-store.html" class="see-all">اكتشف المتاجر <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
+      <a href="ez-market-store.html" class="see-all"><span data-ar="اكتشف المتاجر" data-en="Discover Stores">اكتشف المتاجر</span> <svg class="icon" style="width:15px;height:15px"><use href="#i-chevron"/></svg></a>
     </div>
     <div class="grid grid-4" id="stores-grid"></div>
   </section>
@@ -634,23 +680,23 @@
     <div class="trust-grid reveal">
       <div class="trust-item">
         <div class="trust-icon"><svg class="icon"><use href="#i-truck"/></svg></div>
-        <h4>توصيل سريع</h4>
-        <p>خلال 24-72 ساعة لمعظم المناطق</p>
+        <h4 data-ar="توصيل سريع" data-en="Fast Delivery">توصيل سريع</h4>
+        <p data-ar="خلال 24-72 ساعة لمعظم المناطق" data-en="Within 24-72 hours for most areas">خلال 24-72 ساعة لمعظم المناطق</p>
       </div>
       <div class="trust-item">
         <div class="trust-icon"><svg class="icon"><use href="#i-shield"/></svg></div>
-        <h4>دفع آمن</h4>
-        <p>حماية كاملة لبياناتك المالية</p>
+        <h4 data-ar="دفع آمن" data-en="Secure Payment">دفع آمن</h4>
+        <p data-ar="حماية كاملة لبياناتك المالية" data-en="Full protection for your financial data">حماية كاملة لبياناتك المالية</p>
       </div>
       <div class="trust-item">
         <div class="trust-icon"><svg class="icon"><use href="#i-refresh"/></svg></div>
-        <h4>إرجاع سهل</h4>
-        <p>استرجاع أو استبدال خلال 14 يومًا</p>
+        <h4 data-ar="إرجاع سهل" data-en="Easy Returns">إرجاع سهل</h4>
+        <p data-ar="استرجاع أو استبدال خلال 14 يومًا" data-en="Return or exchange within 14 days">استرجاع أو استبدال خلال 14 يومًا</p>
       </div>
       <div class="trust-item">
         <div class="trust-icon"><svg class="icon"><use href="#i-headset"/></svg></div>
-        <h4>دعم متواصل</h4>
-        <p>فريق خدمة العملاء جاهز يوميًا</p>
+        <h4 data-ar="دعم متواصل" data-en="24/7 Support">دعم متواصل</h4>
+        <p data-ar="فريق خدمة العملاء جاهز يوميًا" data-en="Our customer service team is ready daily">فريق خدمة العملاء جاهز يوميًا</p>
       </div>
     </div>
   </section>
@@ -660,37 +706,40 @@
 <footer>
   <div class="wrap footer-grid">
     <div>
-      <div class="footer-logo">EZ Market</div>
-      <p class="tag">كل ما تريد، في مكان واحد. منصة تجارية تجمع أفضل البائعين والمنتجات في تجربة تسوّق واحدة موثوقة.</p>
+      <div class="footer-logo">
+        <img src="ez12.jpg" alt="شعار EZ Market" class="footer-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+        <span id="footer-logo-text">EZ Market<span class="dot">.</span></span>
+      </div>
+      <p class="tag" data-ar="كل ما تريد، في مكان واحد. منصة تجارية تجمع أفضل البائعين والمنتجات في تجربة تسوّق واحدة موثوقة." data-en="Everything you want, in one place. A marketplace bringing together the best sellers and products in one trusted shopping experience.">كل ما تريد، في مكان واحد. منصة تجارية تجمع أفضل البائعين والمنتجات في تجربة تسوّق واحدة موثوقة.</p>
     </div>
     <div class="footer-col">
-      <h5>عن المنصة</h5>
+      <h5 data-ar="عن المنصة" data-en="About the Platform">عن المنصة</h5>
       <ul>
-        <li><a href="#">عن EZ Market</a></li>
-        <li><a href="ez-market-seller.html">بيع معنا</a></li>
-        <li><a href="#">تواصل معنا</a></li>
-        <li><a href="#">مركز المساعدة</a></li>
+        <li><a href="#" data-ar="عن EZ Market" data-en="About EZ Market">عن EZ Market</a></li>
+        <li><a href="ez-market-seller.html" data-ar="بيع معنا" data-en="Sell With Us">بيع معنا</a></li>
+        <li><a href="#" data-ar="تواصل معنا" data-en="Contact Us">تواصل معنا</a></li>
+        <li><a href="#" data-ar="مركز المساعدة" data-en="Help Center">مركز المساعدة</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h5>خدمة العملاء</h5>
+      <h5 data-ar="خدمة العملاء" data-en="Customer Service">خدمة العملاء</h5>
       <ul>
-        <li><a href="#">الأسئلة الشائعة</a></li>
-        <li><a href="#">الشحن والتوصيل</a></li>
-        <li><a href="#">سياسة الاسترجاع</a></li>
-        <li><a href="ez-market-account.html?tab=orders">تتبع طلبك</a></li>
+        <li><a href="#" data-ar="الأسئلة الشائعة" data-en="FAQ">الأسئلة الشائعة</a></li>
+        <li><a href="#" data-ar="الشحن والتوصيل" data-en="Shipping & Delivery">الشحن والتوصيل</a></li>
+        <li><a href="#" data-ar="سياسة الاسترجاع" data-en="Return Policy">سياسة الاسترجاع</a></li>
+        <li><a href="ez-market-account.html?tab=orders" data-ar="تتبع طلبك" data-en="Track Your Order">تتبع طلبك</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h5>قانوني</h5>
+      <h5 data-ar="قانوني" data-en="Legal">قانوني</h5>
       <ul>
-        <li><a href="#">سياسة الخصوصية</a></li>
-        <li><a href="#">الشروط والأحكام</a></li>
+        <li><a href="#" data-ar="سياسة الخصوصية" data-en="Privacy Policy">سياسة الخصوصية</a></li>
+        <li><a href="#" data-ar="الشروط والأحكام" data-en="Terms & Conditions">الشروط والأحكام</a></li>
       </ul>
     </div>
   </div>
   <div class="wrap footer-bottom">
-    <p>© 2026 EZ Market. جميع الحقوق محفوظة.</p>
+    <p data-ar="© 2026 EZ Market. جميع الحقوق محفوظة." data-en="© 2026 EZ Market. All rights reserved.">© 2026 EZ Market. جميع الحقوق محفوظة.</p>
     <div class="socials">
       <a href="#" aria-label="فيسبوك"><svg class="icon" style="width:16px;height:16px"><use href="#i-fb"/></svg></a>
       <a href="#" aria-label="إنستغرام"><svg class="icon" style="width:16px;height:16px"><use href="#i-ig"/></svg></a>
@@ -700,14 +749,14 @@
 </footer>
 
 <nav class="bottom-nav">
-  <a href="ez-market-home.html" class="active"><svg class="icon" style="width:20px;height:20px"><use href="#i-home"/></svg>الرئيسية</a>
-  <a href="#categories"><svg class="icon" style="width:20px;height:20px"><use href="#i-grid"/></svg>التصنيفات</a>
-  <a href="ez-market-search.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-search"/></svg>البحث</a>
-  <a href="ez-market-cart.html" id="bn-cart"><svg class="icon" style="width:20px;height:20px"><use href="#i-cart"/></svg>السلة</a>
-  <a href="ez-market-account.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg>حسابي</a>
+  <a href="ez-market-home.html" class="active"><svg class="icon" style="width:20px;height:20px"><use href="#i-home"/></svg><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+  <a href="javascript:void(0)" onclick="openNavDrawer()"><svg class="icon" style="width:20px;height:20px"><use href="#i-grid"/></svg><span data-ar="التصنيفات" data-en="Categories">التصنيفات</span></a>
+  <a href="ez-market-search.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-search"/></svg><span data-ar="البحث" data-en="Search">البحث</span></a>
+  <a href="ez-market-cart.html" id="bn-cart"><svg class="icon" style="width:20px;height:20px"><use href="#i-cart"/></svg><span data-ar="السلة" data-en="Cart">السلة</span></a>
+  <a href="ez-market-account.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg><span data-ar="حسابي" data-en="Account">حسابي</span></a>
 </nav>
 
-<div class="toast" id="toast">تمت الإضافة إلى السلة</div>
+<div class="toast" id="toast" data-ar="تمت الإضافة إلى السلة" data-en="Added to cart">تمت الإضافة إلى السلة</div>
 
 <script>
 (function(){
@@ -716,18 +765,8 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- Data ---------- */
-  var categories = [
-    {icon:"📱", name:"الهواتف", slug:"phones"},
-    {icon:"💻", name:"الحواسيب", slug:"electronics"},
-    {icon:"👗", name:"الأزياء", slug:"fashion"},
-    {icon:"🏠", name:"المنزل", slug:"home"},
-    {icon:"💄", name:"الجمال", slug:"beauty"},
-    {icon:"🍳", name:"المطبخ", slug:"home"},
-    {icon:"🧸", name:"الأطفال", slug:"kids"},
-    {icon:"⚽", name:"الرياضة", slug:"sports"},
-    {icon:"🚗", name:"السيارات", slug:"auto"},
-    {icon:"🛠️", name:"أدوات", slug:"tools"}
-  ];
+  var adImages = [];
+  for(var adNum=20; adNum<=30; adNum++){ adImages.push('ez'+adNum+'.jpg'); }
 
   function product(name, store, price, oldPrice, rating, reviews, emoji, tint, badge){
     return {name:name, store:store, price:price, oldPrice:oldPrice, rating:rating, reviews:reviews, emoji:emoji, tint:tint, badge:badge};
@@ -785,11 +824,37 @@
     return html;
   }
 
-  function renderCategories(){
-    var el = document.getElementById('cats-grid');
-    el.innerHTML = categories.map(function(c){
-      return '<a href="ez-market-products.html?cat='+c.slug+'" class="cat-card reveal"><div class="cat-icon">'+c.icon+'</div><span>'+c.name+'</span></a>';
-    }).join('');
+  function renderAdsCarousel(){
+    var track = document.getElementById('ads-track');
+    if(!track) return;
+
+    function slideHtml(file){
+      return '<div class="ad-slide" data-file="'+file+'"><img src="'+file+'" alt="إعلان" loading="lazy" onerror="this.closest(\'.ad-slide\').classList.add(\'ad-empty\')"></div>';
+    }
+
+    // Build the real slides, then repeat the first slide at the end so the
+    // loop can jump back to the start seamlessly.
+    var html = adImages.map(slideHtml).join('') + slideHtml(adImages[0]);
+    track.innerHTML = html;
+
+    if(reduceMotion || adImages.length < 2) return;
+
+    var index = 0;
+    var total = adImages.length;
+
+    setInterval(function(){
+      index++;
+      track.style.transition = 'transform .6s ease';
+      track.style.transform = 'translateX(-' + (index * 100) + '%)';
+
+      if(index === total){
+        setTimeout(function(){
+          track.style.transition = 'none';
+          track.style.transform = 'translateX(0)';
+          index = 0;
+        }, 620);
+      }
+    }, 3000);
   }
 
   function renderProductCard(p){
@@ -836,7 +901,7 @@
     }).join('');
   }
 
-  renderCategories();
+  renderAdsCarousel();
   renderGrid('flash-grid', flashDeals);
   renderGrid('featured-grid', featured);
   renderGrid('best-grid', bestSellers);
@@ -852,7 +917,7 @@
   window.addToCart = function(){
     cartCount++;
     document.getElementById('cart-count').textContent = cartCount;
-    showToast('تمت الإضافة إلى السلة');
+    showToast(window.ezLang === 'en' ? 'Added to cart' : 'تمت الإضافة إلى السلة');
   };
 
   function showToast(msg){
@@ -894,7 +959,8 @@
     var h = Math.floor(diff/3600000);
     var m = Math.floor((diff%3600000)/60000);
     var s = Math.floor((diff%60000)/1000);
-    countdownEl.textContent = 'ينتهي خلال ' + pad(h) + ':' + pad(m) + ':' + pad(s);
+    var prefix = (window.ezLang === 'en') ? 'Ends in ' : 'ينتهي خلال ';
+    countdownEl.textContent = prefix + pad(h) + ':' + pad(m) + ':' + pad(s);
     if(diff <= 0){ clearInterval(timer); }
   }
   tick();
@@ -925,12 +991,46 @@
 </script>
 <script>
 (function(){
+  function applyLanguage(lang){
+    window.ezLang = lang;
+    document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'ar');
+
+    document.querySelectorAll('[data-ar][data-en]').forEach(function(el){
+      el.textContent = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-ar');
+    });
+    document.querySelectorAll('[data-ar-placeholder][data-en-placeholder]').forEach(function(el){
+      el.setAttribute('placeholder', lang === 'en' ? el.getAttribute('data-en-placeholder') : el.getAttribute('data-ar-placeholder'));
+    });
+
+    var toggleLabel = document.getElementById('lang-toggle-label');
+    if(toggleLabel){ toggleLabel.textContent = lang === 'en' ? 'العربية' : 'English'; }
+
+    document.title = lang === 'en' ? 'EZ Market — Everything you need, in one place' : 'EZ Market — كل ما تريد، في مكان واحد';
+
+    if(typeof window.updateHeroTitleLang === 'function'){ window.updateHeroTitleLang(); }
+  }
+  window.toggleLanguage = function(){
+    var next = window.ezLang === 'en' ? 'ar' : 'en';
+    try{ localStorage.setItem('ez-lang', next); }catch(e){}
+    applyLanguage(next);
+  };
+  var saved = 'ar';
+  try{ saved = localStorage.getItem('ez-lang') || 'ar'; }catch(e){}
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ applyLanguage(saved); });
+  } else {
+    applyLanguage(saved);
+  }
+})();
+</script>
+<script>
+(function(){
   var drawer = document.getElementById('nav-drawer');
   var overlay = document.getElementById('nav-drawer-overlay');
   if(!drawer || !overlay) return;
 
   function staggerItems(){
-    var items = drawer.querySelectorAll('.nav-link, .nav-drawer-label');
+    var items = drawer.querySelectorAll('.nav-quick-item, .nav-link, .nav-drawer-label');
     items.forEach(function(el, i){ el.style.transitionDelay = (i * 0.045) + 's'; });
   }
 
@@ -952,23 +1052,34 @@
 </script>
 <script>
 (function(){
-  var titles = [
+  var titlesAr = [
     'تسوّق بسهولة، واختر ما يناسبك',
     'كل ما تحتاجه، بضغطة واحدة',
     'آلاف المنتجات، بائعون موثوقون',
     'أسعار تنافسية، وتوصيل سريع',
     'اكتشف عروضًا جديدة كل يوم'
   ];
+  var titlesEn = [
+    'Shop with ease, choose what suits you',
+    'Everything you need, in one tap',
+    'Thousands of products, trusted sellers',
+    'Competitive prices, fast delivery',
+    'Discover new deals every day'
+  ];
   var i = 0;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var h1 = document.getElementById('hero-rotate-title');
   var inner = h1 ? h1.querySelector('.hrt-inner') : null;
-  if(!h1 || !inner || reduce) return;
+  if(!h1 || !inner) return;
+  window.updateHeroTitleLang = function(){
+    inner.textContent = (window.ezLang === 'en') ? titlesEn[i] : titlesAr[i];
+  };
+  if(reduce) return;
   setInterval(function(){
-    i = (i + 1) % titles.length;
+    i = (i + 1) % titlesAr.length;
     h1.classList.add('hrt-switching');
     setTimeout(function(){
-      inner.textContent = titles[i];
+      inner.textContent = (window.ezLang === 'en') ? titlesEn[i] : titlesAr[i];
       h1.classList.remove('hrt-switching');
     }, 450);
   }, 2500);
@@ -979,10 +1090,10 @@
   var rvReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var SCALE_SEL = '.product-card,.store-card,.order-card,.order-row-card,.promo-card';
   var CANDIDATE_SEL = [
-    '.product-card','.cat-card','.store-card','.promo-card','.review-card',
+    '.product-card','.store-card','.promo-card','.review-card',
     '.order-card','.order-row-card','.summary-card','.stat-card','.panel',
     '.section-head','.page-title','.empty-state','.table-wrap','.breadcrumb',
-    '.grid > *','.cats-grid > *','.promo-grid > *','.stat-grid > *',
+    '.grid > *','.ads-carousel','.promo-grid > *','.stat-grid > *',
     '.trust-grid > *','.form-grid > *','.hero-inner > *'
   ].join(',');
   var HEADING_SEL = '.section-head,.page-title,h1,h2';
@@ -1051,6 +1162,28 @@
       });
     });
     rvMo.observe(document.body, {childList:true, subtree:true});
+  }
+})();
+</script>
+
+<a href="ez-market-cart.html" class="cart-fab" id="cart-fab" aria-label="السلة" data-ar-label="السلة" data-en-label="Cart">
+  <svg class="icon" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+  <span class="cart-fab-badge is-zero" id="cart-fab-count">0</span>
+</a>
+<script>
+(function(){
+  function syncCartFabBadge(){
+    var src = document.getElementById('cart-count');
+    var fab = document.getElementById('cart-fab-count');
+    if(!fab) return;
+    var n = src ? (parseInt(src.textContent, 10) || 0) : 0;
+    fab.textContent = n;
+    fab.classList.toggle('is-zero', n === 0);
+  }
+  syncCartFabBadge();
+  var src = document.getElementById('cart-count');
+  if(src && 'MutationObserver' in window){
+    new MutationObserver(syncCartFabBadge).observe(src, {childList:true, characterData:true, subtree:true});
   }
 })();
 </script>
