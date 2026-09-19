@@ -20,7 +20,7 @@
   :root{
     --ink:#1A1A1A; --ink-soft:#6B6B6B; --surface:#FFFFFF; --surface-alt:#FAF5F5;
     --border:#F1D9DB; --primary:#C8102E; --primary-dark:#8E0B21; --primary-tint:#FBE4E7;
-    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0;
+    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0; --star:#F5A623; --star-tint:#FDF1DC; --price:#1B8A55; --discount:#E8590C; --discount-tint:#FDE7DA;
     --shadow-sm:0 4px 14px rgba(20,40,34,.06); --shadow-md:0 14px 34px rgba(20,40,34,.10);
     --radius-card:18px; --radius-pill:999px; --radius-sm:12px;
     --font:'Cairo','Tahoma',system-ui,sans-serif; color-scheme:light;
@@ -29,14 +29,14 @@
     :root:not([data-theme="light"]){
       --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
       --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
-      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418; --star:#FFC94D; --star-tint:#3D2E12; --price:#4ADE80; --discount:#FF8A50; --discount-tint:#3A2416;
       --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
     }
   }
   :root[data-theme="dark"]{
     --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
     --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
-    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418; --star:#FFC94D; --star-tint:#3D2E12; --price:#4ADE80; --discount:#FF8A50; --discount-tint:#3A2416;
     --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -86,7 +86,7 @@
   .option-card .meta{flex:1;}
   .option-card .meta b{font-size:.88rem; display:block;}
   .option-card .meta span{font-size:.78rem; color:var(--ink-soft);}
-  .option-card .price{font-weight:800; font-size:.88rem; color:var(--primary);}
+  .option-card .price{font-weight:800; font-size:.88rem; color:var(--price);}
 
   .review-block{border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:16px;}
   .review-block:last-child{border-bottom:none; margin-bottom:0; padding-bottom:0;}
@@ -97,7 +97,7 @@
   .review-item .thumb{width:48px; height:48px; border-radius:var(--radius-sm); background:var(--surface-alt); display:flex; align-items:center; justify-content:center; font-size:1.4rem;}
   .review-item .info{flex:1; font-size:.82rem;}
   .review-item .info b{font-weight:700; display:block;}
-  .review-item .price{font-weight:800; font-size:.84rem; color:var(--primary);}
+  .review-item .price{font-weight:800; font-size:.84rem; color:var(--price);}
 
   .step-actions{display:flex; justify-content:space-between; margin-top:22px; gap:12px;}
   .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 24px; border-radius:var(--radius-pill); font-weight:700; font-size:.88rem; border:1.5px solid transparent;}
@@ -192,30 +192,58 @@
 
   /* Slightly smaller, app-like interface on mobile so cards/boxes don't stretch full-screen */
   @media (max-width:760px){
-    html{ zoom:0.85; }
+    html{ zoom:1.07; }
   }
 
   /* ---------- Floating cart button ---------- */
   .cart-fab{
-    position:fixed; top:50%; right:16px; transform:translateY(-50%);
-    width:52px; height:52px; border-radius:50%;
+    position:fixed; bottom:16px; left:16px;
+    width:60px; height:60px; border-radius:50%;
     background:var(--primary); color:#fff;
     display:flex; align-items:center; justify-content:center;
     box-shadow:var(--shadow-md); z-index:150;
     transition:transform .2s ease, background .2s ease;
   }
-  .cart-fab:hover{ background:var(--primary-dark); transform:translateY(-50%) scale(1.07); }
+  .cart-fab:hover{ background:var(--primary-dark); transform:scale(1.07); }
   .cart-fab-badge{
-    position:absolute; top:-4px; left:-4px; background:#fff; color:var(--primary);
+    position:absolute; top:-4px; right:-4px; background:#fff; color:var(--primary);
     font-size:.65rem; font-weight:800; min-width:18px; height:18px; border-radius:50%;
     display:flex; align-items:center; justify-content:center; padding:0 3px;
     border:1px solid var(--primary-tint);
   }
   .cart-fab-badge.is-zero{ display:none; }
   @media (max-width:760px){
-    .cart-fab{ width:44px; height:44px; right:10px; }
-    .cart-fab svg{ width:19px; height:19px; }
+    .cart-fab{ width:50px; height:50px; left:10px; bottom:10px; }
+    .cart-fab svg{ width:22px; height:22px; }
   }
+</style>
+<style id="nav-drawer-style">
+  .nav-drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:190; opacity:0; pointer-events:none; transition:opacity .35s ease; }
+  .nav-drawer-overlay.open{ opacity:1; pointer-events:auto; }
+  .nav-drawer{ position:fixed; top:0; bottom:0; right:0; width:320px; max-width:86vw; background:#FFFFFF; border-inline-start:1px solid var(--border); z-index:200; transform:translateX(100%); transition:transform .45s cubic-bezier(.16,.84,.44,1); box-shadow:-10px 0 40px rgba(0,0,0,.18); overflow-y:auto; padding:18px 0 30px; }
+  :root[data-theme="dark"] .nav-drawer{ background:#1A0E10; }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .nav-drawer{ background:#1A0E10; } }
+  .nav-drawer.open{ transform:translateX(0); }
+  .nav-drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:0 18px 16px; border-bottom:1px solid var(--border); margin-bottom:10px; }
+  .nav-drawer-headwrap{ display:flex; align-items:center; gap:8px; min-width:0; }
+  .nav-drawer-back{ width:32px; height:32px; border-radius:50%; border:1px solid var(--border); background:var(--surface-alt); display:flex; align-items:center; justify-content:center; color:var(--ink); flex-shrink:0; }
+  .nav-drawer-back:hover{ background:var(--primary-tint); color:var(--primary); border-color:var(--primary); }
+  .nav-drawer-head .logo{ font-size:1.2rem; color:var(--primary) !important; font-weight:800; text-shadow:none !important; }
+  .nav-drawer-close{ width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--surface-alt); display:flex; align-items:center; justify-content:center; color:var(--ink); transform:rotate(90deg); flex-shrink:0; }
+  .nav-quick{ display:grid; grid-template-columns:repeat(4,1fr); gap:4px; padding:4px 10px 14px; margin-bottom:6px; border-bottom:1px solid var(--border); }
+  .nav-quick-item{ display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; padding:6px 0; cursor:pointer; color:var(--ink); font-family:inherit; text-decoration:none; }
+  .nav-quick-item .icon-btn{ position:relative; width:42px; height:42px; border-radius:50%; border:1px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; color:var(--ink); }
+  .nav-quick-item:hover .icon-btn{ background:var(--primary-tint); color:var(--primary); border-color:var(--primary); }
+  .nav-quick-item .icon-btn .badge{ position:absolute; top:-4px; left:-4px; background:var(--sale); color:#fff; font-size:.65rem; font-weight:700; min-width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .nav-quick-label{ font-size:.66rem; font-weight:700; color:var(--ink-soft); white-space:nowrap; }
+  .nav-drawer-links{ display:flex; flex-direction:column; padding:0 10px; }
+  .nav-link{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; color:var(--ink); font-weight:700; font-size:.88rem; text-decoration:none; }
+  .nav-link:hover{ background:var(--surface-alt); color:var(--primary); }
+  .nav-link.sub{ font-weight:600; color:var(--ink-soft); padding-inline-start:20px; }
+  .nav-drawer-divider{ height:1px; background:var(--border); margin:12px 10px; }
+  .nav-drawer-label{ display:block; padding:6px 12px 2px; font-size:.72rem; font-weight:800; color:var(--ink-soft); letter-spacing:.02em; }
+  #nav-menu-btn, #header-back-btn{ background:transparent !important; border:none !important; box-shadow:none !important; }
+  #nav-menu-btn:hover, #header-back-btn:hover{ background:rgba(255,255,255,.15) !important; }
 </style>
 </head>
 <body>
@@ -224,20 +252,83 @@
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2l8 3.5V11c0 5.4-3.5 8.7-8 10-4.5-1.3-8-4.6-8-10V5.5z"/><path d="M9 12l2 2 4-4"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
+
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></symbol>
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.4 8 2 4 6 4c2.2 0 3.8 1.2 6 3.6C14.2 5.2 15.8 4 18 4c4 0 5.6 4 4 7.8-2.5 4.6-10 9.2-10 9.2z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h5v-6h2v6h5V10"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="2.5" y="13" width="5" height="7" rx="2"/><rect x="16.5" y="13" width="5" height="7" rx="2"/></symbol>
+
+  <symbol id="i-arrow-back" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
 </svg>
 
 <header>
   <div class="header-top">
     <a href="ez-market-home.html" class="logo" id="site-logo">
       <img src="ez12.jpg" alt="شعار EZ Market" class="site-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-      <span id="site-logo-text">EZ Market<span class="dot">.</span></span>
+      <span id="site-logo-text">EZ Market</span>
     </a>
-    <div style="display:flex; align-items:center; gap:14px;">
-      <div class="secure-tag"><svg class="icon" style="width:15px;height:15px"><use href="#i-shield"/></svg>الدفع آمن ومشفّر</div>
-      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري" style="display:flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--ink);"><svg class="icon" id="theme-icon" style="width:17px;height:17px"><use href="#i-moon"/></svg></button>
+    <div class="header-actions">
+      <button class="icon-btn" id="header-back-btn" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon"><use href="#i-arrow-back"/></svg></button>
+      <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
     </div>
   </div>
 </header>
+
+<div class="nav-drawer-overlay" id="nav-drawer-overlay" onclick="closeNavDrawer()"></div>
+<aside class="nav-drawer" id="nav-drawer" aria-label="قائمة التنقل الكاملة">
+  <div class="nav-drawer-head">
+    <div class="nav-drawer-headwrap">
+      <button class="nav-drawer-back" id="nav-drawer-back" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon" style="width:18px;height:18px"><use href="#i-arrow-back"/></svg></button>
+      <a href="ez-market-home.html" class="logo"><img src="ez12.jpg" alt="شعار EZ Market" class="site-logo-img" style="height:28px; width:auto; max-width:110px; object-fit:contain;" onerror="this.style.display='none';"><span>EZ Market</span></a>
+    </div>
+    <button class="nav-drawer-close" onclick="closeNavDrawer()" aria-label="إغلاق القائمة"><svg class="icon"><use href="#i-chevron"/></svg></button>
+  </div>
+  <div class="nav-quick" role="group" aria-label="اختصارات سريعة">
+    <a class="nav-quick-item" href="ez-market-account.html" aria-label="حسابي">
+      <span class="icon-btn"><svg class="icon"><use href="#i-user"/></svg></span>
+      <span class="nav-quick-label">حسابي</span>
+    </a>
+    <a class="nav-quick-item" href="ez-market-cart.html" aria-label="السلة">
+      <span class="icon-btn"><svg class="icon"><use href="#i-cart"/></svg><span class="badge" id="cart-count">0</span></span>
+      <span class="nav-quick-label">السلة</span>
+    </a>
+    <a class="nav-quick-item" href="ez-market-account.html?tab=favorites" aria-label="المفضلة">
+      <span class="icon-btn"><svg class="icon"><use href="#i-heart"/></svg></span>
+      <span class="nav-quick-label">المفضلة</span>
+    </a>
+    <button class="nav-quick-item" id="theme-toggle" type="button" onclick="toggleTheme()" aria-label="تبديل الوضع الليلي/النهاري">
+      <span class="icon-btn"><svg class="icon" id="theme-icon"><use href="#i-moon"/></svg></span>
+      <span class="nav-quick-label">الوضع الليلي</span>
+    </button>
+  </div>
+  <nav class="nav-drawer-links">
+    <a href="ez-market-home.html" class="nav-link"><svg class="icon"><use href="#i-home"/></svg><span>الرئيسية</span></a>
+    <a href="ez-market-search.html" class="nav-link"><svg class="icon"><use href="#i-search"/></svg><span>البحث</span></a>
+    <a href="ez-market-auth.html" class="nav-link"><svg class="icon"><use href="#i-user"/></svg><span>تسجيل الدخول / إنشاء حساب</span></a>
+    <div class="nav-drawer-divider"></div>
+    <span class="nav-drawer-label">التصنيفات</span>
+    <a href="ez-market-products.html?cat=electronics" class="nav-link sub">الإلكترونيات</a>
+    <a href="ez-market-products.html?cat=phones" class="nav-link sub">الهواتف والأجهزة</a>
+    <a href="ez-market-products.html?cat=fashion" class="nav-link sub">الأزياء والملابس</a>
+    <a href="ez-market-products.html?cat=home" class="nav-link sub">المنزل والمطبخ</a>
+    <a href="ez-market-products.html?cat=beauty" class="nav-link sub">الجمال والعناية</a>
+    <a href="ez-market-products.html?cat=sports" class="nav-link sub">الرياضة واللياقة</a>
+    <a href="ez-market-products.html?cat=kids" class="nav-link sub">الأطفال والألعاب</a>
+    <a href="ez-market-products.html?cat=auto" class="nav-link sub">السيارات والإكسسوارات</a>
+    <a href="ez-market-products.html?cat=deals" class="nav-link sub">العروض والخصومات</a>
+    <div class="nav-drawer-divider"></div>
+    <span class="nav-drawer-label">للبائعين والإدارة</span>
+    <a href="ez-market-seller.html" class="nav-link"><svg class="icon"><use href="#i-headset"/></svg><span>لوحة البائع</span></a>
+    <a href="ez-market-store.html" class="nav-link"><svg class="icon"><use href="#i-grid"/></svg><span>صفحة متجر نموذجية</span></a>
+    <a href="ez-market-admin.html" class="nav-link"><svg class="icon"><use href="#i-shield"/></svg><span>لوحة التحكم الإدارية</span></a>
+  </nav>
+</aside>
+
 
 <div id="checkout-flow">
   <div class="stepper" id="stepper"></div>
@@ -525,7 +616,7 @@
 </script>
 
 <a href="ez-market-cart.html" class="cart-fab" id="cart-fab" aria-label="السلة" data-ar-label="السلة" data-en-label="Cart">
-  <svg class="icon" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+  <svg class="icon" style="width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></svg>
   <span class="cart-fab-badge is-zero" id="cart-fab-count">0</span>
 </a>
 <script>
@@ -543,6 +634,35 @@
   if(src && 'MutationObserver' in window){
     new MutationObserver(syncCartFabBadge).observe(src, {childList:true, characterData:true, subtree:true});
   }
+})();
+</script>
+<script>
+(function(){
+  var drawer = document.getElementById('nav-drawer');
+  var overlay = document.getElementById('nav-drawer-overlay');
+  if(!drawer || !overlay) return;
+  window.openNavDrawer = function(){
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeNavDrawer = function(){
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') window.closeNavDrawer();
+  });
+})();
+</script>
+<script>
+(function(){
+  var showBack = window.history && window.history.length > 1;
+  var drawerBackBtn = document.getElementById('nav-drawer-back');
+  var headerBackBtn = document.getElementById('header-back-btn');
+  if(drawerBackBtn && showBack){ drawerBackBtn.style.display = 'flex'; }
+  if(headerBackBtn && showBack){ headerBackBtn.style.display = 'flex'; }
 })();
 </script>
 </body>

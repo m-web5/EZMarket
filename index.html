@@ -21,6 +21,7 @@
     --ink:#1A1A1A;
     --ink-soft:#6B6B6B;
     --surface:#FFFFFF;
+    --surface-glass:rgba(255,255,255,.72);
     --surface-alt:#FAF5F5;
     --surface-raise:#FFFFFF;
     --border:#F1D9DB;
@@ -31,7 +32,7 @@
     --accent-tint:#FDEBEC;
     --sale:#B3121F;
     --sale-tint:#F8DEE0;
-    --star:#E63946;
+    --star:#F5A623; --star-tint:#FDF1DC; --price:#1B8A55; --discount:#E8590C; --discount-tint:#FDE7DA;
     --shadow-sm:0 4px 14px rgba(20,40,34,.06);
     --shadow-md:0 14px 34px rgba(20,40,34,.10);
     --radius-card:18px;
@@ -45,6 +46,7 @@
       --ink:#F5EBEC;
       --ink-soft:#C9A8AC;
       --surface:#1A0E10;
+      --surface-glass:rgba(26,14,16,.68);
       --surface-alt:#241316;
       --surface-raise:#2A171A;
       --border:#3D1F23;
@@ -55,7 +57,7 @@
       --accent-tint:#3A1519;
       --sale:#FF5C6C;
       --sale-tint:#3A1418;
-      --star:#FF6B76;
+      --star:#FFC94D; --star-tint:#3D2E12; --price:#4ADE80; --discount:#FF8A50; --discount-tint:#3A2416;
       --shadow-sm:0 4px 14px rgba(0,0,0,.35);
       --shadow-md:0 14px 34px rgba(0,0,0,.45);
       color-scheme: dark;
@@ -65,6 +67,7 @@
     --ink:#F5EBEC;
     --ink-soft:#C9A8AC;
     --surface:#1A0E10;
+    --surface-glass:rgba(26,14,16,.68);
     --surface-alt:#241316;
     --surface-raise:#2A171A;
     --border:#3D1F23;
@@ -75,7 +78,7 @@
     --accent-tint:#3A1519;
     --sale:#FF5C6C;
     --sale-tint:#3A1418;
-    --star:#FF6B76;
+    --star:#FFC94D; --star-tint:#3D2E12; --price:#4ADE80; --discount:#FF8A50; --discount-tint:#3A2416;
     --shadow-sm:0 4px 14px rgba(0,0,0,.35);
     --shadow-md:0 14px 34px rgba(0,0,0,.45);
     color-scheme: dark;
@@ -119,10 +122,13 @@
   /* Nav drawer (hamburger menu) */
   .nav-drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:190; opacity:0; pointer-events:none; transition:opacity .35s ease; }
   .nav-drawer-overlay.open{ opacity:1; pointer-events:auto; }
-  .nav-drawer{ position:fixed; top:0; bottom:0; right:0; width:320px; max-width:86vw; background:var(--surface); z-index:200; transform:translateX(100%); transition:transform .45s cubic-bezier(.16,.84,.44,1); box-shadow:-10px 0 40px rgba(0,0,0,.18); overflow-y:auto; padding:18px 0 30px; }
+  .nav-drawer{ position:fixed; top:0; bottom:0; right:0; width:320px; max-width:86vw; background:var(--surface); border-inline-start:1px solid var(--border); z-index:200; transform:translateX(100%); transition:transform .45s cubic-bezier(.16,.84,.44,1); box-shadow:-10px 0 40px rgba(0,0,0,.18); overflow-y:auto; padding:18px 0 30px; }
   .nav-drawer.open{ transform:translateX(0); }
   .nav-drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:0 18px 16px; border-bottom:1px solid var(--border); margin-bottom:10px; }
-  .nav-drawer-head .logo{ font-size:1.2rem; }
+  .nav-drawer-headwrap{ display:flex; align-items:center; gap:8px; min-width:0; }
+  .nav-drawer-back{ width:32px; height:32px; border-radius:50%; border:1px solid var(--border); background:var(--surface-alt); display:flex; align-items:center; justify-content:center; color:var(--ink); flex-shrink:0; }
+  .nav-drawer-back:hover{ background:var(--primary-tint); color:var(--primary); border-color:var(--primary); }
+  .nav-drawer-head .logo{ font-size:1.2rem; color:var(--primary) !important; font-weight:800; text-shadow:none !important; }
   .nav-drawer-close{ width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--surface-alt); display:flex; align-items:center; justify-content:center; color:var(--ink); transform:rotate(90deg); flex-shrink:0; }
   .nav-quick{ display:grid; grid-template-columns:repeat(5,1fr); gap:4px; padding:4px 10px 14px; margin-bottom:6px; border-bottom:1px solid var(--border); }
   .nav-quick-item{ display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:none; padding:6px 0; cursor:pointer; color:var(--ink); font-family:inherit; opacity:0; transform:translateX(24px); transition:opacity .4s ease, transform .4s ease; }
@@ -260,7 +266,7 @@
     border-radius:var(--radius-pill); z-index:2;
   }
   .badge.new{ background:var(--primary-tint); color:var(--primary); }
-  .badge.sale{ background:var(--sale-tint); color:var(--sale); }
+  .badge.sale{ background:var(--discount-tint); color:var(--discount); }
   .badge.best{ background:var(--accent-tint); color:#8E0B21; }
   .fav-btn{
     position:absolute; top:10px; left:10px; z-index:2; width:34px; height:34px; border-radius:50%;
@@ -278,9 +284,9 @@
   .rating .stars{ color:var(--star); display:flex; gap:1px; }
   .rating .icon{ width:13px; height:13px; }
   .price-row{ display:flex; align-items:baseline; gap:8px; margin-top:2px; }
-  .price-now{ font-weight:800; font-size:1.02rem; color:var(--primary); }
+  .price-now{ font-weight:800; font-size:1.02rem; color:var(--price); }
   .price-old{ font-size:.8rem; color:var(--ink-soft); text-decoration:line-through; }
-  .discount-pct{ font-size:.72rem; font-weight:700; color:var(--sale); }
+  .discount-pct{ font-size:.72rem; font-weight:700; color:var(--discount); }
   .card-actions{ display:flex; gap:8px; margin-top:10px; }
   .add-cart-btn{
     flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
@@ -411,6 +417,8 @@
   }
   header .icon-btn:hover{ background:rgba(255,255,255,.3) !important; }
   header .icon-btn .badge{ background:#FFFFFF !important; color:var(--sale) !important; }
+  #nav-menu-btn, #header-back-btn{ background:transparent !important; border:none !important; box-shadow:none !important; }
+  #nav-menu-btn:hover, #header-back-btn:hover{ background:rgba(255,255,255,.15) !important; }
   .cats-nav{ border-top:1px solid rgba(255,255,255,.22) !important; background:transparent !important; }
   .cats-nav a{ color:rgba(255,255,255,.92) !important; font-weight:700 !important; }
   .cats-nav a:hover{ color:#FFFFFF !important; text-decoration:underline; }
@@ -432,29 +440,29 @@
 
   /* Slightly smaller, app-like interface on mobile so cards/boxes don't stretch full-screen */
   @media (max-width:760px){
-    html{ zoom:0.85; }
+    html{ zoom:1.07; }
   }
 
   /* ---------- Floating cart button ---------- */
   .cart-fab{
-    position:fixed; top:50%; right:16px; transform:translateY(-50%);
-    width:52px; height:52px; border-radius:50%;
+    position:fixed; bottom:16px; left:16px;
+    width:60px; height:60px; border-radius:50%;
     background:var(--primary); color:#fff;
     display:flex; align-items:center; justify-content:center;
     box-shadow:var(--shadow-md); z-index:150;
     transition:transform .2s ease, background .2s ease;
   }
-  .cart-fab:hover{ background:var(--primary-dark); transform:translateY(-50%) scale(1.07); }
+  .cart-fab:hover{ background:var(--primary-dark); transform:scale(1.07); }
   .cart-fab-badge{
-    position:absolute; top:-4px; left:-4px; background:#fff; color:var(--primary);
+    position:absolute; top:-4px; right:-4px; background:#fff; color:var(--primary);
     font-size:.65rem; font-weight:800; min-width:18px; height:18px; border-radius:50%;
     display:flex; align-items:center; justify-content:center; padding:0 3px;
     border:1px solid var(--primary-tint);
   }
   .cart-fab-badge.is-zero{ display:none; }
   @media (max-width:760px){
-    .cart-fab{ width:44px; height:44px; right:10px; }
-    .cart-fab svg{ width:19px; height:19px; }
+    .cart-fab{ width:50px; height:50px; left:10px; bottom:10px; }
+    .cart-fab svg{ width:22px; height:22px; }
   }
 </style>
 </head>
@@ -481,19 +489,22 @@
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2.5 12h2.6M18.9 12h2.6M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.6A9 9 0 1 1 10.4 3 7.2 7.2 0 0 0 21 13.6z"/></symbol>
   <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.7 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.7-4-9s1.4-6.5 4-9z"/></symbol>
+
+  <symbol id="i-arrow-back" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
 </svg>
 
 <header id="site-header">
   <div class="header-top">
     <a href="ez-market-home.html" class="logo" id="site-logo">
       <img src="ez12.jpg" alt="شعار EZ Market" class="site-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-      <span id="site-logo-text">EZ Market<span class="dot">.</span></span>
+      <span id="site-logo-text">EZ Market</span>
     </a>
     <div class="search-bar">
       <svg class="icon"><use href="#i-search"/></svg>
       <input type="text" id="home-search" data-ar-placeholder="ابحث عن منتج، تصنيف، أو متجر..." data-en-placeholder="Search for a product, category, or store..." placeholder="ابحث عن منتج، تصنيف، أو متجر..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}">
     </div>
     <div class="header-actions">
+      <button class="icon-btn" id="header-back-btn" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon"><use href="#i-arrow-back"/></svg></button>
       <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
     </div>
   </div>
@@ -521,7 +532,10 @@
 <div class="nav-drawer-overlay" id="nav-drawer-overlay" onclick="closeNavDrawer()"></div>
 <aside class="nav-drawer" id="nav-drawer" aria-label="قائمة التنقل الكاملة">
   <div class="nav-drawer-head">
-    <a href="ez-market-home.html" class="logo">EZ Market<span class="dot">.</span></a>
+    <div class="nav-drawer-headwrap">
+      <button class="nav-drawer-back" id="nav-drawer-back" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon" style="width:18px;height:18px"><use href="#i-arrow-back"/></svg></button>
+      <a href="ez-market-home.html" class="logo"><img src="ez12.jpg" alt="شعار EZ Market" class="site-logo-img" style="height:28px; width:auto; max-width:110px; object-fit:contain;" onerror="this.style.display='none';"><span>EZ Market</span></a>
+    </div>
     <button class="nav-drawer-close" onclick="closeNavDrawer()" aria-label="إغلاق القائمة"><svg class="icon"><use href="#i-chevron"/></svg></button>
   </div>
   <div class="nav-quick" role="group" aria-label="اختصارات سريعة">
@@ -708,7 +722,7 @@
     <div>
       <div class="footer-logo">
         <img src="ez12.jpg" alt="شعار EZ Market" class="footer-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-        <span id="footer-logo-text">EZ Market<span class="dot">.</span></span>
+        <span id="footer-logo-text">EZ Market</span>
       </div>
       <p class="tag" data-ar="كل ما تريد، في مكان واحد. منصة تجارية تجمع أفضل البائعين والمنتجات في تجربة تسوّق واحدة موثوقة." data-en="Everything you want, in one place. A marketplace bringing together the best sellers and products in one trusted shopping experience.">كل ما تريد، في مكان واحد. منصة تجارية تجمع أفضل البائعين والمنتجات في تجربة تسوّق واحدة موثوقة.</p>
     </div>
@@ -1167,7 +1181,7 @@
 </script>
 
 <a href="ez-market-cart.html" class="cart-fab" id="cart-fab" aria-label="السلة" data-ar-label="السلة" data-en-label="Cart">
-  <svg class="icon" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+  <svg class="icon" style="width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></svg>
   <span class="cart-fab-badge is-zero" id="cart-fab-count">0</span>
 </a>
 <script>
@@ -1185,6 +1199,15 @@
   if(src && 'MutationObserver' in window){
     new MutationObserver(syncCartFabBadge).observe(src, {childList:true, characterData:true, subtree:true});
   }
+})();
+</script>
+<script>
+(function(){
+  var showBack = window.history && window.history.length > 1;
+  var drawerBackBtn = document.getElementById('nav-drawer-back');
+  var headerBackBtn = document.getElementById('header-back-btn');
+  if(drawerBackBtn && showBack){ drawerBackBtn.style.display = 'flex'; }
+  if(headerBackBtn && showBack){ headerBackBtn.style.display = 'flex'; }
 })();
 </script>
 </body>

@@ -20,7 +20,7 @@
   :root{
     --ink:#1A1A1A; --ink-soft:#6B6B6B; --surface:#FFFFFF; --surface-alt:#FAF5F5;
     --border:#F1D9DB; --primary:#C8102E; --primary-dark:#8E0B21; --primary-tint:#FBE4E7;
-    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0;
+    --accent:#E63946; --accent-tint:#FDEBEC; --sale:#B3121F; --sale-tint:#F8DEE0; --star:#F5A623; --star-tint:#FDF1DC; --price:#1B8A55; --discount:#E8590C; --discount-tint:#FDE7DA;
     --sidebar:#7A0C1F; --sidebar-text:#E9C9CC; --sidebar-active:#591019;
     --shadow-sm:0 4px 14px rgba(20,40,34,.06); --shadow-md:0 14px 34px rgba(20,40,34,.10);
     --radius-card:16px; --radius-pill:999px; --radius-sm:10px;
@@ -30,7 +30,7 @@
     :root:not([data-theme="light"]){
       --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
       --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
-      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+      --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418; --star:#FFC94D; --star-tint:#3D2E12; --price:#4ADE80; --discount:#FF8A50; --discount-tint:#3A2416;
       --sidebar:#120A0B; --sidebar-text:#C9A8AC; --sidebar-active:#241316;
       --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
     }
@@ -38,7 +38,7 @@
   :root[data-theme="dark"]{
     --ink:#F5EBEC; --ink-soft:#C9A8AC; --surface:#1A0E10; --surface-alt:#241316;
     --border:#3D1F23; --primary:#FF3B4E; --primary-dark:#E01F35; --primary-tint:#3D1418;
-    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418;
+    --accent:#FF6B76; --accent-tint:#3A1519; --sale:#FF5C6C; --sale-tint:#3A1418; --star:#FFC94D; --star-tint:#3D2E12; --price:#4ADE80; --discount:#FF8A50; --discount-tint:#3A2416;
     --sidebar:#120A0B; --sidebar-text:#C9A8AC; --sidebar-active:#241316;
     --shadow-sm:0 4px 14px rgba(0,0,0,.35); --shadow-md:0 14px 34px rgba(0,0,0,.45); color-scheme:dark;
   }
@@ -139,29 +139,29 @@
 
   /* Slightly smaller, app-like interface on mobile so cards/boxes don't stretch full-screen */
   @media (max-width:760px){
-    html{ zoom:0.85; }
+    html{ zoom:1.07; }
   }
 
   /* ---------- Floating cart button ---------- */
   .cart-fab{
-    position:fixed; top:50%; right:16px; transform:translateY(-50%);
-    width:52px; height:52px; border-radius:50%;
+    position:fixed; bottom:16px; left:16px;
+    width:60px; height:60px; border-radius:50%;
     background:var(--primary); color:#fff;
     display:flex; align-items:center; justify-content:center;
     box-shadow:var(--shadow-md); z-index:150;
     transition:transform .2s ease, background .2s ease;
   }
-  .cart-fab:hover{ background:var(--primary-dark); transform:translateY(-50%) scale(1.07); }
+  .cart-fab:hover{ background:var(--primary-dark); transform:scale(1.07); }
   .cart-fab-badge{
-    position:absolute; top:-4px; left:-4px; background:#fff; color:var(--primary);
+    position:absolute; top:-4px; right:-4px; background:#fff; color:var(--primary);
     font-size:.65rem; font-weight:800; min-width:18px; height:18px; border-radius:50%;
     display:flex; align-items:center; justify-content:center; padding:0 3px;
     border:1px solid var(--primary-tint);
   }
   .cart-fab-badge.is-zero{ display:none; }
   @media (max-width:760px){
-    .cart-fab{ width:44px; height:44px; right:10px; }
-    .cart-fab svg{ width:19px; height:19px; }
+    .cart-fab{ width:50px; height:50px; left:10px; bottom:10px; }
+    .cart-fab svg{ width:22px; height:22px; }
   }
 </style>
 </head>
@@ -235,7 +235,7 @@
         <div class="delta down">▼ 4 منتجات منخفضة المخزون</div>
       </div>
       <div class="stat-card">
-        <div class="top"><span class="label">تقييم المتجر</span><div class="stat-icon" style="background:var(--sale-tint); color:var(--sale);"><svg class="icon"><use href="#i-star"/></svg></div></div>
+        <div class="top"><span class="label">تقييم المتجر</span><div class="stat-icon" style="background:var(--star-tint); color:var(--star);"><svg class="icon"><use href="#i-star"/></svg></div></div>
         <div class="value">4.8 / 5</div>
         <div class="delta up">من 620 تقييمًا</div>
       </div>
@@ -423,7 +423,7 @@
 </script>
 
 <a href="ez-market-cart.html" class="cart-fab" id="cart-fab" aria-label="السلة" data-ar-label="السلة" data-en-label="Cart">
-  <svg class="icon" style="width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+  <svg class="icon" style="width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 7H6"/></svg>
   <span class="cart-fab-badge is-zero" id="cart-fab-count">0</span>
 </a>
 <script>
