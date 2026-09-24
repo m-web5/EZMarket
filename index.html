@@ -11,7 +11,7 @@
 })();
 </script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>EZ Market — كل ما تريد، في مكان واحد</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -120,14 +120,6 @@
   .header-actions{ display:flex; align-items:center; gap:10px; margin-inline-start:auto; }
   .header-auth-btns{ display:flex; align-items:center; gap:8px; }
   .header-auth-btns .btn{ padding:10px 20px; font-size:.9rem; white-space:nowrap; }
-  @media (max-width: 640px){
-    .header-auth-btns .btn-outline{ display:none; }
-    .header-auth-btns .btn{ padding:8px 14px; font-size:.82rem; }
-  }
-  @media (max-width: 420px){
-    .header-auth-btns{ display:none; }
-  }
-
   /* Nav drawer (hamburger menu) */
   .nav-drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:190; opacity:0; pointer-events:none; transition:opacity .35s ease; }
   .nav-drawer-overlay.open{ opacity:1; pointer-events:auto; }
@@ -177,7 +169,9 @@
     .search-bar{ display:none; }
     .mobile-search{ display:flex; padding:0 20px 12px; }
     .mobile-search .search-bar{ display:flex; max-width:none; }
-    .cats-nav{ display:none; }
+    /* شريط التصنيفات يبقى ظاهرًا على الهاتف مع تمرير أفقي */
+    .cats-nav ul{ gap:18px; padding:10px 14px; -webkit-overflow-scrolling:touch; }
+    .cats-nav a{ font-size:.82rem; }
   }
 
   /* ---------- Hero ---------- */
@@ -337,9 +331,9 @@
 
   /* ---------- Category gateways: عمود واحد من بطاقات طولية، الصورة خلفية كاملة للبطاقة ---------- */
   .flash{ display:block; }
-  .cat-gates{ display:flex; flex-direction:column; align-items:center; gap:26px; }
+  .cat-gates{ display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; }
   .cat-gate{
-    position:relative; display:block; width:min(100%, 440px); aspect-ratio:3 / 4;
+    position:relative; display:block; width:100%; aspect-ratio:3 / 4;
     border-radius:28px; overflow:hidden; isolation:isolate; box-shadow:var(--shadow-sm);
     transition:opacity .55s ease, box-shadow .3s ease, transform .3s ease;
   }
@@ -386,10 +380,11 @@
   }
   .cat-gate:hover .cat-gate-cta{ background:var(--primary-dark); }
   @media (max-width:700px){
-    .cat-gate{ border-radius:24px; }
-    .cat-gate-info{ padding:0 16px 18px; gap:12px; }
-    .cat-gate-name{ font-size:1.2rem; }
-    .cat-gate-cta{ padding:12px 14px; font-size:.92rem; }
+    .cat-gates{ gap:12px; }
+    .cat-gate{ border-radius:20px; }
+    .cat-gate-info{ padding:0 12px 14px; gap:8px; }
+    .cat-gate-name{ font-size:1rem; }
+    .cat-gate-cta{ padding:10px 10px; font-size:.8rem; gap:5px; }
   }
 
   /* ---------- Promo banners ---------- */
@@ -582,7 +577,7 @@
 
   /* Slightly smaller, app-like interface on mobile so cards/boxes don't stretch full-screen */
   @media (max-width:760px){
-    html{ zoom:0.82; }
+    html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   }
 
   /* ---------- Floating cart button ---------- */
@@ -631,6 +626,63 @@
   body, input, button, textarea, select { font-weight:600; }
   h1,h2,h3,h4,h5,h6, .logo, .site-logo-text, .footer-logo { font-weight:800 !important; }
   body { line-height:1.9; }
+</style>
+<style id="mobile-fixes">
+  /* ===================================================================
+     تحسينات الهاتف (Mobile fixes) — بدل تصغير الصفحة بـ zoom
+     =================================================================== */
+  html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  body{ overflow-x:clip; }
+  img, video, canvas, iframe{ max-width:100%; }
+  /* عناصر الشبكات لا تُوسّع الصفحة أفقيًا (منع تمدد 1fr بسبب المحتوى) */
+  .grid>*,.grid-3>*,.grid-4>*,.mini-grid>*,.stat-grid>*,.form-grid>*,.content-grid>*,.saved-grid>*,.fav-grid>*,.addr-grid>*,.feature-grid>*,.trust-grid>*,.promo-grid>*,.about-grid>*,.row2>*,.layout>*,.app>*,.pdp>*,.cart-layout>*,.checkout-layout>*,.footer-grid>*,.list-view>*{ min-width:0; }
+  .price-row, .rating{ flex-wrap:wrap; }
+  .topbar, .topbar-actions, .panel-head, .section-head{ flex-wrap:wrap; min-width:0; }
+  .main{ min-width:0; }
+  header .header-actions{ display:flex; align-items:center; gap:6px; }
+  .topbar > div:last-child{ flex-wrap:wrap; }
+
+  @media (max-width:760px){
+    /* ---------- الهيدر ---------- */
+    .header-top{ flex-wrap:wrap; gap:10px; padding:10px 14px; }
+    .header-top .logo{ order:1; flex:1 1 0; min-width:0; gap:8px !important; overflow:hidden; }
+    .header-top .site-logo-img{ height:40px !important; width:auto; max-width:40vw !important; object-fit:contain; flex-shrink:0; }
+    header .logo #site-logo-text{ font-size:clamp(1.15rem, 5.6vw, 1.5rem) !important; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .header-actions{ order:2; margin-inline-start:0; flex-shrink:0; }
+    .header-top > .search-bar{ order:3; flex:1 1 100%; max-width:none; }
+    header .icon-btn{ width:44px; height:44px; }
+    .mobile-search{ padding:0 14px 12px; }
+
+    /* ---------- تفاعل اللمس ---------- */
+    a, button, .btn, .icon-btn{ -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+    /* 16px يمنع iOS من تكبير الصفحة تلقائيًا عند التركيز على حقل إدخال */
+    input, select, textarea{ font-size:16px !important; }
+    .btn{ min-height:44px; }
+    .main{ padding:16px 14px 40px; }
+    .topbar{ gap:10px; }
+
+    /* ---------- المناطق الآمنة (الشاشات ذات النتوء/الشريط السفلي) ---------- */
+    .bottom-nav{ padding-bottom:env(safe-area-inset-bottom); }
+    .wrap{ padding-left:14px; padding-right:14px; }
+  }
+  @media (max-width:360px){
+    header .logo #site-logo-text{ font-size:1.1rem !important; }
+    .header-top .site-logo-img{ height:34px !important; }
+  }
+
+  /* ===== index: صف أزرار الدخول/التسجيل على الهاتف ===== */
+  @media (max-width:760px){
+    header .header-actions{ display:contents; }
+    #header-back-btn{ order:0; }
+    #nav-menu-btn{ order:2; flex-shrink:0; }
+    .header-auth-btns{ order:3; flex:1 1 100%; display:flex; gap:10px; }
+    .header-auth-btns .btn{ flex:1 1 0; padding:9px 12px; font-size:.95rem; min-height:42px; }
+    /* الهيدر لاصق، لكن صف الشعار والأزرار يمرّ للأعلى عند التمرير ويبقى البحث والتصنيفات ظاهرين */
+    #site-header{ top:-118px; }
+    .cats-nav{ display:block; }
+    .cats-nav ul{ gap:20px; padding:10px 14px; -webkit-overflow-scrolling:touch; }
+    .cats-nav a{ font-size:.88rem; padding:4px 0; display:inline-block; }
+  }
 </style>
 </head>
 <body>
@@ -986,12 +1038,12 @@
 
   /* One gateway per category. `key` matches the ?cat= keys in ez-market-products.html */
   var categoryGates = [
-    {key:"electronics", ar:"الإلكترونيات", en:"Electronics", emoji:"💻", tint:"--primary-tint"},
-    {key:"phones", ar:"الهواتف والأجهزة", en:"Phones & Devices", emoji:"📱", tint:"--accent-tint"},
-    {key:"fashion", ar:"الأزياء والملابس", en:"Fashion & Clothing", emoji:"👗", tint:"--sale-tint"},
-    {key:"home", ar:"المنزل والمطبخ", en:"Home & Kitchen", emoji:"🏠", tint:"--primary-tint"},
-    {key:"beauty", ar:"الجمال والعناية", en:"Beauty & Care", emoji:"💄", tint:"--accent-tint"},
-    {key:"sports", ar:"الرياضة واللياقة", en:"Sports & Fitness", emoji:"⚽", tint:"--sale-tint"},
+    {key:"electronics", ar:"الإلكترونيات", en:"Electronics", emoji:"💻", tint:"--primary-tint", img:"ez80.jpg"},
+    {key:"phones", ar:"الهواتف والأجهزة", en:"Phones & Devices", emoji:"📱", tint:"--accent-tint", img:"ez81.jpg"},
+    {key:"fashion", ar:"الأزياء والملابس", en:"Fashion & Clothing", emoji:"👗", tint:"--sale-tint", img:"ez82.jpg"},
+    {key:"home", ar:"المنزل والمطبخ", en:"Home & Kitchen", emoji:"🏠", tint:"--primary-tint", img:"ez83.jpg"},
+    {key:"beauty", ar:"الجمال والعناية", en:"Beauty & Care", emoji:"💄", tint:"--accent-tint", img:"ez84.jpg"},
+    {key:"sports", ar:"الرياضة واللياقة", en:"Sports & Fitness", emoji:"⚽", tint:"--sale-tint", img:"ez85.jpg"},
     {key:"kids", ar:"الأطفال والألعاب", en:"Kids & Toys", emoji:"🧸", tint:"--primary-tint", img:"ez70.jpg"},
     {key:"auto", ar:"السيارات والإكسسوارات", en:"Auto & Accessories", emoji:"🚗", tint:"--accent-tint", img:"ez71.jpg"},
     {key:"tools", ar:"أدوات ومستلزمات", en:"Tools & Supplies", emoji:"🛠️", tint:"--sale-tint", img:"ez72.jpg"},
