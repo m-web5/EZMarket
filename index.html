@@ -665,6 +665,28 @@
     /* في الصفحات التي فيها شريط تنقل سفلي: يطفو فوقه بدل أن يغطي زره */
     body:has(.bottom-nav) .cart-fab{ bottom:calc(76px + env(safe-area-inset-bottom)); }
   }
+
+  /* ---------- تأثير "طيران المنتج" نحو السلة ---------- */
+  .fly-to-cart-ghost{
+    position:fixed; z-index:400; pointer-events:none;
+    border-radius:16px; overflow:hidden;
+    background:var(--surface-alt,#F4EFEC);
+    box-shadow:var(--shadow-md);
+    display:flex; align-items:center; justify-content:center;
+    will-change:transform, opacity, left, top;
+  }
+  .fly-to-cart-ghost img{ width:100%; height:100%; object-fit:cover; }
+  .fly-to-cart-ghost.is-emoji{ font-size:2.4rem; }
+  @keyframes cartFabBump{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.28); }
+    60%{ transform:scale(.92); }
+    100%{ transform:scale(1); }
+  }
+  .cart-fab.bump{ animation:cartFabBump .45s cubic-bezier(.34,1.56,.64,1); }
+  @media (prefers-reduced-motion: reduce){
+    .cart-fab.bump{ animation:none; }
+  }
 </style>
 
 <style id="brand-wordmark">
@@ -789,7 +811,7 @@
         <a href="ez-market-auth.html" class="btn btn-outline"><span class="btn-label-full" data-ar="تسجيل الدخول" data-en="Log In">تسجيل الدخول</span><span class="btn-label-short" data-ar="دخول" data-en="Log In">دخول</span></a>
         <a href="ez-market-auth.html?mode=register" class="btn btn-primary"><span class="btn-label-full" data-ar="إنشاء حساب" data-en="Sign Up">إنشاء حساب</span><span class="btn-label-short" data-ar="تسجيل" data-en="Sign Up">تسجيل</span></a>
         <button type="button" id="currency-toggle-btn" onclick="toggleCurrency()" aria-label="تغيير العملة">
-          <span id="currency-toggle-label">ر.س</span>
+          <span id="currency-toggle-label">$</span>
         </button>
       </div>
       <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
@@ -887,7 +909,6 @@
 <section class="hero" id="hero">
   <div class="wrap hero-inner">
     <div>
-      <span class="hero-badge" data-ar="🛍️ أكثر من 5000 منتج من بائعين موثوقين" data-en="🛍️ Over 5,000 products from trusted sellers">🛍️ أكثر من 5000 منتج من بائعين موثوقين</span>
       <h1 id="hero-rotate-title" class="hero-rotate"><span class="hrt-inner" data-ar="تسوّق بسهولة، واختر ما يناسبك" data-en="Shop with ease, choose what suits you">تسوّق بسهولة، واختر ما يناسبك</span></h1>
       <p data-ar="اكتشف آلاف المنتجات من متاجر وبائعين مختلفين في مكان واحد، بأسعار موثوقة وتوصيل سريع لكل مناطق المملكة." data-en="Discover thousands of products from different stores and sellers in one place, with trusted prices and fast delivery across the country.">اكتشف آلاف المنتجات من متاجر وبائعين مختلفين في مكان واحد، بأسعار موثوقة وتوصيل سريع لكل مناطق المملكة.</p>
       <div class="hero-ctas">
@@ -1056,8 +1077,9 @@
   };
 
   function syncCurrencyLabel(){
+    // الزر يعرض العملة التي سيتم التحويل إليها عند الضغط (عكس العملة الحالية المعروضة في المنصة)
     var label = document.getElementById('currency-toggle-label');
-    if(label){ label.textContent = currentCurrency === 'SAR' ? 'ر.س' : '$'; }
+    if(label){ label.textContent = currentCurrency === 'SAR' ? '$' : 'ر.س'; }
   }
 
   /* One gateway per category. `key` matches the ?cat= keys in ez-market-products.html */
@@ -1248,10 +1270,80 @@
   };
 
   var cartCount = 0;
-  window.addToCart = function(){
-    cartCount++;
-    document.getElementById('cart-count').textContent = cartCount;
-    showToast(window.ezLang === 'en' ? 'Added to cart' : 'تمت الإضافة إلى السلة');
+  // يستنسخ صورة/رمز المنتج ويطيّره بمسار منحنٍ حتى يهبط داخل زر السلة العائم
+  function flyToCart(sourceEl, onLand){
+    var cartFab = document.getElementById('cart-fab');
+    if(!sourceEl || !cartFab || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      if(onLand) onLand();
+      return;
+    }
+
+    var startRect = sourceEl.getBoundingClientRect();
+    var endRect   = cartFab.getBoundingClientRect();
+    var size = 74;
+
+    var ghost = document.createElement('div');
+    ghost.className = 'fly-to-cart-ghost';
+
+    var img = sourceEl.querySelector('img');
+    if(img){
+      ghost.appendChild(img.cloneNode(true));
+    } else {
+      var tile = sourceEl.classList.contains('tile') ? sourceEl : sourceEl.querySelector('.tile');
+      ghost.classList.add('is-emoji');
+      ghost.textContent = (tile ? tile.textContent : sourceEl.textContent).trim() || '🛍️';
+    }
+
+    ghost.style.width  = size+'px';
+    ghost.style.height = size+'px';
+    document.body.appendChild(ghost);
+
+    var startX = startRect.left + startRect.width/2;
+    var startY = startRect.top  + startRect.height/2;
+    var endX   = endRect.left   + endRect.width/2;
+    var endY   = endRect.top    + endRect.height/2;
+    // نقطة تحكم مرتفعة فوق المسار لصنع قوس طبيعي بدل خط مستقيم
+    var ctrlX = startX + (endX - startX) * 0.25;
+    var ctrlY = Math.min(startY, endY) - 150;
+
+    var duration = 680;
+    var t0 = null;
+
+    function frame(ts){
+      if(!t0) t0 = ts;
+      var p = Math.min((ts - t0) / duration, 1);
+      var inv = 1 - p;
+      var x = inv*inv*startX + 2*inv*p*ctrlX + p*p*endX;
+      var y = inv*inv*startY + 2*inv*p*ctrlY + p*p*endY;
+      var scale  = 1 - 0.78*p;
+      var rotate = p * 200;
+      var opacity = p < 0.7 ? 1 : 1 - (p - 0.7)/0.3;
+
+      ghost.style.left = (x - size/2) + 'px';
+      ghost.style.top  = (y - size/2) + 'px';
+      ghost.style.transform = 'scale('+scale+') rotate('+rotate+'deg)';
+      ghost.style.opacity = opacity;
+
+      if(p < 1){
+        requestAnimationFrame(frame);
+      } else {
+        ghost.remove();
+        cartFab.classList.add('bump');
+        setTimeout(function(){ cartFab.classList.remove('bump'); }, 450);
+        if(onLand) onLand();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  window.addToCart = function(triggerBtn){
+    var card = triggerBtn ? triggerBtn.closest('.product-card, .store-card, .promo-card') : null;
+    var source = card ? card.querySelector('.product-media img, .product-media .tile, .tile') : null;
+    flyToCart(source, function(){
+      cartCount++;
+      document.getElementById('cart-count').textContent = cartCount;
+      showToast(window.ezLang === 'en' ? 'Added to cart' : 'تمت الإضافة إلى السلة');
+    });
   };
 
   function showToast(msg){

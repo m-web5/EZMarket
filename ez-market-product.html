@@ -214,6 +214,9 @@
   .cats-nav a{ color:rgba(255,255,255,.92) !important; font-weight:600 !important; }
   .cats-nav a:hover{ color:#FFFFFF !important; text-decoration:underline; }
   .mobile-search .search-bar{ background:#FFFFFF !important; }
+  .breadcrumb{ color:rgba(255,255,255,.85) !important; font-weight:600 !important; }
+  .breadcrumb a{ color:#FFFFFF !important; }
+  .breadcrumb .current{ color:#FFFFFF !important; font-weight:700 !important; }
   @media (max-width:760px){ .logo{ font-size:1.35rem !important; } .site-logo-img{ height:42px !important; max-width:170px !important; } }
 </style>
 <style id="coolvetica-font">
@@ -286,6 +289,28 @@
     .cart-fab svg{ width:26px !important; height:26px !important; }
     /* في الصفحات التي فيها شريط تنقل سفلي: يطفو فوقه بدل أن يغطي زره */
     body:has(.bottom-nav) .cart-fab{ bottom:calc(76px + env(safe-area-inset-bottom)); }
+  }
+
+  /* ---------- تأثير "طيران المنتج" نحو السلة ---------- */
+  .fly-to-cart-ghost{
+    position:fixed; z-index:400; pointer-events:none;
+    border-radius:16px; overflow:hidden;
+    background:var(--surface-alt,#F4EFEC);
+    box-shadow:var(--shadow-md);
+    display:flex; align-items:center; justify-content:center;
+    will-change:transform, opacity, left, top;
+  }
+  .fly-to-cart-ghost img{ width:100%; height:100%; object-fit:cover; }
+  .fly-to-cart-ghost.is-emoji{ font-size:2.4rem; }
+  @keyframes cartFabBump{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.28); }
+    60%{ transform:scale(.92); }
+    100%{ transform:scale(1); }
+  }
+  .cart-fab.bump{ animation:cartFabBump .45s cubic-bezier(.34,1.56,.64,1); }
+  @media (prefers-reduced-motion: reduce){
+    .cart-fab.bump{ animation:none; }
   }
 </style>
 <style id="nav-drawer-style">
@@ -540,7 +565,7 @@
       </div>
 
       <div class="pdp-ctas">
-        <button class="btn btn-outline" onclick="addToCart()"><svg class="icon" style="width:17px;height:17px"><use href="#i-cart"/></svg>أضف للسلة</button>
+        <button class="btn btn-outline" onclick="addToCart(this)"><svg class="icon" style="width:17px;height:17px"><use href="#i-cart"/></svg>أضف للسلة</button>
         <button class="btn btn-dark" onclick="buyNow()">اشترِ الآن</button>
         <button class="fav-toggle" onclick="this.classList.toggle('active')" aria-label="أضف للمفضلة"><svg class="icon"><use href="#i-heart"/></svg></button>
       </div>
@@ -659,10 +684,79 @@
     clearTimeout(window._tt);
     window._tt = setTimeout(function(){ t.classList.remove('show'); }, 2200);
   }
-  window.addToCart = function(){
-    cartCount += qty;
-    document.getElementById('cart-count').textContent = cartCount;
-    showToast('تمت إضافة '+qty+' إلى السلة');
+  // يستنسخ صورة/رمز المنتج من المعرض الرئيسي ويطيّره بمسار منحنٍ حتى يهبط داخل زر السلة العائم
+  function flyToCart(sourceEl, onLand){
+    var cartFab = document.getElementById('cart-fab');
+    if(!sourceEl || !cartFab || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      if(onLand) onLand();
+      return;
+    }
+
+    var startRect = sourceEl.getBoundingClientRect();
+    var endRect   = cartFab.getBoundingClientRect();
+    var size = 84;
+
+    var ghost = document.createElement('div');
+    ghost.className = 'fly-to-cart-ghost';
+
+    var img = sourceEl.querySelector('img');
+    if(img){
+      ghost.appendChild(img.cloneNode(true));
+    } else {
+      var emojiEl = sourceEl.querySelector('#gallery-emoji') || sourceEl;
+      ghost.classList.add('is-emoji');
+      ghost.textContent = emojiEl.textContent.trim() || '🛍️';
+    }
+
+    ghost.style.width  = size+'px';
+    ghost.style.height = size+'px';
+    document.body.appendChild(ghost);
+
+    var startX = startRect.left + startRect.width/2;
+    var startY = startRect.top  + startRect.height/2;
+    var endX   = endRect.left   + endRect.width/2;
+    var endY   = endRect.top    + endRect.height/2;
+    // نقطة تحكم مرتفعة فوق المسار لصنع قوس طبيعي بدل خط مستقيم
+    var ctrlX = startX + (endX - startX) * 0.25;
+    var ctrlY = Math.min(startY, endY) - 150;
+
+    var duration = 680;
+    var t0 = null;
+
+    function frame(ts){
+      if(!t0) t0 = ts;
+      var p = Math.min((ts - t0) / duration, 1);
+      var inv = 1 - p;
+      var x = inv*inv*startX + 2*inv*p*ctrlX + p*p*endX;
+      var y = inv*inv*startY + 2*inv*p*ctrlY + p*p*endY;
+      var scale  = 1 - 0.78*p;
+      var rotate = p * 200;
+      var opacity = p < 0.7 ? 1 : 1 - (p - 0.7)/0.3;
+
+      ghost.style.left = (x - size/2) + 'px';
+      ghost.style.top  = (y - size/2) + 'px';
+      ghost.style.transform = 'scale('+scale+') rotate('+rotate+'deg)';
+      ghost.style.opacity = opacity;
+
+      if(p < 1){
+        requestAnimationFrame(frame);
+      } else {
+        ghost.remove();
+        cartFab.classList.add('bump');
+        setTimeout(function(){ cartFab.classList.remove('bump'); }, 450);
+        if(onLand) onLand();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  window.addToCart = function(triggerBtn){
+    var source = document.getElementById('gallery-main');
+    flyToCart(source, function(){
+      cartCount += qty;
+      document.getElementById('cart-count').textContent = cartCount;
+      showToast('تمت إضافة '+qty+' إلى السلة');
+    });
   };
   window.buyNow = function(){
     showToast('جاري تحويلك لإتمام الطلب...');
