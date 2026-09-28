@@ -92,12 +92,23 @@
   @media (max-width:860px){ .search-bar{display:none;} }
 
   /* Category banner */
-  .cat-banner{background:linear-gradient(135deg, var(--primary-dark), var(--primary)); color:#fff; padding:34px 0;}
+  .cat-banner{position:relative; isolation:isolate; overflow:hidden; color:#fff; padding:64px 0 46px; min-height:260px; display:flex; align-items:center;
+    background-color:var(--primary-dark);
+    background-image:linear-gradient(135deg, var(--primary-dark), var(--primary));
+    background-size:cover; background-position:center;}
+  .cat-banner > .wrap{width:100%;}
+  /* dark-red veil keeps the title readable on any photo; stronger on the text side (right in RTL) */
+  .cat-banner::before{content:""; position:absolute; inset:0; z-index:-1;
+    background:linear-gradient(270deg, rgba(120,8,26,.86) 0%, rgba(150,10,32,.62) 45%, rgba(0,0,0,.28) 100%);}
+  .cat-banner.has-img{animation:ezBannerIn .8s ease both;}
+  @keyframes ezBannerIn{from{background-size:112%; opacity:.6} to{background-size:cover; opacity:1}}
+  .cat-banner h1{text-shadow:0 2px 14px rgba(0,0,0,.45);}
+  .cat-banner p{text-shadow:0 1px 8px rgba(0,0,0,.45);}
   .cat-banner-inner{display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;}
-  .cat-banner h1{font-size:1.7rem; font-weight:700;}
+  .cat-banner h1{font-size:2rem; font-weight:700;}
   .cat-banner p{margin-top:6px; color:rgba(255,255,255,.85); font-size:.9rem; max-width:48ch;}
   .subcats{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
-  .subcats a{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); padding:7px 14px; border-radius:var(--radius-pill); font-size:.8rem; font-weight:500;}
+  .subcats a{background:rgba(255,255,255,.16); backdrop-filter:blur(4px); border:1px solid rgba(255,255,255,.3); padding:7px 14px; border-radius:var(--radius-pill); font-size:.8rem; font-weight:500;}
   .subcats a.active{background:#fff; color:var(--primary-dark);}
 
   /* Layout */
@@ -806,6 +817,34 @@
   var ct = document.getElementById('cat-title'); if(ct) ct.textContent = currentCat.title;
   var cd = document.getElementById('cat-desc'); if(cd) cd.textContent = currentCat.desc;
 
+
+  /* ---------- category banner background photo ---------- */
+  var BANNER = {   /* wide 1600x600 photos, different from the homepage category-card images */
+    electronics:{q:["modern electronics gadgets laptop headphones desk setup wide","technology devices circuit board neon wide banner"], k:"technology"},
+    phones:     {q:["smartphones tablet smartwatch on desk wide photo","mobile phones accessories lifestyle wide banner"], k:"smartphone"},
+    fashion:    {q:["fashion boutique clothes hanging rack wide photo","stylish clothing shoes accessories flat lay wide"], k:"fashion"},
+    home:       {q:["cozy modern kitchen interior wide photo","home living room decor cookware wide banner"], k:"interior"},
+    beauty:     {q:["skincare cosmetics beauty products marble wide photo","makeup brushes perfume vanity table wide banner"], k:"cosmetics"},
+    sports:     {q:["fitness gym dumbbells yoga mat sport wide photo","running shoes sports equipment outdoor wide banner"], k:"gym"},
+    kids:       {q:["colorful kids toys playroom wide photo","children toys building blocks teddy wide banner"], k:"toys"},
+    auto:       {q:["car dashboard interior detailing wide photo","automotive accessories garage road wide banner"], k:"automobile"},
+    tools:      {q:["workshop power tools toolbox wooden bench wide photo","hand tools drill hardware wide banner"], k:"tools"},
+    deals:      {q:["shopping sale discount bags colorful wide photo","retail sale shopping mall wide banner"], k:"shopping"}
+  };
+  (function(){
+    var el = document.querySelector('.cat-banner'), b = BANNER[slug]; if(!el || !b) return;
+    var urls = b.q.map(function(q){ return "https://tse2.mm.bing.net/th?q=" + encodeURIComponent(q) + "&w=1600&h=600&c=7&rs=1&p=0"; });
+    urls.push("https://loremflickr.com/1600/600/" + encodeURIComponent(b.k) + "?lock=11");
+    var i = 0;
+    (function tryNext(){
+      if(i >= urls.length) return;
+      var im = new Image();
+      im.onload = function(){ el.style.backgroundImage = "url('" + urls[i] + "')"; el.classList.add('has-img'); };
+      im.onerror = function(){ i++; tryNext(); };
+      im.src = urls[i];
+    })();
+  })();
+
   var subcatsEl = document.getElementById('subcats-list');
   if(subcatsEl){
     subcatsEl.innerHTML = currentCat.subcats.map(function(s, i){
@@ -1419,5 +1458,7 @@
 })();
 </script>
 
+<script src="ez-catalog.js" defer></script>
+<script src="ez-media.js" defer></script>
 </body>
 </html>

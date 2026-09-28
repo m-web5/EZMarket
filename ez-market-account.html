@@ -356,6 +356,7 @@
     .header-top .site-logo-img{ height:34px !important; }
   }
 </style>
+<style id="no-bottom-nav">.bottom-nav{display:none !important} @media (max-width:760px){ body{padding-bottom:0 !important} .cart-fab{bottom:calc(18px + env(safe-area-inset-bottom)) !important} }</style>
 </head>
 <body>
 
@@ -564,12 +565,6 @@
 </main>
 
 <footer><div class="wrap">© 2026 EZ Market. جميع الحقوق محفوظة.</div></footer>
-
-<nav class="bottom-nav">
-  <a href="index.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-home"/></svg>الرئيسية</a>
-  <a href="ez-market-cart.html"><svg class="icon" style="width:20px;height:20px"><use href="#i-cart"/></svg>السلة</a>
-  <a href="ez-market-account.html" style="color:var(--primary)"><svg class="icon" style="width:20px;height:20px"><use href="#i-user"/></svg>حسابي</a>
-</nav>
 
 <script>
   function setTab(name, btn){

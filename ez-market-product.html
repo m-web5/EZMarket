@@ -628,9 +628,54 @@
 
 <div class="toast" id="toast">تمت الإضافة إلى السلة</div>
 
+<script src="ez-catalog.js"></script>
 <script>
 (function(){
   "use strict";
+
+
+  /* ---------- load the requested product (?id=...) ---------- */
+  var CAT = window.EZ_CATALOG, qs = new URLSearchParams(location.search);
+  var P = CAT.byId(qs.get('id')) || CAT.byName("سماعة بلوتوث إلغاء ضوضاء");
+  var priceNow = parseFloat(qs.get('p')) || P.price;
+  var priceOld = qs.get('p') ? (parseFloat(qs.get('o')) || null) : P.old;
+  var discPct = priceOld ? Math.round((1 - priceNow / priceOld) * 100) : 0;
+  var STOCK = P.stock;
+  function $(s){ return document.querySelector(s); }
+  function setText(s, t){ var e = $(s); if(e) e.textContent = t; }
+  document.title = P.name + ' — EZ Market';
+  var bcCat = $('.breadcrumb a[href*="cat="]');
+  if(bcCat){ bcCat.href = 'ez-market-products.html?cat=' + P.cat; bcCat.textContent = CAT.CATS[P.cat]; }
+  setText('.breadcrumb .current', P.name);
+  setText('.cat-pill', CAT.CATS[P.cat]);
+  setText('.pdp-title', P.name);
+  setText('.pdp-rating > span:nth-child(2)', P.rating);
+  setText('.pdp-rating a', '(' + P.reviews + ' تقييم)');
+  setText('.pdp-price .now', priceNow + ' ر.س');
+  var oldEl = $('.pdp-price .old'), discEl = $('.pdp-price .disc'), badgeEl = $('.gallery-main .badge'), cd = $('.countdown-bar');
+  if(priceOld){ oldEl.textContent = priceOld + ' ر.س'; discEl.textContent = 'وفّر ' + discPct + '%'; badgeEl.textContent = 'خصم ' + discPct + '%'; }
+  else { oldEl.style.display = 'none'; discEl.style.display = 'none'; badgeEl.style.display = 'none'; if(cd) cd.style.display = 'none'; }
+  setText('#gallery-emoji', P.emoji);
+  var firstThumb = $('.gallery-thumbs button');
+  if(firstThumb){ firstThumb.textContent = P.emoji; firstThumb.setAttribute('onclick', "setImg(this,'" + P.emoji + "')"); }
+  setText('.stock-note', P.stock <= 5 ? 'كمية محدودة — ' + P.stock + ' قطع متبقية' : 'متوفر — ' + P.stock + ' قطعة متبقية');
+  var accInner = $('.acc-body-inner');
+  if(accInner){ accInner.innerHTML = P.desc + '<ul>' + P.specs.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul>'; }
+  setText('.rs-score', P.rating);
+  var rsP = $('.review-summary p'); if(rsP) rsP.textContent = 'بناءً على ' + P.reviews + ' تقييمًا';
+  var rc = document.querySelectorAll('.review-card p');
+  if(rc.length >= 2 && P.id !== 'p3'){
+    rc[0].textContent = 'المنتج مطابق للوصف والجودة ممتازة، أنصح به.';
+    rc[1].textContent = 'التوصيل وصل في الموعد والتغليف ممتاز، تجربة شراء رائعة.';
+  }
+  /* size block only makes sense for clothing / footwear-type products */
+  var sizeBlock = document.querySelectorAll('.option-block')[1];
+  if(sizeBlock){
+    if(P.cat === 'fashion' || P.name.indexOf('حذاء') > -1){
+      sizeBlock.querySelector('h4').textContent = 'المقاس';
+      var sb = sizeBlock.querySelectorAll('.swatch-size'); ['S','M','L'].forEach(function(t, i){ if(sb[i]){ sb[i].textContent = t; sb[i].disabled = false; sb[i].classList.toggle('active', i === 1); } });
+    } else { sizeBlock.style.display = 'none'; }
+  }
 
   function starsHtml(rating, size){
     size = size || 14;
@@ -641,8 +686,8 @@
     }
     return html;
   }
-  document.getElementById('rating-stars').innerHTML = starsHtml(4.6,15);
-  document.getElementById('rs-stars').innerHTML = starsHtml(4.6,18);
+  document.getElementById('rating-stars').innerHTML = starsHtml(P.rating,15);
+  document.getElementById('rs-stars').innerHTML = starsHtml(P.rating,18);
 
   window.setImg = function(btn, emoji){
     document.querySelectorAll('.gallery-thumbs button').forEach(function(b){ b.classList.remove('active'); });
@@ -665,7 +710,7 @@
 
   var qty = 1;
   window.changeQty = function(delta){
-    qty = Math.max(1, Math.min(24, qty + delta));
+    qty = Math.max(1, Math.min(STOCK, qty + delta));
     document.getElementById('qty').textContent = qty;
   };
 
@@ -774,14 +819,11 @@
     b.style.maxHeight = b.scrollHeight + 'px';
   });
 
-  var related = [
-    {name:"مكبر صوت لاسلكي محمول", price:219, emoji:"🔊", tint:"--sale-tint"},
-    {name:"سماعة رأس للألعاب", price:349, emoji:"🎮", tint:"--accent-tint"},
-    {name:"شاحن سريع 65 واط", price:79, emoji:"🔌", tint:"--primary-tint"},
-    {name:"ساعة ذكية جيل 5", price:349, emoji:"⌚", tint:"--sale-tint"}
-  ];
-  document.getElementById('related-grid').innerHTML = related.map(function(p){
-    return '<a href="ez-market-product.html" class="product-card"><div class="product-media" style="background:var('+p.tint+')">'+p.emoji+'</div><div class="product-info"><span class="product-name">'+p.name+'</span><span class="price-now">'+p.price+' ر.س</span></div></a>';
+  var related = CAT.PRODUCTS.filter(function(x){ return x.cat === P.cat && x.id !== P.id; }).slice(0, 4);
+  if(related.length < 4){ CAT.PRODUCTS.forEach(function(x){ if(related.length < 4 && x.id !== P.id && related.indexOf(x) < 0) related.push(x); }); }
+  var tints = ['--sale-tint','--accent-tint','--primary-tint'];
+  document.getElementById('related-grid').innerHTML = related.map(function(p, k){
+    return '<a href="ez-market-product.html?id=' + p.id + '" class="product-card"><div class="product-media" style="background:var(' + tints[k % 3] + ')">' + p.emoji + '</div><div class="product-info"><span class="product-name">' + p.name + '</span><span class="price-now">' + p.price + ' ر.س</span></div></a>';
   }).join('');
 
   var target = Date.now() + (6*3600 + 24*60 + 10) * 1000;
@@ -1289,5 +1331,6 @@
 })();
 </script>
 
+<script src="ez-media.js" defer></script>
 </body>
 </html>

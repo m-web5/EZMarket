@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
 <style>
   @font-face {
     font-family: 'ShamelBold';
@@ -30,10 +31,10 @@
     font-display: swap;
   }
   *, *::before, *::after {
-    font-family: 'Cairo', 'Noto Naskh Arabic', 'Tahoma', system-ui, sans-serif !important;
+    font-family: 'Coolvetica', 'Cairo', 'Noto Naskh Arabic', 'Tahoma', system-ui, sans-serif !important;
   }
   h1, h2, h3, .logo, .site-logo-text, .footer-logo, .brand-name, .footer-logo-text {
-    font-family: 'ShamelBold', 'Cairo', 'Noto Naskh Arabic', 'Tahoma', system-ui, sans-serif !important;
+    font-family: 'Coolvetica', 'ShamelBold', 'Cairo', 'Noto Naskh Arabic', 'Tahoma', system-ui, sans-serif !important;
   }
   html{ font-size:16px; }
   @media (max-width:480px){ html{ font-size:15px; } }
@@ -321,6 +322,32 @@
     transition:opacity 1.5s ease, transform 2s cubic-bezier(.22,.61,.36,1);
     will-change:transform, opacity;
   }
+  /* Dark mode: multiply blend darkens the artwork itself, so switch it off and
+     place the (white-background) logo on a soft light tile to keep true colors */
+  :root[data-theme="dark"] .feature-card-img img{
+    mix-blend-mode:normal; background:#fff; border-radius:28px; padding:10px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.12), 0 10px 30px rgba(0,0,0,.45);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .feature-card-img img{
+      mix-blend-mode:normal; background:#fff; border-radius:28px; padding:10px;
+      box-shadow:0 0 0 1px rgba(255,255,255,.12), 0 10px 30px rgba(0,0,0,.45);
+    }
+  }
+  /* Dark mode: description text in white */
+  :root[data-theme="dark"] .feature-card-body p{ color:#fff; }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .feature-card-body p{ color:#fff; }
+  }
+  /* Dark mode: logos whose white background was removed by JS -> no tile at all */
+  :root[data-theme="dark"] .feature-card-img img.cutout{
+    background:transparent; padding:0; border-radius:0; box-shadow:none; mix-blend-mode:normal;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .feature-card-img img.cutout{
+      background:transparent; padding:0; border-radius:0; box-shadow:none; mix-blend-mode:normal;
+    }
+  }
   /* Logo entrance: slow, smooth glide from the left (runs once per card) */
   .feature-card.feat-in .feature-card-img img{ opacity:1; transform:translateX(0); }
   @media (prefers-reduced-motion: reduce){
@@ -349,6 +376,8 @@
     transition:transform .5s ease;
   }
   .product-card:hover .product-media .tile{ transform:scale(1.08); }
+  .product-media .tile{ position:relative; }
+  .product-photo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
   .badge{
     position:absolute; top:10px; right:10px; font-size:.68rem; font-weight:700; padding:4px 9px;
     border-radius:var(--radius-pill); z-index:2;
@@ -592,14 +621,14 @@
     font-style:normal;
     font-weight:100 900;
     font-display:swap;
-    src:url("fonts/Coolvetica%20Rg.otf") format("opentype");
+    src:url("fonts/Coolvetica_Rg.otf") format("opentype"), url("fonts/Coolvetica%20Rg.otf") format("opentype");
   }
   @font-face{
     font-family:'Coolvetica';
     font-style:italic;
     font-weight:100 900;
     font-display:swap;
-    src:url("fonts/Coolvetica%20Rg%20It.otf") format("opentype");
+    src:url("fonts/Coolvetica_Rg_It.otf") format("opentype"), url("fonts/Coolvetica%20Rg%20It.otf") format("opentype");
   }
   /* الأرقام (0-9) تُستثنى دائماً من Coolvetica وتُعرض بخط Cairo، عبر نطاق يونيكود مخصص ضمن نفس اسم الخط */
   @font-face{
@@ -800,6 +829,59 @@
   }
   @media (max-width:340px){
     .header-partner-logos{ --hpl:30px; gap:4px; }
+  }
+</style>
+<style id="logo-merge">
+  /* ===== شعار المنصة: صورة + كلمة EZ Market كوحدة واحدة بخط Coolvetica عريض ===== */
+  header .logo, .nav-drawer-head .logo{ gap:2px !important; align-items:center; }
+  header .logo .site-logo-img{
+    height:52px !important; width:auto; max-width:none !important; object-fit:contain;
+    mix-blend-mode:lighten;            /* يذيب خلفية الصورة الحمراء داخل لون الهيدر */
+    margin-inline-end:-4px;            /* يقرّب الصورة من الكلمة حتى تبدو قطعة واحدة */
+  }
+  header .logo #site-logo-text, .nav-drawer-head .logo span{
+    font-family:'Coolvetica','Cairo',sans-serif !important; font-style:italic !important;
+    font-weight:700 !important; letter-spacing:-.4px !important;
+    -webkit-text-stroke:.9px currentColor; paint-order:stroke fill;   /* تغليظ فعلي لأن الخط له وزن واحد */
+  }
+  header .logo #site-logo-text{ font-size:1.9rem !important; line-height:1; }
+  @media (max-width:760px){
+    header .header-top .site-logo-img{ height:44px !important; max-width:none !important; }
+    header .logo #site-logo-text{ font-size:clamp(1.35rem, 6.6vw, 1.8rem) !important; }
+  }
+  @media (max-width:360px){
+    header .header-top .site-logo-img{ height:38px !important; }
+  }
+</style>
+<style id="swirl-wordmark">
+  /* ===== شعار لولبي: خط مخطوط متصل الحروف + ضربة خطية بدوامتين تحت الكلمة ===== */
+  header .logo #site-logo-text,
+  .nav-drawer-head .logo span,
+  #footer-logo-text{
+    font-family:'Yellowtail','Brush Script MT','Segoe Script',cursive !important;
+    font-style:normal !important; font-weight:400 !important;
+    letter-spacing:.5px !important; -webkit-text-stroke:0 !important;
+    direction:ltr; position:relative; display:inline-block; line-height:1.05;
+    padding:0 6px 14px; text-shadow:0 2px 0 rgba(0,0,0,.12);
+  }
+  header .logo #site-logo-text{ font-size:2.6rem !important; }
+  .nav-drawer-head .logo span{ font-size:1.8rem !important; }
+  #footer-logo-text{ font-size:2rem !important; }
+  header .logo #site-logo-text::after,
+  .nav-drawer-head .logo span::after,
+  #footer-logo-text::after{
+    content:""; position:absolute; left:0; right:0; bottom:0; height:16px;
+    background:currentColor;
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cpath d='M22 14C22 9 14 8 11 12C8 17 14 21 19 18C23 15 20 11 16 13M22 14C60 22 130 22 178 10C190 7 196 2 191 1C186 0 183 6 188 8' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+            mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cpath d='M22 14C22 9 14 8 11 12C8 17 14 21 19 18C23 15 20 11 16 13M22 14C60 22 130 22 178 10C190 7 196 2 191 1C186 0 183 6 188 8' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+    animation:swirlDraw 1.6s cubic-bezier(.22,.61,.36,1) .2s both;
+  }
+  @keyframes swirlDraw{ from{ clip-path:inset(0 100% 0 0); } to{ clip-path:inset(0 0 0 0); } }
+  @media (prefers-reduced-motion: reduce){
+    header .logo #site-logo-text::after, .nav-drawer-head .logo span::after, #footer-logo-text::after{ animation:none; }
+  }
+  @media (max-width:760px){
+    header .logo #site-logo-text{ font-size:clamp(1.9rem, 9vw, 2.3rem) !important; }
   }
 </style>
 </head>
@@ -1083,8 +1165,8 @@
   var adImages = [];
   for(var adNum=20; adNum<=30; adNum++){ adImages.push('ez'+adNum+'.jpg'); }
 
-  function product(name, store, price, oldPrice, rating, reviews, emoji, tint, badge){
-    return {name:name, store:store, price:price, oldPrice:oldPrice, rating:rating, reviews:reviews, emoji:emoji, tint:tint, badge:badge};
+  function product(name, store, price, oldPrice, rating, reviews, emoji, tint, badge, img){
+    return {name:name, store:store, price:price, oldPrice:oldPrice, rating:rating, reviews:reviews, emoji:emoji, tint:tint, badge:badge, img:img};
   }
 
   /* ---------- Currency (prices stored in SAR; convert on display) ---------- */
@@ -1131,12 +1213,28 @@
     {key:"deals", ar:"العروض والخصومات", en:"Deals & Discounts", emoji:"🏷️", tint:"--primary-tint", img:"ez73.jpg"}
   ];
 
+  var productFallback = {
+    p1: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMzAwIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9ImJnIiBjeD0iNTAlIiBjeT0iNDAlIiByPSI3NSUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGRTNFNiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0Y3QjdCRiIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPjxlbGxpcHNlIGN4PSIxNTAiIGN5PSIyNjIiIHJ4PSI4MiIgcnk9IjEwIiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIuMTQiLz48cGF0aCBkPSJNOTYgNzAgTDYyIDkyIEwzNCAyMDAgTDY0IDIxMiBMODQgMTQwIEw4NCAyNTYgTDIxNiAyNTYgTDIxNiAxNDAgTDIzNiAyMTIgTDI2NiAyMDAgTDIzOCA5MiBMMjA0IDcwIFExNTAgMTA4IDk2IDcwWiIgZmlsbD0iI0Q3MjYzRCIvPgo8cGF0aCBkPSJNOTYgNzAgUTE1MCAxMDggMjA0IDcwIEwxOTYgNTggUTE1MCA4NCAxMDQgNThaIiBmaWxsPSIjOEUwQjIxIi8+CjxwYXRoIGQ9Ik04NCAxNDAgTDIxNiAxNDAgTTg0IDE4OCBMMjE2IDE4OCBNODQgMjI2IEwyMTYgMjI2IiBzdHJva2U9IiNBODFBMkUiIHN0cm9rZS13aWR0aD0iNSIgb3BhY2l0eT0iLjciLz4KPHBhdGggZD0iTTE1MCA5MiBWMjU2IiBzdHJva2U9IiNGNUVCRUMiIHN0cm9rZS13aWR0aD0iNSIvPjxnIGZpbGw9IiNGRkM5NEQiPjxyZWN0IHg9IjE0NSIgeT0iMTMwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTQiIHJ4PSIzIi8+PC9nPgo8cGF0aCBkPSJNMzQgMjAwIEw2NCAyMTIgTDYwIDIzMiBMMzAgMjIyWiBNMjY2IDIwMCBMMjM2IDIxMiBMMjQwIDIzMiBMMjcwIDIyMloiIGZpbGw9IiM4RTBCMjEiLz4KPHJlY3QgeD0iMTAwIiB5PSIxOTYiIHdpZHRoPSIzNCIgaGVpZ2h0PSIzMCIgcng9IjYiIGZpbGw9IiNCMDE3MzAiLz48cmVjdCB4PSIxNjYiIHk9IjE5NiIgd2lkdGg9IjM0IiBoZWlnaHQ9IjMwIiByeD0iNiIgZmlsbD0iI0IwMTczMCIvPjwvc3ZnPg==",
+    p2: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMzAwIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9ImJnIiBjeD0iNTAlIiBjeT0iNDAlIiByPSI3NSUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGRjRENiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0Y1RDlBMCIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPjxlbGxpcHNlIGN4PSIxNTAiIGN5PSIyNjIiIHJ4PSI4MiIgcnk9IjEwIiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIuMTQiLz48ZWxsaXBzZSBjeD0iMTUwIiBjeT0iMjQ4IiByeD0iNjAiIHJ5PSIxMiIgZmlsbD0iIzNCM0I0RiIvPjxyZWN0IHg9IjEzOCIgeT0iMjM2IiB3aWR0aD0iMjQiIGhlaWdodD0iMTIiIHJ4PSI0IiBmaWxsPSIjNTU1NTZFIi8+CjxwYXRoIGQ9Ik0xNTAgMjM2IEwxMTAgMTUwIEwxNzYgOTYiIHN0cm9rZT0iIzU1NTU2RSIgc3Ryb2tlLXdpZHRoPSIxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjExMCIgY3k9IjE1MCIgcj0iOSIgZmlsbD0iI0ZGQzk0RCIvPjxjaXJjbGUgY3g9IjE3NiIgY3k9Ijk2IiByPSI5IiBmaWxsPSIjRkZDOTREIi8+CjxwYXRoIGQ9Ik0xNTAgNzAgTDIxNCAxMTggTDE3MiAxNDggTDEyOCA5MloiIGZpbGw9IiNGRjZCNzYiLz48cGF0aCBkPSJNMTI4IDkyIEwxNzIgMTQ4IEwxNjAgMTU2IEwxMTggMTAyWiIgZmlsbD0iI0Q3MjYzRCIvPgo8cGF0aCBkPSJNMTg2IDE0MCBMMjMyIDIzNiBMMTQwIDIzNloiIGZpbGw9IiNGRkU5QTgiIG9wYWNpdHk9Ii41NSIvPjxjaXJjbGUgY3g9IjE4NCIgY3k9IjEzMiIgcj0iMTEiIGZpbGw9IiNGRkY0QzIiLz48L3N2Zz4=",
+    p3: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMzAwIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9ImJnIiBjeD0iNTAlIiBjeT0iNDAlIiByPSI3NSUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0RERjFGQyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0E5RDdGMCIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPjxlbGxpcHNlIGN4PSIxNTAiIGN5PSIyNjIiIHJ4PSI4MiIgcnk9IjEwIiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIuMTQiLz48cmVjdCB4PSIxMDgiIHk9IjYwIiB3aWR0aD0iODQiIGhlaWdodD0iMjYiIHJ4PSIxMCIgZmlsbD0iIzJCMkQ0MiIvPjxyZWN0IHg9IjExOCIgeT0iODQiIHdpZHRoPSI2NCIgaGVpZ2h0PSIxMiIgcng9IjQiIGZpbGw9IiM4RDk5QUUiLz4KPHJlY3QgeD0iOTgiIHk9Ijk0IiB3aWR0aD0iMTA0IiBoZWlnaHQ9IjE1NiIgcng9IjI2IiBmaWxsPSIjMkZBNEU3Ii8+PHJlY3QgeD0iOTgiIHk9IjE1MCIgd2lkdGg9IjEwNCIgaGVpZ2h0PSIzNCIgZmlsbD0iI0ZGRiIvPgo8cGF0aCBkPSJNMTEyIDEwOCBRMTIwIDE3MCAxMTIgMjM2IiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIuMzUiIGZpbGw9Im5vbmUiLz4KPGNpcmNsZSBjeD0iMTUwIiBjeT0iMTY3IiByPSIxMCIgZmlsbD0iI0Q3MjYzRCIvPjxyZWN0IHg9Ijk4IiB5PSIyMzIiIHdpZHRoPSIxMDQiIGhlaWdodD0iMTgiIHJ4PSI5IiBmaWxsPSIjMUM3REI4Ii8+PC9zdmc+",
+    p4: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMzAwIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9ImJnIiBjeD0iNTAlIiBjeT0iNDAlIiByPSI3NSUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI0ZGRjFENiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0Y3Q0ZBMyIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2JnKSIvPjxlbGxpcHNlIGN4PSIxNTAiIGN5PSIyNjIiIHJ4PSI4MiIgcnk9IjEwIiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIuMTQiLz48cmVjdCB4PSI2MiIgeT0iNjIiIHdpZHRoPSI4OCIgaGVpZ2h0PSI4OCIgcng9IjEwIiBmaWxsPSIjRkYzQjRFIi8+PGNpcmNsZSBjeD0iMTUwIiBjeT0iMTA2IiByPSIxNiIgZmlsbD0iI0ZGM0I0RSIvPgo8cmVjdCB4PSIxNTAiIHk9IjYyIiB3aWR0aD0iODgiIGhlaWdodD0iODgiIHJ4PSIxMCIgZmlsbD0iI0ZGQzk0RCIvPjxjaXJjbGUgY3g9IjE5NCIgY3k9IjE1MCIgcj0iMTYiIGZpbGw9IiNGRkM5NEQiLz4KPHJlY3QgeD0iNjIiIHk9IjE1MCIgd2lkdGg9Ijg4IiBoZWlnaHQ9Ijg4IiByeD0iMTAiIGZpbGw9IiMyRkE0RTciLz48Y2lyY2xlIGN4PSIxMDYiIGN5PSIxNTAiIHI9IjE2IiBmaWxsPSIjRjVGNUY1Ii8+CjxyZWN0IHg9IjE1MCIgeT0iMTUwIiB3aWR0aD0iODgiIGhlaWdodD0iODgiIHJ4PSIxMCIgZmlsbD0iIzRBREU4MCIvPjxjaXJjbGUgY3g9IjE1MCIgY3k9IjE5NCIgcj0iMTYiIGZpbGw9IiMyRkE0RTciLz4KPGcgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iLjg1Ij48Y2lyY2xlIGN4PSI5MCIgY3k9IjkwIiByPSI2Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iOTAiIHI9IjYiLz48Y2lyY2xlIGN4PSI5MCIgY3k9IjIxMCIgcj0iNiIvPjxjaXJjbGUgY3g9IjIxMCIgY3k9IjIxMCIgcj0iNiIvPjwvZz48L3N2Zz4="
+  };
+
+  /* Real product photos (Unsplash, free for commercial use). Replace any URL with your own image path. */
+  var productImages = {
+    p1: "https://images.unsplash.com/photo-1706765779494-2705542ebe74?auto=format&fit=crop&w=600&h=600&q=75",   /* winter puffer jacket */
+    p2: "https://images.unsplash.com/photo-1678819483347-3faeb1e426c0?auto=format&fit=crop&w=600&h=600&q=75",   /* desk lamp */
+    p3: "https://images.unsplash.com/photo-1544003484-3cd181d17917?auto=format&fit=crop&w=600&h=600&q=75",   /* stainless steel thermal bottle */
+    p4: "https://images.unsplash.com/photo-1575881737088-a5a2bbf44e85?auto=format&fit=crop&w=600&h=600&q=75"    /* colorful educational toy */
+  };
+
   var newArrivals = [
-    product("سترة شتوية دافئة","متجر الأزياء",259,null,4.3,18,"🧥","--primary-tint","new"),
-    product("مصباح مكتب ذكي","متجر المنزل",119,null,4.4,9,"💡","--accent-tint","new"),
-    product("زجاجة رياضية حرارية","متجر الرياضة",59,null,4.6,27,"🚰","--sale-tint","new"),
-    product("لعبة تركيب تعليمية","متجر الأطفال",99,null,4.7,14,"🧩","--primary-tint","new")
+    product("سترة شتوية دافئة","متجر الأزياء",259,null,4.3,18,"🧥","--primary-tint","new",productImages.p1),
+    product("مصباح مكتب ذكي","متجر المنزل",119,null,4.4,9,"💡","--accent-tint","new",productImages.p2),
+    product("زجاجة رياضية حرارية","متجر الرياضة",59,null,4.6,27,"🚰","--sale-tint","new",productImages.p3),
+    product("لعبة تركيب تعليمية","متجر الأطفال",99,null,4.7,14,"🧩","--primary-tint","new",productImages.p4)
   ];
+  newArrivals.forEach(function(p,i){ p.fb = productFallback['p'+(i+1)]; });
 
   var badgeLabel = {sale:"خصم", best:"الأكثر مبيعًا", new:"جديد"};
 
@@ -1194,7 +1292,7 @@
         '<div class="product-media">'+
           badgeHtml+
           '<button class="fav-btn" aria-label="أضف للمفضلة" onclick="event.preventDefault();toggleFav(this)"><svg class="icon" style="width:16px;height:16px"><use href="#i-heart"/></svg></button>'+
-          '<div class="tile" style="background:var('+p.tint+')">'+p.emoji+'</div>'+
+          '<div class="tile" style="background:var('+p.tint+')">'+p.emoji+(p.img ? '<img class="product-photo" src="'+p.img+'" alt="'+p.name+'" loading="lazy" decoding="async" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.removeAttribute(\'data-fb\');}else{this.remove();}" data-fb="'+(p.fb||'')+'">' : '')+'</div>'+
         '</div>'+
         '<div class="product-info">'+
           '<span class="store-name">'+p.store+'</span>'+
@@ -1427,6 +1525,101 @@
     cards.forEach(function(c){ fio.observe(c); });
   })();
 
+})();
+</script>
+<script>
+/* Feature logos: in dark mode remove the white JPG background (edge flood-fill + soft edge) */
+(function(){
+  var root = document.documentElement;
+  function isDark(){
+    var t = root.getAttribute('data-theme');
+    if(t) return t === 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function cutout(img){
+    var w = img.naturalWidth, h = img.naturalHeight;
+    if(!w || !h) return null;
+    var c = document.createElement('canvas'); c.width = w; c.height = h;
+    var ctx = c.getContext('2d', {willReadFrequently:true});
+    ctx.drawImage(img, 0, 0);
+    var im = ctx.getImageData(0, 0, w, h), d = im.data;
+    var TH = 236;                                   // "almost white" threshold
+    function white(i){ return d[i] >= TH && d[i+1] >= TH && d[i+2] >= TH; }
+    var bg = new Uint8Array(w * h), stack = [];
+    function push(x, y){
+      var k = y * w + x;
+      if(bg[k] || !white(k * 4)) return;
+      bg[k] = 1; stack.push(k);
+    }
+    for(var x = 0; x < w; x++){ push(x, 0); push(x, h - 1); }
+    for(var y = 0; y < h; y++){ push(0, y); push(w - 1, y); }
+    while(stack.length){
+      var k = stack.pop(), px = k % w, py = (k - px) / w;
+      if(px > 0) push(px - 1, py);
+      if(px < w - 1) push(px + 1, py);
+      if(py > 0) push(px, py - 1);
+      if(py < h - 1) push(px, py + 1);
+    }
+    var out = new Uint8ClampedArray(d);            // read from the original, write to the copy
+    for(var yy = 0; yy < h; yy++){
+      for(var xx = 0; xx < w; xx++){
+        var kk = yy * w + xx, i = kk * 4;
+        if(bg[kk]){ out[i+3] = 0; continue; }
+        // pixels within 2px of the removed background: un-blend from white to kill the halo
+        var near = false;
+        for(var dy = -2; dy <= 2 && !near; dy++){
+          var ny = yy + dy; if(ny < 0 || ny >= h) continue;
+          for(var dx = -2; dx <= 2; dx++){
+            var nx = xx + dx; if(nx < 0 || nx >= w) continue;
+            if(bg[ny * w + nx]){ near = true; break; }
+          }
+        }
+        if(near){
+          var a = Math.max(255 - d[i], 255 - d[i+1], 255 - d[i+2]) / 255;
+          if(a < 0.04) a = 0.04;
+          if(a > 1) a = 1;
+          for(var ch = 0; ch < 3; ch++){
+            var v = (d[i+ch] - (1 - a) * 255) / a;
+            out[i+ch] = v < 0 ? 0 : (v > 255 ? 255 : v);
+          }
+          out[i+3] = Math.round(a * 255);
+        }
+      }
+    }
+    im.data.set(out);
+    ctx.putImageData(im, 0, 0);
+    return c.toDataURL('image/png');
+  }
+  function apply(img){
+    if(!img.dataset.orig) img.dataset.orig = img.getAttribute('src');
+    if(isDark()){
+      if(!img.dataset.cut){
+        try{ img.dataset.cut = cutout(img) || ''; }catch(e){ img.dataset.cut = ''; }   // e.g. file:// (tainted canvas)
+      }
+      if(img.dataset.cut){ img.src = img.dataset.cut; img.classList.add('cutout'); }
+    }else{
+      img.classList.remove('cutout');
+      if(img.dataset.orig && img.getAttribute('src') !== img.dataset.orig) img.src = img.dataset.orig;
+    }
+  }
+  function run(){
+    document.querySelectorAll('.feature-card-img img').forEach(function(img){
+      if(img.dataset.cut !== undefined || !isDark()){ apply(img); return; }
+      var go = function(){ apply(img); };
+      if(img.complete && img.naturalWidth) go(); else img.addEventListener('load', go, {once:true});
+    });
+  }
+  // lazy images may load late: process each one when it finishes loading
+  document.querySelectorAll('.feature-card-img img').forEach(function(img){
+    img.addEventListener('load', function(){
+      if(img.dataset.cut && img.getAttribute('src') === img.dataset.cut) return;   // our own swap
+      if(img.getAttribute('src') !== img.dataset.orig && img.dataset.orig) return;
+      if(isDark()) apply(img);
+    });
+  });
+  run();
+  new MutationObserver(run).observe(root, {attributes:true, attributeFilter:['data-theme']});
+  if(window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', run);
 })();
 </script>
 <script>
@@ -2010,5 +2203,7 @@
   window.addEventListener('load', place);
 })();
 </script>
+<script src="ez-catalog.js" defer></script>
+<script src="ez-media.js" defer></script>
 </body>
 </html>
