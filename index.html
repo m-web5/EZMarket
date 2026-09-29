@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script>try{if(localStorage.getItem('ez-user'))document.documentElement.classList.add('ez-logged-in');}catch(e){}</script>
+<style id="ez-auth-state">
+  html.ez-logged-in .header-auth-btns .btn,
+  html.ez-logged-in .nav-drawer-links a[href^="ez-market-auth.html"]{ display:none !important; }
+  html.ez-logged-in .header-auth-row .header-auth-btns{ grid-template-columns:auto !important; justify-content:end; }
+</style>
+
 <script>
 (function(){
   try{
@@ -812,7 +819,7 @@
 </style>
 <style id="header-logos">
   /* خانات اللوجوهات: مقاس مرن يتكيّف مع الجوال والتابلت واللابتوب */
-  .header-partner-logos{ --hpl: clamp(34px, 3.4vw, 52px); display:flex; align-items:center; gap:clamp(6px, 1vw, 12px); flex:0 0 auto; }
+  .header-partner-logos{ --hpl: clamp(44px, 4.4vw, 68px); display:flex; align-items:center; gap:clamp(6px, 1vw, 12px); flex:0 0 auto; }
   .hpl-slot{
     width:var(--hpl); height:var(--hpl); flex:0 0 auto; display:flex; align-items:center; justify-content:center;
     border:1.5px dashed rgba(255,255,255,.45); border-radius:10px; overflow:hidden;
@@ -820,7 +827,7 @@
   .hpl-slot.has-img{ border:none; border-radius:0; }
   .hpl-slot img{ width:100%; height:100%; object-fit:contain; display:block; background:transparent; }
   @media (max-width:860px){
-    .header-partner-logos{ --hpl: clamp(34px, 10.5vw, 46px); }
+    .header-partner-logos{ --hpl: clamp(40px, 12vw, 54px); }
   }
   @media (max-width:760px){
     .header-top .logo{ flex:0 0 auto !important; }
@@ -828,7 +835,7 @@
     .header-actions{ order:2; }
   }
   @media (max-width:340px){
-    .header-partner-logos{ --hpl:30px; gap:4px; }
+    .header-partner-logos{ --hpl:36px; gap:4px; }
   }
 </style>
 <style id="logo-merge">
@@ -948,6 +955,17 @@
     header .logo .ez-logo-stack .ez-logo-svg{ height:26px; }
   }
 </style>
+<style id="hdr-nav-btns">
+  /* زر القائمة + زر الرجوع: عند بداية الهيدر (يمين في العربية، يسار في الإنجليزية) */
+  .header-nav-btns{ display:flex; align-items:center; gap:6px; flex:0 0 auto; order:0; }
+  html[lang="en"][dir="rtl"] .header-nav-btns{ order:99; flex-direction:row-reverse; }
+  html[lang="en"] #header-back-btn svg{ transform:scaleX(-1); }
+  @media (max-width:760px){
+    .header-nav-btns{ order:0; }
+    html[lang="en"][dir="rtl"] .header-nav-btns{ order:2; }
+    html[lang="en"][dir="rtl"] .header-partner-logos{ order:1; }
+  }
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="ez-logo-sym" viewBox="-6 -4 396 130" fill="currentColor">
@@ -988,6 +1006,10 @@
 
 <header id="site-header">
   <div class="header-top">
+    <div class="header-nav-btns">
+      <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
+      <button class="icon-btn" id="header-back-btn" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon"><use href="#i-arrow-back"/></svg></button>
+    </div>
     <a href="index.html" class="logo" id="site-logo">
       <span class="ez-logo-stack"><span class="ez-logo-slot" data-file="ez102.jpg"><img src="ez102.jpg" alt="EZ Market" onerror="this.parentNode.classList.add('logo-empty')"></span><svg class="ez-logo-svg" viewBox="-6 -4 396 130" aria-hidden="true"><use href="#ez-logo-sym"/></svg></span>
     </a>
@@ -1001,7 +1023,6 @@
       <input type="text" id="home-search" data-ar-placeholder="ابحث عن منتج، تصنيف، أو متجر..." data-en-placeholder="Search for a product, category, or store..." placeholder="ابحث عن منتج، تصنيف، أو متجر..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}">
     </div>
     <div class="header-actions">
-      <button class="icon-btn" id="header-back-btn" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon"><use href="#i-arrow-back"/></svg></button>
       <div class="header-auth-btns">
         <a href="ez-market-auth.html" class="btn btn-outline"><svg class="icon btn-ico"><use href="#i-login"/></svg><span class="btn-label-full" data-ar="تسجيل الدخول" data-en="Log In">تسجيل الدخول</span><span class="btn-label-short" data-ar="دخول" data-en="Log In">دخول</span></a>
         <a href="ez-market-auth.html?mode=register" class="btn btn-primary"><svg class="icon btn-ico"><use href="#i-user-plus"/></svg><span class="btn-label-full" data-ar="إنشاء حساب" data-en="Sign Up">إنشاء حساب</span><span class="btn-label-short" data-ar="تسجيل" data-en="Sign Up">تسجيل</span></a>
@@ -1009,7 +1030,6 @@
           <svg class="icon btn-ico"><use href="#i-coin"/></svg><span id="currency-toggle-label">$</span>
         </button>
       </div>
-      <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
     </div>
   </div>
   <div class="mobile-search">
@@ -1091,12 +1111,6 @@
     <a href="ez-market-products.html?cat=kids" class="nav-link sub" data-ar="الأطفال والألعاب" data-en="Kids & Toys">الأطفال والألعاب</a>
     <a href="ez-market-products.html?cat=auto" class="nav-link sub" data-ar="السيارات والإكسسوارات" data-en="Auto & Accessories">السيارات والإكسسوارات</a>
     <a href="ez-market-products.html?cat=deals" class="nav-link sub" data-ar="العروض والخصومات" data-en="Deals & Discounts">العروض والخصومات</a>
-
-    <div class="nav-drawer-divider"></div>
-    <span class="nav-drawer-label" data-ar="للبائعين والإدارة" data-en="For Sellers & Admin">للبائعين والإدارة</span>
-    <a href="ez-market-seller.html" class="nav-link"><svg class="icon"><use href="#i-headset"/></svg><span data-ar="لوحة البائع" data-en="Seller Dashboard">لوحة البائع</span></a>
-    <a href="ez-market-store.html" class="nav-link"><svg class="icon"><use href="#i-grid"/></svg><span data-ar="صفحة متجر نموذجية" data-en="Sample Store Page">صفحة متجر نموذجية</span></a>
-    <a href="ez-market-admin.html" class="nav-link"><svg class="icon"><use href="#i-shield"/></svg><span data-ar="لوحة التحكم الإدارية" data-en="Admin Dashboard">لوحة التحكم الإدارية</span></a>
   </nav>
 </aside>
 
@@ -2262,7 +2276,7 @@
       row.appendChild(btns);
       hdr.style.top = '-' + (top ? top.offsetHeight : 0) + 'px';
     } else {
-      actions.insertBefore(btns, menuBtn);
+      actions.appendChild(btns);
       hdr.style.top = '';
     }
   }

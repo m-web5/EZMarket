@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script>try{if(localStorage.getItem('ez-user'))document.documentElement.classList.add('ez-logged-in');}catch(e){}</script>
+<style id="ez-auth-state">
+  html.ez-logged-in .header-auth-btns .btn,
+  html.ez-logged-in .nav-drawer-links a[href^="ez-market-auth.html"]{ display:none !important; }
+  html.ez-logged-in .header-auth-row .header-auth-btns{ grid-template-columns:auto !important; justify-content:end; }
+</style>
+
 <script>
 (function(){
   try{
@@ -471,6 +478,17 @@
     header .logo .ez-logo-stack .ez-logo-svg{ height:26px; }
   }
 </style>
+<style id="hdr-nav-btns">
+  /* زر القائمة + زر الرجوع: عند بداية الهيدر (يمين في العربية، يسار في الإنجليزية) */
+  .header-nav-btns{ display:flex; align-items:center; gap:6px; flex:0 0 auto; order:0; }
+  html[lang="en"][dir="rtl"] .header-nav-btns{ order:99; flex-direction:row-reverse; }
+  html[lang="en"] #header-back-btn svg{ transform:scaleX(-1); }
+  @media (max-width:760px){
+    .header-nav-btns{ order:0; }
+    html[lang="en"][dir="rtl"] .header-nav-btns{ order:2; }
+    html[lang="en"][dir="rtl"] .header-partner-logos{ order:1; }
+  }
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="ez-logo-sym" viewBox="-6 -4 396 130" fill="currentColor">
@@ -506,13 +524,15 @@
 
 <header>
   <div class="header-top">
+    <div class="header-nav-btns">
+      <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
+      <button class="icon-btn" id="header-back-btn" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon"><use href="#i-arrow-back"/></svg></button>
+    </div>
     <a href="index.html" class="logo" id="site-logo">
       <span class="ez-logo-stack"><span class="ez-logo-slot" data-file="ez102.jpg"><img src="ez102.jpg" alt="EZ Market" onerror="this.parentNode.classList.add('logo-empty')"></span><svg class="ez-logo-svg" viewBox="-6 -4 396 130" aria-hidden="true"><use href="#ez-logo-sym"/></svg></span>
     </a>
     <div class="search-bar"><svg class="icon"><use href="#i-search"/></svg><input type="text" placeholder="ابحث عن منتج، تصنيف، أو متجر..." onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}"></div>
     <div class="header-actions">
-      <button class="icon-btn" id="header-back-btn" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon"><use href="#i-arrow-back"/></svg></button>
-      <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
     </div>
   </div>
   <div class="breadcrumb">
@@ -568,11 +588,6 @@
     <a href="ez-market-products.html?cat=kids" class="nav-link sub">الأطفال والألعاب</a>
     <a href="ez-market-products.html?cat=auto" class="nav-link sub">السيارات والإكسسوارات</a>
     <a href="ez-market-products.html?cat=deals" class="nav-link sub">العروض والخصومات</a>
-    <div class="nav-drawer-divider"></div>
-    <span class="nav-drawer-label">للبائعين والإدارة</span>
-    <a href="ez-market-seller.html" class="nav-link"><svg class="icon"><use href="#i-headset"/></svg><span>لوحة البائع</span></a>
-    <a href="ez-market-store.html" class="nav-link"><svg class="icon"><use href="#i-grid"/></svg><span>صفحة متجر نموذجية</span></a>
-    <a href="ez-market-admin.html" class="nav-link"><svg class="icon"><use href="#i-shield"/></svg><span>لوحة التحكم الإدارية</span></a>
   </nav>
 </aside>
 

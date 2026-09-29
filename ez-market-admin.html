@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script>try{if(localStorage.getItem('ez-user'))document.documentElement.classList.add('ez-logged-in');}catch(e){}</script>
+<style id="ez-auth-state">
+  html.ez-logged-in .header-auth-btns .btn,
+  html.ez-logged-in .nav-drawer-links a[href^="ez-market-auth.html"]{ display:none !important; }
+  html.ez-logged-in .header-auth-row .header-auth-btns{ grid-template-columns:auto !important; justify-content:end; }
+</style>
+
 <script>
 (function(){
   try{
@@ -524,11 +531,6 @@
     <a href="ez-market-products.html?cat=kids" class="nav-link sub">الأطفال والألعاب</a>
     <a href="ez-market-products.html?cat=auto" class="nav-link sub">السيارات والإكسسوارات</a>
     <a href="ez-market-products.html?cat=deals" class="nav-link sub">العروض والخصومات</a>
-    <div class="nav-drawer-divider"></div>
-    <span class="nav-drawer-label">للبائعين والإدارة</span>
-    <a href="ez-market-seller.html" class="nav-link"><svg class="icon"><use href="#i-headset"/></svg><span>لوحة البائع</span></a>
-    <a href="ez-market-store.html" class="nav-link"><svg class="icon"><use href="#i-grid"/></svg><span>صفحة متجر نموذجية</span></a>
-    <a href="ez-market-admin.html" class="nav-link"><svg class="icon"><use href="#i-shield"/></svg><span>لوحة التحكم الإدارية</span></a>
   </nav>
 </aside>
       </div>

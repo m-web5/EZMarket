@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script>try{if(localStorage.getItem('ez-user'))document.documentElement.classList.add('ez-logged-in');}catch(e){}</script>
+<style id="ez-auth-state">
+  html.ez-logged-in .header-auth-btns .btn,
+  html.ez-logged-in .nav-drawer-links a[href^="ez-market-auth.html"]{ display:none !important; }
+  html.ez-logged-in .header-auth-row .header-auth-btns{ grid-template-columns:auto !important; justify-content:end; }
+</style>
+
 <script>
 (function(){
   try{
@@ -83,12 +90,6 @@
   .store-cover{height:180px; background:linear-gradient(120deg, var(--primary-dark), var(--primary) 60%, #E63946); background-size:cover; background-position:center; position:relative; overflow:hidden;}
   @media (max-width:640px){ .store-cover{height:130px;} }
 
-  .cover-upload-controls{position:absolute; inset-inline-end:16px; bottom:14px; display:flex; gap:8px; z-index:2;}
-  .cover-upload-btn{display:inline-flex; align-items:center; gap:7px; padding:9px 16px; border-radius:var(--radius-pill); font-weight:600; font-size:.8rem; border:1.5px solid rgba(255,255,255,.7); background:rgba(0,0,0,.35); backdrop-filter:blur(4px); color:#fff; cursor:pointer;}
-  .cover-upload-btn:hover{background:rgba(0,0,0,.5);}
-  .cover-remove-btn{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; border:1.5px solid rgba(255,255,255,.7); background:rgba(0,0,0,.35); backdrop-filter:blur(4px); color:#fff; cursor:pointer;}
-  .cover-remove-btn:hover{background:rgba(0,0,0,.5);}
-  @media (max-width:640px){ .cover-upload-btn span{display:none;} .cover-upload-btn{padding:9px;} }
 
   .store-header{max-width:1160px; margin:-52px auto 0; padding:0 20px 20px; position:relative;}
   .store-top-row{display:flex; margin-bottom:52px;}
@@ -434,6 +435,17 @@
     header .logo .ez-logo-stack .ez-logo-svg{ height:26px; }
   }
 </style>
+<style id="hdr-nav-btns">
+  /* زر القائمة + زر الرجوع: عند بداية الهيدر (يمين في العربية، يسار في الإنجليزية) */
+  .header-nav-btns{ display:flex; align-items:center; gap:6px; flex:0 0 auto; order:0; }
+  html[lang="en"][dir="rtl"] .header-nav-btns{ order:99; flex-direction:row-reverse; }
+  html[lang="en"] #header-back-btn svg{ transform:scaleX(-1); }
+  @media (max-width:760px){
+    .header-nav-btns{ order:0; }
+    html[lang="en"][dir="rtl"] .header-nav-btns{ order:2; }
+    html[lang="en"][dir="rtl"] .header-partner-logos{ order:1; }
+  }
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="ez-logo-sym" viewBox="-6 -4 396 130" fill="currentColor">
@@ -469,12 +481,14 @@
 
 <header>
   <div class="header-top">
+    <div class="header-nav-btns">
+      <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
+      <button class="icon-btn" id="header-back-btn" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon"><use href="#i-arrow-back"/></svg></button>
+    </div>
     <a href="index.html" class="logo" id="site-logo">
       <span class="ez-logo-stack"><span class="ez-logo-slot" data-file="ez102.jpg"><img src="ez102.jpg" alt="EZ Market" onerror="this.parentNode.classList.add('logo-empty')"></span><svg class="ez-logo-svg" viewBox="-6 -4 396 130" aria-hidden="true"><use href="#ez-logo-sym"/></svg></span>
     </a>
     <div class="header-actions">
-      <button class="icon-btn" id="header-back-btn" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon"><use href="#i-arrow-back"/></svg></button>
-      <button class="icon-btn" id="nav-menu-btn" onclick="openNavDrawer()" aria-label="القائمة"><svg class="icon"><use href="#i-menu"/></svg></button>
     </div>
   </div>
 </header>
@@ -525,26 +539,11 @@
     <a href="ez-market-products.html?cat=kids" class="nav-link sub">الأطفال والألعاب</a>
     <a href="ez-market-products.html?cat=auto" class="nav-link sub">السيارات والإكسسوارات</a>
     <a href="ez-market-products.html?cat=deals" class="nav-link sub">العروض والخصومات</a>
-    <div class="nav-drawer-divider"></div>
-    <span class="nav-drawer-label">للبائعين والإدارة</span>
-    <a href="ez-market-seller.html" class="nav-link"><svg class="icon"><use href="#i-headset"/></svg><span>لوحة البائع</span></a>
-    <a href="ez-market-store.html" class="nav-link"><svg class="icon"><use href="#i-grid"/></svg><span>صفحة متجر نموذجية</span></a>
-    <a href="ez-market-admin.html" class="nav-link"><svg class="icon"><use href="#i-shield"/></svg><span>لوحة التحكم الإدارية</span></a>
   </nav>
 </aside>
 
 
 <div class="store-cover" id="store-cover">
-  <input type="file" id="cover-upload-input" accept="image/*" style="display:none">
-  <div class="cover-upload-controls">
-    <button class="cover-remove-btn" id="cover-remove-btn" onclick="removeStoreCover()" style="display:none" aria-label="إزالة صورة الغلاف" title="إزالة صورة الغلاف">
-      <svg class="icon"><use href="#i-x"/></svg>
-    </button>
-    <button class="cover-upload-btn" onclick="document.getElementById('cover-upload-input').click()">
-      <svg class="icon" style="width:15px;height:15px"><use href="#i-camera"/></svg>
-      <span>تغيير صورة الغلاف</span>
-    </button>
-  </div>
 </div>
 
 <main class="wrap">
@@ -631,7 +630,7 @@
   /* ---------- بيانات المتاجر: كل متجر له منتجاته وتصنيفاته الخاصة ---------- */
   var STORES = {
     "blue-tech": {
-      ar:"بلو تك", logo:"بت", category:"إلكترونيات وأجهزة", rating:4.8, reviews:620, count:214, followers:"3.2K", joined:"يناير 2023",
+      ar:"بلو تك", logo:"بت", logoQ:"modern electronics gadgets smartphone laptop", coverQ:"electronics store technology gadgets laptops smartphones banner", category:"إلكترونيات وأجهزة", rating:4.8, reviews:620, count:214, followers:"3.2K", joined:"يناير 2023",
       desc:"وجهتك الأولى للأجهزة الإلكترونية والإكسسوارات التقنية الأصلية، بضمان رسمي وتوصيل سريع لجميع مناطق المملكة منذ عام 2023.",
       chips:["الكل","سماعات","ساعات ذكية","حواسيب","إكسسوارات"],
       products:[
@@ -646,7 +645,7 @@
       ]
     },
     "style-hub": {
-      ar:"ستايل هب", logo:"سه", category:"أزياء وموضة", rating:4.6, reviews:410, count:186, followers:"2.1K", joined:"مارس 2023",
+      ar:"ستايل هب", logo:"سه", logoQ:"fashion clothing boutique clothes rack", coverQ:"fashion store clothing boutique men women banner", category:"أزياء وموضة", rating:4.6, reviews:410, count:186, followers:"2.1K", joined:"مارس 2023",
       desc:"متجر متخصص في الأزياء العصرية للرجال والنساء، بتشكيلات مختارة بعناية وجودة عالية وأسعار تناسب الجميع.",
       chips:["الكل","رجالي","نسائي","أحذية","حقائب"],
       products:[
@@ -659,7 +658,7 @@
       ]
     },
     "home-line": {
-      ar:"هوم لاين", logo:"هل", category:"المنزل والمطبخ", rating:4.7, reviews:355, count:168, followers:"1.8K", joined:"يونيو 2023",
+      ar:"هوم لاين", logo:"هل", logoQ:"modern kitchen home appliances cookware", coverQ:"home decor kitchen living room interior banner", category:"المنزل والمطبخ", rating:4.7, reviews:355, count:168, followers:"1.8K", joined:"يونيو 2023",
       desc:"كل ما يلزم منزلك من أدوات مطبخ وديكور وأجهزة منزلية عملية، بجودة موثوقة وأسعار مناسبة لكل بيت.",
       chips:["الكل","مطبخ","ديكور","تخزين","أجهزة منزلية"],
       products:[
@@ -672,7 +671,7 @@
       ]
     },
     "beauty-zone": {
-      ar:"بيوتي زون", logo:"بز", category:"الجمال والعناية", rating:4.7, reviews:498, count:192, followers:"2.6K", joined:"أبريل 2023",
+      ar:"بيوتي زون", logo:"بز", logoQ:"cosmetics makeup skincare products", coverQ:"beauty cosmetics makeup skincare products banner", category:"الجمال والعناية", rating:4.7, reviews:498, count:192, followers:"2.6K", joined:"أبريل 2023",
       desc:"منتجات عناية وتجميل أصلية من أفضل الماركات العالمية، لتمنحك إطلالة مثالية ورعاية يومية متكاملة.",
       chips:["الكل","عناية بالبشرة","مكياج","عناية بالشعر","عطور"],
       products:[
@@ -685,7 +684,7 @@
       ]
     },
     "sport-max": {
-      ar:"سبورت ماكس", logo:"سم", category:"الرياضة واللياقة", rating:4.6, reviews:303, count:147, followers:"1.5K", joined:"فبراير 2023",
+      ar:"سبورت ماكس", logo:"سم", logoQ:"sports equipment fitness gym gear", coverQ:"sports fitness gym equipment sportswear banner", category:"الرياضة واللياقة", rating:4.6, reviews:303, count:147, followers:"1.5K", joined:"فبراير 2023",
       desc:"معدات رياضية ومستلزمات لياقة بدنية لكل الأعمار، لمساعدتك على تحقيق أهدافك الرياضية بثقة وراحة.",
       chips:["الكل","لياقة منزلية","ملابس رياضية","دراجات","مستلزمات خارجية"],
       products:[
@@ -698,7 +697,7 @@
       ]
     },
     "kids-world": {
-      ar:"كيدز وورلد", logo:"كو", category:"الأطفال والألعاب", rating:4.8, reviews:275, count:134, followers:"1.3K", joined:"مايو 2023",
+      ar:"كيدز وورلد", logo:"كو", logoQ:"colorful kids toys teddy bear blocks", coverQ:"kids toys playroom colorful children toys banner", category:"الأطفال والألعاب", rating:4.8, reviews:275, count:134, followers:"1.3K", joined:"مايو 2023",
       desc:"ألعاب ومستلزمات أطفال آمنة وممتعة، مختارة بعناية لتنمية مهارات طفلك وإسعاده كل يوم.",
       chips:["الكل","ألعاب تعليمية","دمى وشخصيات","مستلزمات رضّع","ألعاب خارجية"],
       products:[
@@ -766,40 +765,43 @@
     btn.classList.add('active');
   };
 
-  /* ---------- رفع صورة الشعار وصورة الغلاف من قِبل صاحب المتجر ---------- */
+  /* ---------- صورة الشعار وصورة الغلاف (روابط صور حقيقية مرتبطة باسم/تخصص المتجر) ---------- */
   var LOGO_KEY = 'ez-store-logo-' + slug;
-  var COVER_KEY = 'ez-store-cover-' + slug;
   var coverEl = document.getElementById('store-cover');
   var logoEl = document.getElementById('store-logo-badge');
   var logoTextEl = document.getElementById('store-logo-text');
-  var coverRemoveBtn = document.getElementById('cover-remove-btn');
   var MAX_IMG_BYTES = 3 * 1024 * 1024; /* 3MB */
 
-  function applyCoverImage(dataUrl){
-    if(dataUrl){
-      coverEl.style.backgroundImage = 'url(' + dataUrl + ')';
-      coverRemoveBtn.style.display = 'flex';
-    } else {
-      coverEl.style.backgroundImage = '';
-      coverRemoveBtn.style.display = 'none';
-    }
+  /* سلسلة روابط بديلة: إن فشل الرابط الأول يُجرَّب التالي، وإن فشلت كلها يبقى التدرج اللوني / الحرف */
+  function photoUrls(query, w, h, seed){
+    var q = encodeURIComponent(query);
+    var kw = encodeURIComponent(query.split(' ').slice(0,2).join(','));
+    return [
+      'https://tse' + (1 + seed % 4) + '.mm.bing.net/th?q=' + q + '&w=' + w + '&h=' + h + '&c=7&rs=1&p=0',
+      'https://loremflickr.com/' + w + '/' + h + '/' + kw + '?lock=' + seed
+    ];
+  }
+  function loadFirst(urls, onOk){
+    var i = 0, im = new Image();
+    im.onload = function(){ onOk(im.src); };
+    im.onerror = function(){ i++; if(i < urls.length){ im.src = urls[i]; } };
+    im.src = urls[0];
   }
 
-  function applyLogoImage(dataUrl){
+  function applyCoverImage(url){
+    coverEl.style.backgroundImage = 'linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.18)), url("' + url + '")';
+  }
+
+  function applyLogoImage(url){
     var existingImg = logoEl.querySelector('img');
-    if(dataUrl){
-      if(existingImg){ existingImg.src = dataUrl; }
-      else {
-        var img = document.createElement('img');
-        img.src = dataUrl;
-        img.alt = store.ar;
-        logoEl.insertBefore(img, logoTextEl);
-      }
-      logoTextEl.style.display = 'none';
-    } else {
-      if(existingImg){ existingImg.remove(); }
-      logoTextEl.style.display = '';
+    if(existingImg){ existingImg.src = url; }
+    else {
+      var img = document.createElement('img');
+      img.src = url;
+      img.alt = store.ar;
+      logoEl.insertBefore(img, logoTextEl);
     }
+    logoTextEl.style.display = 'none';
   }
 
   function readImageFile(file, onDone){
@@ -811,12 +813,14 @@
     reader.readAsDataURL(file);
   }
 
-  try{
-    var savedLogo = localStorage.getItem(LOGO_KEY);
-    if(savedLogo) applyLogoImage(savedLogo);
-    var savedCover = localStorage.getItem(COVER_KEY);
-    if(savedCover) applyCoverImage(savedCover);
-  }catch(e){}
+  var seed = 0; for(var si = 0; si < slug.length; si++){ seed += slug.charCodeAt(si); } seed = seed % 90 + 1;
+
+  loadFirst(photoUrls(store.coverQ, 1600, 400, seed), applyCoverImage);
+
+  var savedLogo = null;
+  try{ savedLogo = localStorage.getItem(LOGO_KEY); }catch(e){}
+  if(savedLogo){ applyLogoImage(savedLogo); }
+  else { loadFirst(photoUrls(store.logoQ, 240, 240, seed + 7), applyLogoImage); }
 
   document.getElementById('logo-upload-input').addEventListener('change', function(e){
     readImageFile(e.target.files[0], function(dataUrl){
@@ -825,19 +829,6 @@
     });
     e.target.value = '';
   });
-
-  document.getElementById('cover-upload-input').addEventListener('change', function(e){
-    readImageFile(e.target.files[0], function(dataUrl){
-      applyCoverImage(dataUrl);
-      try{ localStorage.setItem(COVER_KEY, dataUrl); }catch(e){}
-    });
-    e.target.value = '';
-  });
-
-  window.removeStoreCover = function(){
-    applyCoverImage(null);
-    try{ localStorage.removeItem(COVER_KEY); }catch(e){}
-  };
 })();
 </script>
 <script>
