@@ -699,15 +699,7 @@
 
     <div class="grid grid-3" id="products-grid"></div>
 
-    <div class="pagination">
-      <button disabled>‹</button>
-      <button class="active">1</button>
-      <button>2</button>
-      <button>3</button>
-      <button>…</button>
-      <button>8</button>
-      <button>›</button>
-    </div>
+    <div class="pagination" id="pagination"></div>
   </div>
 
 </main>
@@ -735,6 +727,7 @@
 
 <footer><div class="wrap">© 2026 EZ Market. جميع الحقوق محفوظة.</div></footer>
 
+<script src="ez-products-bank.js"></script>
 <script>
 (function(){
   "use strict";
@@ -952,10 +945,11 @@
     }).join('');
   }
 
-  var list = currentCat.products;
+  var PAGE_SIZE = 9, TOTAL_PAGES = 8, page = 1;
+  var list = (window.EZ_BANK ? EZ_BANK.fill(slug, currentCat.products, PAGE_SIZE * TOTAL_PAGES) : currentCat.products);
+  var view = list.slice();
 
   var resultCountEl = document.getElementById('result-count');
-  if(resultCountEl){ resultCountEl.textContent = 'عرض 1–'+list.length+' من أصل '+list.length+' نتيجة'; }
   var drawerApplyBtn = document.getElementById('drawer-apply-btn');
   if(drawerApplyBtn){ drawerApplyBtn.textContent = 'عرض '+list.length+' نتيجة'; }
 
@@ -998,7 +992,26 @@
     );
   }
 
-  document.getElementById('products-grid').innerHTML = list.map(card).join('');
+  function renderPagination(){
+    var el = document.getElementById('pagination'); if(!el) return;
+    var pages = Math.ceil(view.length / PAGE_SIZE), h = '<button '+(page===1?'disabled ':'')+'data-p="'+(page-1)+'" aria-label="السابق">‹</button>';
+    for(var i=1;i<=pages;i++){ h += '<button data-p="'+i+'" class="'+(i===page?'active':'')+'"'+(i===page?' aria-current="page"':'')+'>'+i+'</button>'; }
+    el.innerHTML = h + '<button '+(page===pages?'disabled ':'')+'data-p="'+(page+1)+'" aria-label="التالي">›</button>';
+  }
+  function renderPage(scroll){
+    var start = (page-1)*PAGE_SIZE, slice = view.slice(start, start+PAGE_SIZE);
+    document.getElementById('products-grid').innerHTML = slice.map(card).join('');
+    if(resultCountEl){ resultCountEl.textContent = 'عرض '+(start+1)+'–'+(start+slice.length)+' من أصل '+view.length+' نتيجة'; }
+    renderPagination();
+    if(window.ezMediaRefresh){ try{ window.ezMediaRefresh(); }catch(e){} }
+    if(scroll){ var g = document.getElementById('products-grid'); if(g) window.scrollTo({top:g.getBoundingClientRect().top + window.pageYOffset - 120, behavior:'smooth'}); }
+  }
+  var pagEl = document.getElementById('pagination');
+  if(pagEl) pagEl.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-p]'); if(!b || b.disabled) return;
+    page = +b.getAttribute('data-p'); renderPage(true);
+  });
+  renderPage(false);
 
   var sortEl = document.getElementById('sort');
   if(sortEl){
@@ -1009,7 +1022,7 @@
       else if(v.indexOf('الأعلى تقييمًا') > -1) sorted.sort(function(a,b){ return b.rating - a.rating; });
       else if(v.indexOf('الأكثر مبيعًا') > -1) sorted.sort(function(a,b){ return b.reviews - a.reviews; });
       else if(v.indexOf('الأحدث') > -1) sorted.reverse();
-      document.getElementById('products-grid').innerHTML = sorted.map(card).join('');
+      view = sorted; page = 1; renderPage(false);
     });
   }
 

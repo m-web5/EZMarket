@@ -141,6 +141,7 @@
   function findQuery(name){
     if(!name) return null;
     if(EZ_QUERY[name]) return EZ_QUERY[name];
+    if(window.EZ_QUERY_EXTRA && window.EZ_QUERY_EXTRA[name]) return window.EZ_QUERY_EXTRA[name];  /* generated products (ez-products-bank.js) */
     var best = null;
     EZ_QUERY_KEYS.forEach(function(k){
       if(name.indexOf(k) > -1 || (name.length > 7 && k.indexOf(name) > -1)){ if(!best || k.length > best.length) best = k; }

@@ -42,10 +42,10 @@
     font-display: swap;
   }
   *, *::before, *::after {
-    font-family: 'Cairo', 'Noto Naskh Arabic', 'Tahoma', system-ui, sans-serif !important;
+    font-family: 'Coolvetica', 'Cairo', 'Noto Naskh Arabic', 'Tahoma', system-ui, sans-serif !important;
   }
   h1, h2, h3, .logo, .site-logo-text, .footer-logo, .brand-name, .footer-logo-text {
-    font-family: 'ShamelBold', 'Cairo', 'Noto Naskh Arabic', 'Tahoma', system-ui, sans-serif !important;
+    font-family: 'Coolvetica', 'ShamelBold', 'Cairo', 'Noto Naskh Arabic', 'Tahoma', system-ui, sans-serif !important;
   }
   html{ font-size:16px; }
   @media (max-width:480px){ html{ font-size:15px; } }
@@ -92,6 +92,8 @@
 
   .profile-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-card); padding:22px; text-align:center; position:sticky; top:80px;}
   .avatar{width:74px; height:74px; border-radius:50%; background:var(--primary-tint); color:var(--primary); font-size:1.8rem; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-weight:700;}
+  .avatar .icon{width:34px; height:34px;}
+  .profile-card h3:empty, .profile-card p:empty{display:none;}
   .profile-card h3{font-size:1rem; font-weight:700;}
   .profile-card p{font-size:.78rem; color:var(--ink-soft); margin-top:2px;}
   .side-nav{display:flex; flex-direction:column; gap:4px; margin-top:20px; text-align:right;}
@@ -206,14 +208,14 @@
     font-style:normal;
     font-weight:100 900;
     font-display:swap;
-    src:url("fonts/Coolvetica%20Rg.otf") format("opentype");
+    src:url("fonts/Coolvetica_Rg.otf") format("opentype"), url("fonts/Coolvetica%20Rg.otf") format("opentype");
   }
   @font-face{
     font-family:'Coolvetica';
     font-style:italic;
     font-weight:100 900;
     font-display:swap;
-    src:url("fonts/Coolvetica%20Rg%20It.otf") format("opentype");
+    src:url("fonts/Coolvetica_Rg_It.otf") format("opentype"), url("fonts/Coolvetica%20Rg%20It.otf") format("opentype");
   }
   /* الأرقام (0-9) تُستثنى دائماً من Coolvetica وتُعرض بخط Cairo، عبر نطاق يونيكود مخصص ضمن نفس اسم الخط */
   @font-face{
@@ -364,6 +366,59 @@
   }
 </style>
 <style id="no-bottom-nav">.bottom-nav{display:none !important} @media (max-width:760px){ body{padding-bottom:0 !important} .cart-fab{bottom:calc(18px + env(safe-area-inset-bottom)) !important} }</style>
+<style id="logo-merge">
+  /* ===== شعار المنصة: صورة + كلمة EZ Market كوحدة واحدة بخط Coolvetica عريض ===== */
+  header .logo, .nav-drawer-head .logo{ gap:2px !important; align-items:center; }
+  header .logo .site-logo-img{
+    height:52px !important; width:auto; max-width:none !important; object-fit:contain;
+    mix-blend-mode:lighten;            /* يذيب خلفية الصورة الحمراء داخل لون الهيدر */
+    margin-inline-end:-4px;            /* يقرّب الصورة من الكلمة حتى تبدو قطعة واحدة */
+  }
+  header .logo #site-logo-text, .nav-drawer-head .logo span{
+    font-family:'Coolvetica','Cairo',sans-serif !important; font-style:italic !important;
+    font-weight:700 !important; letter-spacing:-.4px !important;
+    -webkit-text-stroke:.9px currentColor; paint-order:stroke fill;   /* تغليظ فعلي لأن الخط له وزن واحد */
+  }
+  header .logo #site-logo-text{ font-size:1.9rem !important; line-height:1; }
+  @media (max-width:760px){
+    header .header-top .site-logo-img{ height:44px !important; max-width:none !important; }
+    header .logo #site-logo-text{ font-size:clamp(1.35rem, 6.6vw, 1.8rem) !important; }
+  }
+  @media (max-width:360px){
+    header .header-top .site-logo-img{ height:38px !important; }
+  }
+</style>
+<style id="swirl-wordmark">
+  /* ===== شعار لولبي: خط مخطوط متصل الحروف + ضربة خطية بدوامتين تحت الكلمة ===== */
+  header .logo #site-logo-text,
+  .nav-drawer-head .logo span,
+  #footer-logo-text{
+    font-family:'Yellowtail','Brush Script MT','Segoe Script',cursive !important;
+    font-style:normal !important; font-weight:400 !important;
+    letter-spacing:.5px !important; -webkit-text-stroke:0 !important;
+    direction:ltr; position:relative; display:inline-block; line-height:1.05;
+    padding:0 6px 14px; text-shadow:0 2px 0 rgba(0,0,0,.12);
+  }
+  header .logo #site-logo-text{ font-size:2.6rem !important; }
+  .nav-drawer-head .logo span{ font-size:1.8rem !important; }
+  #footer-logo-text{ font-size:2rem !important; }
+  header .logo #site-logo-text::after,
+  .nav-drawer-head .logo span::after,
+  #footer-logo-text::after{
+    content:""; position:absolute; left:0; right:0; bottom:0; height:16px;
+    background:currentColor;
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cpath d='M22 14C22 9 14 8 11 12C8 17 14 21 19 18C23 15 20 11 16 13M22 14C60 22 130 22 178 10C190 7 196 2 191 1C186 0 183 6 188 8' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+            mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'%3E%3Cpath d='M22 14C22 9 14 8 11 12C8 17 14 21 19 18C23 15 20 11 16 13M22 14C60 22 130 22 178 10C190 7 196 2 191 1C186 0 183 6 188 8' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+    animation:swirlDraw 1.6s cubic-bezier(.22,.61,.36,1) .2s both;
+  }
+  @keyframes swirlDraw{ from{ clip-path:inset(0 100% 0 0); } to{ clip-path:inset(0 0 0 0); } }
+  @media (prefers-reduced-motion: reduce){
+    header .logo #site-logo-text::after, .nav-drawer-head .logo span::after, #footer-logo-text::after{ animation:none; }
+  }
+  @media (max-width:760px){
+    header .logo #site-logo-text{ font-size:clamp(1.9rem, 9vw, 2.3rem) !important; }
+  }
+</style>
 <style id="ez-logo-lines">
   /* ===== شعار EZ Market الجديد: كلمة مخطوطة + خط حلزوني سفلي + عربة تسوق (SVG يتلوّن بلون النص الحالي) ===== */
   .ez-logo-svg{ display:block; height:58px; width:auto; aspect-ratio:396/130; max-width:100%; overflow:visible; flex-shrink:0; color:inherit; filter:drop-shadow(0 2px 3px rgba(0,0,0,.14)); }
@@ -538,9 +593,9 @@
 
 <main class="wrap layout">
   <aside class="profile-card">
-    <div class="avatar">أس</div>
-    <h3>أحمد سالم</h3>
-    <p>ahmed@email.com</p>
+    <div class="avatar"><svg class="icon"><use href="#i-user"/></svg></div>
+    <h3 id="acc-name"></h3>
+    <p id="acc-email"></p>
     <nav class="side-nav">
       <button class="active" onclick="setTab('orders',this)"><svg class="icon"><use href="#i-box"/></svg>طلباتي</button>
       <button onclick="setTab('favorites',this)"><svg class="icon"><use href="#i-heart"/></svg>المفضلة</button>
@@ -556,37 +611,7 @@
       <div class="panel">
         <h2>طلباتي</h2>
 
-        <div class="order-row-card">
-          <div class="thumb">🎧</div>
-          <div class="meta"><b>طلب #EZ10248</b><span>3 منتجات — 12 سبتمبر 2026</span></div>
-          <span class="status-pill shipping">قيد التوصيل</span>
-          <div class="order-price">1,186 ر.س</div>
-          <a href="#" class="track-link">تتبع</a>
-        </div>
-
-        <div class="order-row-card">
-          <div class="thumb">👜</div>
-          <div class="meta"><b>طلب #EZ10190</b><span>1 منتج — 2 سبتمبر 2026</span></div>
-          <span class="status-pill delivered">تم التسليم</span>
-          <div class="order-price">259 ر.س</div>
-          <a href="#" class="track-link">التفاصيل</a>
-        </div>
-
-        <div class="order-row-card">
-          <div class="thumb">🖥️</div>
-          <div class="meta"><b>طلب #EZ10142</b><span>2 منتج — 21 أغسطس 2026</span></div>
-          <span class="status-pill processing">قيد التجهيز</span>
-          <div class="order-price">2,748 ر.س</div>
-          <a href="#" class="track-link">تتبع</a>
-        </div>
-
-        <div class="order-row-card">
-          <div class="thumb">👕</div>
-          <div class="meta"><b>طلب #EZ10098</b><span>1 منتج — 3 أغسطس 2026</span></div>
-          <span class="status-pill cancelled">ملغي</span>
-          <div class="order-price">89 ر.س</div>
-          <a href="#" class="track-link">التفاصيل</a>
-        </div>
+        <div class="empty-state" style="text-align:center; color:var(--ink-soft); padding:32px 8px;">لا توجد طلبات بعد</div>
       </div>
     </div>
 
@@ -608,19 +633,6 @@
       <div class="panel">
         <h2>العناوين المحفوظة</h2>
         <div class="addr-grid">
-          <div class="addr-card default">
-            <span class="tag">افتراضي</span>
-            <b>المنزل</b>
-            <p>الرياض، حي النرجس، شارع الأمير سلطان، مبنى 12</p>
-            <p>0501234567</p>
-            <div class="addr-actions"><a href="#">تعديل</a><a href="#" class="del">حذف</a></div>
-          </div>
-          <div class="addr-card">
-            <b>العمل</b>
-            <p>الرياض، حي العليا، برج الأعمال، الطابق 4</p>
-            <p>0501234567</p>
-            <div class="addr-actions"><a href="#">تعديل</a><a href="#">تعيين كافتراضي</a></div>
-          </div>
           <button class="add-addr-btn">+ إضافة عنوان جديد</button>
         </div>
       </div>
@@ -631,9 +643,9 @@
       <div class="panel">
         <h2>البيانات الشخصية</h2>
         <div class="form-grid">
-          <div><label>الاسم الكامل</label><input type="text" value="أحمد سالم"></div>
-          <div><label>رقم الهاتف</label><input type="tel" value="0501234567"></div>
-          <div><label>البريد الإلكتروني</label><input type="email" value="ahmed@email.com"></div>
+          <div><label>الاسم الكامل</label><input type="text" value=""></div>
+          <div><label>رقم الهاتف</label><input type="tel" value=""></div>
+          <div><label>البريد الإلكتروني</label><input type="email" value=""></div>
           <div><label>كلمة المرور الجديدة</label><input type="password" placeholder="••••••••"></div>
         </div>
         <button class="btn btn-primary">حفظ التغييرات</button>

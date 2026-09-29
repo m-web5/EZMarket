@@ -567,6 +567,7 @@
 
 <footer><div class="wrap">© 2026 EZ Market. جميع الحقوق محفوظة.</div></footer>
 
+<script src="ez-products-bank.js"></script>
 <script>
 (function(){
   "use strict";
@@ -586,6 +587,12 @@
     {name:"سماعة رأس للألعاب", store:"متجر الصوتيات", price:349, old:null, rating:4.5, reviews:96, emoji:"🎮", tint:"--primary-tint", badge:"جديد"},
     {name:"سماعة أذن رياضية مقاومة للماء", store:"بلو تك", price:149, old:199, rating:4.3, reviews:210, emoji:"🎧", tint:"--sale-tint", badge:"خصم"}
   ];
+  if(window.EZ_BANK){   /* add products from every category so search results are full (existing 3 stay first) */
+    var BAR = {sale:"خصم", best:"الأكثر مبيعًا", "new":"جديد"}, extra = [];
+    EZ_BANK.cats.forEach(function(c){ EZ_BANK.get(c).slice(0, 3).forEach(function(p){ extra.push({name:p.name, store:p.store, price:p.price, old:p.oldPrice, rating:p.rating, reviews:p.reviews, emoji:p.emoji, tint:p.tint, badge:p.badge ? BAR[p.badge] : null}); }); });
+    products = products.concat(extra);
+  }
+
 
   var categories = [
     {name:"الصوتيات والسماعات", count:48, emoji:"🎧"}

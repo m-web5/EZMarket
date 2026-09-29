@@ -6,6 +6,10 @@
   html.ez-logged-in .header-auth-btns .btn,
   html.ez-logged-in .nav-drawer-links a[href^="ez-market-auth.html"]{ display:none !important; }
   html.ez-logged-in .header-auth-row .header-auth-btns{ grid-template-columns:auto !important; justify-content:end; }
+  .pagination{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:36px; flex-wrap:wrap;}
+  .pagination button{width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--ink); font-weight:600; font-size:.84rem; cursor:pointer;}
+  .pagination button.active{background:var(--primary); color:#fff; border-color:var(--primary);}
+  .pagination button:disabled{opacity:.4; cursor:not-allowed;}
 </style>
 
 <script>
@@ -91,14 +95,12 @@
   @media (max-width:640px){ .store-cover{height:130px;} }
 
 
-  .store-header{max-width:1160px; margin:-52px auto 0; padding:0 20px 20px; position:relative;}
-  .store-top-row{display:flex; margin-bottom:52px;}
+  .store-header{max-width:1160px; margin:-75px auto 0; padding:0 20px 20px; position:relative;}
+  .store-top-row{display:flex; margin-bottom:60px;}
   .store-body-row{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;}
-  .store-logo{width:96px; height:96px; border-radius:22px; background:var(--surface); border:4px solid var(--surface); box-shadow:var(--shadow-md); display:flex; align-items:center; justify-content:center; font-size:2.2rem; font-weight:700; color:var(--primary); flex-shrink:0; position:relative; overflow:visible;}
-  .store-logo img{width:100%; height:100%; object-fit:cover; border-radius:18px;}
-  .logo-upload-btn{position:absolute; bottom:-4px; inset-inline-end:-4px; width:30px; height:30px; border-radius:50%; background:var(--primary); color:#fff; border:3px solid var(--surface); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow-sm);}
-  .logo-upload-btn:hover{background:var(--primary-dark);}
-  .logo-upload-btn svg{width:14px; height:14px;}
+  .store-logo{width:150px; height:150px; border-radius:50%; background:#fff; border:4px solid var(--surface); box-shadow:var(--shadow-md); display:flex; align-items:center; justify-content:center; font-size:2.2rem; font-weight:700; color:var(--primary); flex-shrink:0; position:relative; overflow:visible;}
+  .store-logo img{width:100%; height:100%; object-fit:contain; border-radius:50%; padding:8px; background:transparent; display:block;}
+  .store-logo img.photo-fill{object-fit:cover; padding:0;}
   .store-meta{flex:1; min-width:200px;}
   .store-meta h1{font-size:1.35rem; font-weight:700; display:flex; align-items:center; gap:8px;}
   .verified{color:var(--primary); width:18px; height:18px;}
@@ -354,7 +356,9 @@
     /* المتجر: الشعار فوق، ثم الاسم والتقييم، ثم الأزرار — بدل تداخل النص مع غلاف المتجر */
     .store-header{ padding:0 14px 16px; }
     .store-body-row{ flex-direction:column; align-items:flex-start; gap:12px; }
-    .store-logo{ width:84px; height:84px; font-size:1.9rem; }
+    .store-logo{ width:118px; height:118px; font-size:2.4rem; }
+    .store-header{ margin-top:-59px; }
+    .store-top-row{ margin-bottom:48px; }
     .store-meta{ width:100%; flex:none; }
     .store-cta{ width:100%; }
     .store-cta .btn{ flex:1 1 0; justify-content:center; }
@@ -551,10 +555,6 @@
     <div class="store-top-row">
       <div class="store-logo" id="store-logo-badge">
         <span id="store-logo-text">--</span>
-        <input type="file" id="logo-upload-input" accept="image/*" style="display:none">
-        <button class="logo-upload-btn" onclick="document.getElementById('logo-upload-input').click()" aria-label="تغيير شعار المتجر" title="تغيير شعار المتجر">
-          <svg class="icon"><use href="#i-camera"/></svg>
-        </button>
       </div>
     </div>
     <div class="store-body-row">
@@ -583,6 +583,7 @@
       <select id="sort"><option>الأحدث</option><option>الأعلى تقييمًا</option><option>السعر: الأقل أولًا</option></select>
     </div>
     <div class="grid" id="store-products"></div>
+    <div class="pagination" id="store-pagination"></div>
   </div>
 
   <div class="tab-panel" id="tab-about">
@@ -615,6 +616,7 @@
 
 <footer><div class="wrap">© 2026 EZ Market. جميع الحقوق محفوظة.</div></footer>
 
+<script src="ez-products-bank.js"></script>
 <script>
 (function(){
   "use strict";
@@ -737,7 +739,15 @@
     return '<button class="'+(i===0?'active':'')+'">'+c+'</button>';
   }).join('');
 
-  document.getElementById('store-products').innerHTML = store.products.map(function(p){
+  var STORE_CAT = {"blue-tech":"electronics","style-hub":"fashion","home-line":"home","beauty-zone":"beauty","sport-max":"sports","kids-world":"kids"};
+  var BADGE_AR = {sale:"خصم", best:"الأكثر مبيعًا", "new":"جديد"};
+  var SPAGE = 9, sPage = 1, sList = store.products.slice();
+  if(window.EZ_BANK){
+    sList = EZ_BANK.fill(STORE_CAT[slug] || 'electronics', sList, SPAGE * 8).map(function(p){
+      return p.oldPrice !== undefined ? {name:p.name, price:p.price, old:p.oldPrice, rating:p.rating, reviews:p.reviews, emoji:p.emoji, tint:p.tint, badge:p.badge ? BADGE_AR[p.badge] : null} : p;
+    });
+  }
+  function storeCard(p){
     var badgeHtml = p.badge ? '<span class="badge">'+p.badge+'</span>' : '';
     return (
       '<a href="ez-market-product.html" class="product-card">'+
@@ -749,7 +759,20 @@
         '</div>'+
       '</a>'
     );
-  }).join('');
+  }
+  function renderStoreProducts(scroll){
+    var pages = Math.ceil(sList.length / SPAGE), st = (sPage-1)*SPAGE;
+    document.getElementById('store-products').innerHTML = sList.slice(st, st+SPAGE).map(storeCard).join('');
+    var h = '<button '+(sPage===1?'disabled ':'')+'data-p="'+(sPage-1)+'" aria-label="السابق">‹</button>';
+    for(var i=1;i<=pages;i++){ h += '<button data-p="'+i+'" class="'+(i===sPage?'active':'')+'">'+i+'</button>'; }
+    document.getElementById('store-pagination').innerHTML = h + '<button '+(sPage===pages?'disabled ':'')+'data-p="'+(sPage+1)+'" aria-label="التالي">›</button>';
+    if(scroll){ window.scrollTo({top:document.getElementById('store-products').getBoundingClientRect().top + window.pageYOffset - 140, behavior:'smooth'}); }
+  }
+  document.getElementById('store-pagination').addEventListener('click', function(e){
+    var b = e.target.closest('button[data-p]'); if(!b || b.disabled) return;
+    sPage = +b.getAttribute('data-p'); renderStoreProducts(true);
+  });
+  renderStoreProducts(false);
 
   document.querySelectorAll('.cat-chips button').forEach(function(b){
     b.addEventListener('click', function(){
@@ -818,17 +841,20 @@
   loadFirst(photoUrls(store.coverQ, 1600, 400, seed), applyCoverImage);
 
   var savedLogo = null;
-  try{ savedLogo = localStorage.getItem(LOGO_KEY); }catch(e){}
+  
   if(savedLogo){ applyLogoImage(savedLogo); }
-  else { loadFirst(photoUrls(store.logoQ, 240, 240, seed + 7), applyLogoImage); }
+  else {
+    /* شعار المتجر: ez200.jpg … ez205.jpg بجانب ملفات الصفحات (بالترتيب: بلو تك، ستايل هب، هوم لاين، بيوتي زون، سبورت ماكس، كيدز وورلد) */
+    var LOGO_FILES = {"blue-tech":"ez200.jpg","style-hub":"ez201.jpg","home-line":"ez202.jpg","beauty-zone":"ez203.jpg","sport-max":"ez204.jpg","kids-world":"ez205.jpg"};
+    var logoFile = LOGO_FILES[slug] || LOGO_FILES['blue-tech'];
+    var probe = new Image();
+    probe.onload = function(){ applyLogoImage(logoFile); };
+    probe.onerror = function(){   /* الملف غير موجود بعد: صورة بديلة من الويب ثم الحرف */
+      loadFirst(photoUrls(store.logoQ, 240, 240, seed + 7), function(u){ applyLogoImage(u); var im = logoEl.querySelector('img'); if(im) im.classList.add('photo-fill'); });
+    };
+    probe.src = logoFile;
+  }
 
-  document.getElementById('logo-upload-input').addEventListener('change', function(e){
-    readImageFile(e.target.files[0], function(dataUrl){
-      applyLogoImage(dataUrl);
-      try{ localStorage.setItem(LOGO_KEY, dataUrl); }catch(e){}
-    });
-    e.target.value = '';
-  });
 })();
 </script>
 <script>

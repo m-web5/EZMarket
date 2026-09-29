@@ -1238,6 +1238,7 @@
 
 <div class="toast" id="toast" data-ar="تمت الإضافة إلى السلة" data-en="Added to cart">تمت الإضافة إلى السلة</div>
 
+<script src="ez-products-bank.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1318,6 +1319,13 @@
     product("لعبة تركيب تعليمية","متجر الأطفال",99,null,4.7,14,"🧩","--primary-tint","new",productImages.p4)
   ];
   newArrivals.forEach(function(p,i){ p.fb = productFallback['p'+(i+1)]; });
+  if(window.EZ_BANK){   /* complete the grid to 8 products with real-photo items from other categories */
+    [["fashion",1],["home",1],["beauty",1],["sports",0],["kids",2],["auto",0],["tools",0],["phones",4]].forEach(function(c){
+      if(newArrivals.length >= 8) return;
+      var p = EZ_BANK.get(c[0])[c[1]];
+      newArrivals.push(product(p.name, p.store, p.price, p.oldPrice, p.rating, p.reviews, p.emoji, p.tint, "new", undefined));
+    });
+  }
 
   var badgeLabel = {sale:"خصم", best:"الأكثر مبيعًا", new:"جديد"};
 
