@@ -416,6 +416,63 @@
     html[lang="en"][dir="rtl"] .header-partner-logos{ order:1; }
   }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<style id="ez-wordmark-bold">
+  /* ===== اسم المنصة: براند مخطوط عريض (Pacifico) + خط لولبي سفلي ===== */
+  .ez-wordmark{ display:inline-flex; flex-direction:column; align-items:stretch; white-space:nowrap; line-height:1.05; direction:ltr; }
+  .ez-wordmark .ez-wm-text{ display:block; text-align:center; }
+  .ez-wordmark .ez-wm-swirl{ display:block; width:100%; height:.5em; margin-top:-.05em; overflow:visible; }
+  .logo .ez-logo-stack .ez-wordmark, .footer-logo .ez-logo-stack .ez-wordmark{
+    font-family:'Pacifico','Yellowtail','Cairo',cursive !important;
+    font-style:normal !important; font-weight:400 !important;
+    font-size:1.5rem !important; letter-spacing:.3px !important; color:inherit;
+    -webkit-text-stroke:.6px currentColor; paint-order:stroke fill;
+    text-shadow:0 2px 3px rgba(0,0,0,.18);
+  }
+  .ez-wordmark .ez-wm-swirl path{ fill:none; stroke:currentColor; stroke-width:3.2; stroke-linecap:round; stroke-linejoin:round; }
+  header .logo .ez-logo-stack .ez-wordmark{ color:#fff; }
+  .nav-drawer-head .logo .ez-logo-stack .ez-wordmark{ color:var(--primary); font-size:1.35rem !important; text-shadow:none; }
+  .footer-logo .ez-logo-stack .ez-wordmark{ font-size:1.6rem !important; }
+  .auth-visual .logo .ez-logo-stack .ez-wordmark{ color:#fff; font-size:1.8rem !important; }
+  @media (max-width:760px){ header .logo .ez-logo-stack .ez-wordmark{ font-size:1.3rem !important; } }
+  @media (max-width:360px){ header .logo .ez-logo-stack .ez-wordmark{ font-size:1.15rem !important; } }
+</style>
+<style id="ez-wordmark-everywhere">
+  /* ===== توحيد الشعار في كل المواضع (الهيدر، القائمة، الفوتر، الشريط الجانبي، الشريط العلوي للجوال، شاشة الدخول) ===== */
+  :is(.logo,.footer-logo,.sb-logo) .ez-logo-stack .ez-wordmark .ez-wm-text,
+  .mobile-topbar .logo .ez-logo-stack .ez-wordmark .ez-wm-text{
+    font-family:'Pacifico','Yellowtail','Cairo',cursive !important;
+    font-style:normal !important; font-weight:400 !important; letter-spacing:.3px !important;
+    font-size:inherit !important; color:inherit !important;
+  }
+  .sb-logo .ez-logo-stack .ez-wordmark{
+    font-family:'Pacifico','Yellowtail','Cairo',cursive !important; font-size:1.4rem !important;
+    color:#fff; -webkit-text-stroke:.6px currentColor; text-shadow:0 2px 3px rgba(0,0,0,.2);
+  }
+  .mobile-topbar .logo .ez-logo-stack .ez-wordmark{
+    font-family:'Pacifico','Yellowtail','Cairo',cursive !important; font-size:1.2rem !important;
+    color:var(--primary); text-shadow:none; -webkit-text-stroke:.5px currentColor;
+  }
+  .footer-logo .ez-logo-stack .ez-wordmark{ color:var(--primary); }
+</style>
+<style id="ez-wordmark-reset">
+  /* ===== إلغاء قواعد الشعار القديمة (الخط اللولبي ::after والحشوة) التي كانت تتكرر على كل عنصر span داخل الشعار ===== */
+  .logo span::after, .footer-logo span::after, .sb-logo span::after, .nav-drawer-head .logo span::after,
+  .nav-drawer-head .logo::after, .footer-logo::after{ content:none !important; display:none !important; animation:none !important; }
+  :is(.logo,.footer-logo,.sb-logo) .ez-logo-stack, :is(.logo,.footer-logo,.sb-logo) .ez-logo-stack .ez-logo-slot{
+    padding:0 !important; text-shadow:none !important; position:relative;
+  }
+  :is(.logo,.footer-logo,.sb-logo) .ez-logo-stack{ display:inline-flex !important; flex-direction:column; align-items:center; gap:0 !important; }
+  :is(.logo,.footer-logo,.sb-logo) .ez-logo-stack .ez-logo-slot{ display:inline-flex !important; }
+  :is(.logo,.footer-logo,.sb-logo) .ez-logo-stack .ez-wordmark{ display:inline-flex !important; flex-direction:column; padding:0 !important; position:relative; margin-top:-2px; }
+  :is(.logo,.footer-logo,.sb-logo) .ez-logo-stack .ez-wordmark .ez-wm-text{ display:block !important; padding:0 !important; position:static; text-shadow:none !important; line-height:1.15; }
+  /* القائمة الجانبية: نفس شعار الصفحة الرئيسية بنفس النسب (الصورة 80px + اسم 1.25rem) بلون المنصة */
+  .nav-drawer-head .logo .ez-logo-stack .ez-logo-slot{ --h:80px; }
+  .nav-drawer-head .logo .ez-logo-stack .ez-wordmark{ font-size:1.25rem !important; color:var(--primary) !important; text-shadow:none; }
+  .nav-drawer-head .logo{ gap:0 !important; }
+  .footer-logo .ez-logo-stack .ez-logo-slot{ --h:100px; }
+  .footer-logo .ez-logo-stack .ez-wordmark{ font-size:1.4rem !important; }
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="ez-logo-sym" viewBox="-6 -4 396 130" fill="currentColor">
@@ -454,7 +511,7 @@
       <button class="icon-btn" id="header-back-btn" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon"><use href="#i-arrow-back"/></svg></button>
     </div>
     <a href="index.html" class="logo" id="site-logo">
-      <span class="ez-logo-stack"><span class="ez-logo-slot" data-file="ez102.jpg"><img src="ez102.jpg" alt="EZ Market" onerror="this.parentNode.classList.add('logo-empty')"></span><svg class="ez-logo-svg" viewBox="-6 -4 396 130" aria-hidden="true"><use href="#ez-logo-sym"/></svg></span>
+      <span class="ez-logo-stack"><span class="ez-logo-slot" data-file="ez102.jpg"><img src="ez102.jpg" alt="EZ Market" onerror="this.parentNode.classList.add('logo-empty')"></span><span class="ez-wordmark" aria-hidden="true"><span class="ez-wm-text">EZ Market</span><svg class="ez-wm-swirl" viewBox="0 0 200 20" preserveAspectRatio="none"><path d="M6 11C6 5 -2 5 1 10C4 15 11 13 11 9M10 12C60 17 140 17 190 6C195 5 197 8 195 11"/></svg></span></span>
     </a>
     <div class="search-bar"><svg class="icon"><use href="#i-search"/></svg><input id="search-input" type="text" value="سماعة" onkeydown="if(event.key==='Enter'&&this.value.trim()){location.href='ez-market-search.html?q='+encodeURIComponent(this.value.trim());}"></div>
     <div class="header-actions">
@@ -467,7 +524,7 @@
   <div class="nav-drawer-head">
     <div class="nav-drawer-headwrap">
       <button class="nav-drawer-back" id="nav-drawer-back" onclick="history.back()" aria-label="رجوع خطوة للخلف" style="display:none;"><svg class="icon" style="width:18px;height:18px"><use href="#i-arrow-back"/></svg></button>
-      <a href="index.html" class="logo"><span class="ez-logo-stack"><span class="ez-logo-slot" data-file="ez102.jpg"><img src="ez102.jpg" alt="EZ Market" onerror="this.parentNode.classList.add('logo-empty')"></span><svg class="ez-logo-svg" viewBox="-6 -4 396 130" aria-hidden="true"><use href="#ez-logo-sym"/></svg></span></a>
+      <a href="index.html" class="logo"><span class="ez-logo-stack"><span class="ez-logo-slot" data-file="ez102.jpg"><img src="ez102.jpg" alt="EZ Market" onerror="this.parentNode.classList.add('logo-empty')"></span><span class="ez-wordmark" aria-hidden="true"><span class="ez-wm-text">EZ Market</span><svg class="ez-wm-swirl" viewBox="0 0 200 20" preserveAspectRatio="none"><path d="M6 11C6 5 -2 5 1 10C4 15 11 13 11 9M10 12C60 17 140 17 190 6C195 5 197 8 195 11"/></svg></span></span></a>
     </div>
     <button class="nav-drawer-close" onclick="closeNavDrawer()" aria-label="إغلاق القائمة"><svg class="icon"><use href="#i-chevron"/></svg></button>
   </div>
